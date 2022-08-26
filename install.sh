@@ -3,7 +3,7 @@
 
 LOG="${HOME}/Library/Logs/dotfiles.log"
 GITHUB_USER="betancour"
-GITHUB_REPO=""
+GITHUB_REPO="dotfiles"
 USER_GIT_AUTHOR_NAME="Your Name"
 USER_GIT_AUTHOR_EMAIL="you@example.com"
 DIR="/usr/local/opt/${GITHUB_REPO}"
