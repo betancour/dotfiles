@@ -14,7 +14,7 @@ _process() {
 
 _success() {
 	local message=$1
-	print "%s✓ Success:%s\n" "$(tput setaf 2)" "$(tput sgr0) $message"
+	printf "%s✓ Success:%s\n" "$(tput setaf 2)" "$(tput sgr0) $message"
 }
 
 download_dotfiles() {
