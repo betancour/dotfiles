@@ -12,7 +12,7 @@ _process() {
 	printf "$(tput setaf 6) %s...$(tput sgr0)\n" "$@"
 }
 
-_sucess() {
+_success() {
 	local message=$1
 	print "%s✓ Success:%s\n" "$(tput setaf 2)" "$(tput sgr0) $message"
 }
@@ -21,11 +21,11 @@ download_dotfiles() {
 	_process "→ Creating directory at ${DIR} and setting permissions"
 	mkdir -p "${DIR}"
 
-	_process " Creating directory at ${LOG} and setting permissions" 
+	_process "→ Creating directory at ${LOG} and setting permissions" 
 	mkdir -p "${LOG}"
 
 	_process "→ Downloading repository to /tmp directory"
-	curl -zxf /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
+	curl -xf /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
 
 	_process "→ Extracting files to ${DIR}"
     tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
