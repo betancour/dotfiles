@@ -25,14 +25,13 @@ download_dotfiles() {
 	mkdir -p "${LOG}"
 
 	_process "→ Downloading repository to /tmp directory"
-	curl -L -k "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
-	-O /tmp/${GITHUB_REPO}.tar.gz
+	curl  -#fLo /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
 
 	_process "→ Extracting files to ${DIR}"
-    tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
+  tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
 
-    _process "→ Removing tarball from /tmp directory"
-    rm -rf /tmp/${GITHUB_REPO}.tar.gz
+  _process "→ Removing tarball from /tmp directory"
+  rm -rf /tmp/${GITHUB_REPO}.tar.gz
 
     [[ $? ]] && _success "${DIR} created, repository downloaded and extracted"
 
