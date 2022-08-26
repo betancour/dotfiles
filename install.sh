@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-LOG="${HOME}/Library/Logs/dotfiles.log"
+LOG="${HOME}/opt/logs/dotfiles.log"
 GITHUB_USER="betancour"
 GITHUB_REPO="dotfiles"
 USER_GIT_AUTHOR_NAME="Yitzhak B. Solorzano"
 USER_GIT_AUTHOR_EMAIL="betancour@gmail.com"
-DIR="/usr/local/opt/${GITHUB_REPO}"
+DIR="${HOME}/opt/${GITHUB_REPO}"
 
 _process() {
 	echo "$(date) PROCESSING: $@" >> $LOG
@@ -20,6 +20,9 @@ _sucess() {
 download_dotfiles() {
 	_process "→ Creating directory at ${DIR} and setting permissions"
 	mkdir -p "${DIR}"
+
+	_process " Creating directory at ${LOG} and setting permissions" 
+	mkdir -p "${LOG}"
 
 	_process "→ Downloading repository to /tmp directory"
 	curl -zxf /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
