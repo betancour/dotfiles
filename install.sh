@@ -13,7 +13,7 @@ _process() {
 	printf "$(tput setaf 6) %s...$(tput sgr0)\n" "$@"
 }
 
-_sucess(){
+_sucess() {
 	local message=$1
 	print "%s✓ Success:%s\n" "$(tput setaf 2)" "$(tput sgr0) $message"
 }
@@ -36,7 +36,7 @@ _download_dotfiles() {
     cd "${DIR}"
 }
 
-link_dotfiles(){
+link_dotfiles() {
     if [[ -f "${DIR}/opt/files" ]]; then
         _process "→ Symlinking dotfiles in /configs"
 
@@ -91,7 +91,7 @@ setup_git_authorship() {
   fi
 }
 
-install(){
+install() {
  download_dotfiles
  link_dotfiles
  setup_git_authorship
