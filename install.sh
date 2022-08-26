@@ -1,4 +1,3 @@
-# /install
 #!/usr/bin/env bash
 
 LOG="${HOME}/Library/Logs/dotfiles.log"
@@ -18,7 +17,7 @@ _sucess() {
 	print "%s✓ Success:%s\n" "$(tput setaf 2)" "$(tput sgr0) $message"
 }
 
-_download_dotfiles() {
+download_dotfiles() {
 	_process "→ Creating directory at ${DIR} and setting permissions"
 	mkdir -p "${DIR}"
 
