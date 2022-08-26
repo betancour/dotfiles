@@ -25,7 +25,7 @@ download_dotfiles() {
 	mkdir -p "${LOG}"
 
 	_process "→ Downloading repository to /tmp directory"
-	curl -xf /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
+	curl -L -k /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
 
 	_process "→ Extracting files to ${DIR}"
     tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
