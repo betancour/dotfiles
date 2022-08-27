@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-LOG="${HOME}/opt/logs/"
+LOG="${HOME}/opt/logs/dotfiles.log"
 GITHUB_USER="betancour"
 GITHUB_REPO="dotfiles"
 USER_GIT_AUTHOR_NAME="Yitzhak B. Solorzano"
