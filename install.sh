@@ -19,10 +19,7 @@ _success() {
 
 download_dotfiles() {
 	_process "→ Creating directory at ${DIR} and setting permissions"
-	mkdir -p "${DIR}"
-	
-	_process
-	touch ${HOME}/.bash_profile
+	mkdir -p "${DIR}"	
 
 	_process "→ Downloading repository to /tmp directory"
 	curl  -#fLo /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
