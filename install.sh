@@ -67,30 +67,30 @@ link_dotfiles() {
 }
 
 setup_git_authorship() {
-	GIT_AUTHOR_NAME="$(git config user.name)"
-	GIT_AUTHOR_EMAIL="$(git config user.email)"
+	GIT_AUTHOR_NAME=eval git config user.name
+	GIT_AUTHOR_EMAIL=eval git config user.email
 
-  if [[ ! -z "$GIT_AUTHOR_NAME" ]]; then
-    _process "→ Setting up Git author"
+	if [[ ! -z "$GIT_AUTHOR_NAME" ]]; then
+		_process "→ Setting up Git author"
 
-    read USER_GIT_AUTHOR_NAME
-    if [[ ! -z "$USER_GIT_AUTHOR_NAME" ]]; then
-      GIT_AUTHOR_NAME="${USER_GIT_AUTHOR_NAME}"
-      $(git config --global user.name "$GIT_AUTHOR_NAME")
-    else
-      _warning "No Git user name has been set.  Please update manually"
-    fi
+    	read USER_GIT_AUTHOR_NAME
+    	if [[ ! -z "$USER_GIT_AUTHOR_NAME" ]]; then
+      		GIT_AUTHOR_NAME="${USER_GIT_AUTHOR_NAME}"
+      		$(git config --global user.name "$GIT_AUTHOR_NAME")
+		else
+      		_warning "No Git user name has been set.  Please update manually"
+    	fi
 
-    read USER_GIT_AUTHOR_EMAIL
-    if [[ ! -z "$USER_GIT_AUTHOR_EMAIL" ]]; then
-      GIT_AUTHOR_EMAIL="${USER_GIT_AUTHOR_EMAIL}"
-      $(git config --global user.email "$GIT_AUTHOR_EMAIL")
-    else
-      _warning "No Git user email has been set.  Please update manually"
-    fi
-  else
-    _process "→ Git author already set, moving on..."
-  fi
+    	read USER_GIT_AUTHOR_EMAIL
+    	if [[ ! -z "$USER_GIT_AUTHOR_EMAIL" ]]; then
+      		GIT_AUTHOR_EMAIL="${USER_GIT_AUTHOR_EMAIL}"
+      		$(git config --global user.email "$GIT_AUTHOR_EMAIL")
+    	else
+      		_warning "No Git user email has been set.  Please update manually"
+    	fi
+		else
+    	_process "→ Git author already set, moving on..."
+  	fi
 }
 
 install() {
