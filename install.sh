@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-LOG="${HOME}/opt/logs/dotfiles.log"
+LOG="${HOME}/opt/dotfiles.log"
 GITHUB_USER="betancour"
 GITHUB_REPO="dotfiles"
 USER_GIT_AUTHOR_NAME="Yitzhak B. Solorzano"
@@ -20,18 +20,18 @@ _success() {
 download_dotfiles() {
 	_process "→ Creating directory at ${DIR} and setting permissions"
 	mkdir -p "${DIR}"
-
-	_process "→ Creating directory at ${LOG} and setting permissions" 
-	mkdir -p "${LOG}"
+	
+	_process
+	touch ${HOME}/.bash_profile
 
 	_process "→ Downloading repository to /tmp directory"
 	curl  -#fLo /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
 
 	_process "→ Extracting files to ${DIR}"
-  tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
+	tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
 
-  _process "→ Removing tarball from /tmp directory"
-  rm -rf /tmp/${GITHUB_REPO}.tar.gz
+	_process "→ Removing tarball from /tmp directory"
+	rm -rf /tmp/${GITHUB_REPO}.tar.gz
 
     [[ $? ]] && _success "${DIR} created, repository downloaded and extracted"
 
@@ -78,7 +78,7 @@ setup_git_authorship() {
       		GIT_AUTHOR_NAME="${USER_GIT_AUTHOR_NAME}"
       		$(git config --global user.name "$GIT_AUTHOR_NAME")
 		else
-      		_warning "No Git user name has been set.  Please update manually"
+      		_warning "No Git user name has been set. Please update manually"
     	fi
 
     	read USER_GIT_AUTHOR_EMAIL
