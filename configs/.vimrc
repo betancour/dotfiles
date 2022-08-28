@@ -1,16 +1,15 @@
-autocmd BufWrite * :set ff=unix "Autoconvert to unix line endings
-filetype plugin on  "Identify syntax
-set autoread        "Reload buffer when external change detected
-set autowrite       "Save buffer when changing files
+autocmd BufWrite * :set ff=unix 
+filetype plugin on
+set autoread        
+set autowrite       
 set dir=/tmp
 set fileformats=unix,mac,dos
 set noautoread
-set viminfo=h,'50,<10000,s1000,/1000,:100 " What to save in .viminfo
+set viminfo=h,'50,<10000,s1000,/1000,:100 
 
 hi LineNr ctermfg=white ctermbg=gray
 highlight CursorColumn term=bold ctermfg=black ctermbg=green
 map <silent> ;c :set cursorcolumn!<CR>
-set background=dark "When guessing, guess bg is dark (vs light)
 set number
 set relativenumber
 set modeline
@@ -23,10 +22,10 @@ if exists ('termguicolors')
   set termguicolors
 endif
 
-set autoindent      "Retain indentation on next line
-set mouse=c         "Fix neovim behavior
-set smartindent     "Turn on autoindenting of blocks
-set textwidth=78    "Wrap at column 78
+set autoindent     
+set mouse=c 
+set smartindent 
+set textwidth=78 
 set wrapmargin=78
 
 map %% $>i
@@ -39,9 +38,9 @@ vmap <BS> x
 let javaScript_fold=0
 set foldlevel=99
 
-set shiftround      "Indent/outdent to nearest tabstop
-set shiftwidth=4    "Indent/outdent by two columns
-set tabstop=4       "Indentation levels every two columns
+set shiftround      
+set shiftwidth=4   
+set tabstop=4      
 set ruler
 set smarttab
 set smartindent
@@ -56,7 +55,7 @@ map <silent> TT :set noexpandtab<CR>:%retab!<CR>
 nnoremap v <C-V>
 nnoremap <C-V> v
 
-set virtualedit=block "Square up visual selections
+set virtualedit=block 
 
 function! ToggleSyntax()
   if g:f_syntax == 1
