@@ -1,15 +1,10 @@
 # Handy search for content
 alias gg='grep -ril --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git --exclude-dir=.idea'
 
-# Autocompletion if it's available
-
-[[ $PS1 && -f /usr/share/bash-completion/bash-completion ]] && \
-  . /usr/share/bash-completion/bash_completion
-
 # Handy Aliases
-alias basheng='LANG=en_US.UTF-8 bash'
+alias basheng='LANG=en_US.UTF-8 zsh'
 unalias -a
-alias vim='vim'
+alias vim='nvim'
 alias free='free -h'
 alias df='df -h'
 alias top='htop'
@@ -30,8 +25,8 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal ||
   echo error)" "$(history\tail -n1|sed -e
   '\''s/^\s*[0-9]\+\s*//;s[;&|]\s*alerts$//'\'')"'
 
-# VI to VIM
-which vim &>/dev/null && alias vi=vim
+# VI to NEOVIM
+which nvim &>/dev/null && alias vi=nvim
 
 # Add cuda paths
 export PATH=${PATH}:/usr/local/cuda/bin;
