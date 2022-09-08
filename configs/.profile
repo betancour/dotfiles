@@ -1,6 +1,6 @@
-if [ -n "$BASH_VERSION" ]; then
-    if [ -f "$HOME/.bashrc" ]; then
-	. "$HOME/.bashrc"
+if [ -n "$ZSH_VERSION" ]; then
+    if [ -f "$HOME/.vimrc" ]; then
+	. "$HOME/.vimrc"
     fi
 fi
 

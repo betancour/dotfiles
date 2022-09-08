@@ -1,8 +1,8 @@
-# .bash_profile
+# .profile
 
 # Get the aliases and functions
-if [ -f ~/.bashrc ]; then
-	. ~/.bashrc
+if [ -f ~/.zshrc ]; then
+	. ~/.zshrc
 fi
 
 # User specific environment and startup programs
