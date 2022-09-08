@@ -64,8 +64,13 @@ link_dotfiles() {
 }
 
 setup_git_authorship() {
+<<<<<<< HEAD
 	GIT_AUTHOR_NAME=$(git config user.name)
 	GIT_AUTHOR_EMAIL=$(git config user.email)
+=======
+	GIT_AUTHOR_NAME="$(git config user.name)"
+	GIT_AUTHOR_EMAIL="$(git config user.email)"
+>>>>>>> origin/main
 
 	if [[ ! -z "$GIT_AUTHOR_NAME" ]]; then
 		_process "→ Setting up Git author"

@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+set nocompatible
+>>>>>>> origin/main
 set showmatch
 set ignorecase
 set mouse=v
