@@ -58,14 +58,14 @@ link_dotfiles() {
 
         IFS=$OIFS
 
-        source "${HOME}/.bash_profile"
+        source "${HOME}/.profile"
         [[ $? ]] && _success "All files have been copied"
     fi
 }
 
 setup_git_authorship() {
-	GIT_AUTHOR_NAME='$(git config user.name)'
-	GIT_AUTHOR_EMAIL='$(git config user.email)'
+	GIT_AUTHOR_NAME='eval git config user.name'
+	GIT_AUTHOR_EMAIL='eval git config user.email'
 
 	if [[ ! -z "$GIT_AUTHOR_NAME" ]]; then
 		_process "→ Setting up Git author"
