@@ -8,27 +8,27 @@ USER_GIT_AUTHOR_EMAIL="betancour@gmail.com"
 DIR="${HOME}/opt/${GITHUB_REPO}"
 
 _process() {
-	echo "$(date) PROCESSING: $@" >> $LOG
-	printf "$(tput setaf 6) %s...$(tput sgr0)\n" "$@"
+    echo "$(date) PROCESSING: $@" >> $LOG
+    printf "$(tput setaf 6) %s...$(tput sgr0)\n" "$@"
 }
 
 _success() {
-	local message=$1
-	printf "%s✓ Success:%s\n" "$(tput setaf 2)" "$(tput sgr0) $message"
+    local message=$1
+    printf "%s✓ Success:%s\n" "$(tput setaf 2)" "$(tput sgr0) $message"
 }
 
 download_dotfiles() {
-	_process "→ Creating' directory at ${DIR} and setting permissions"
-	mkdir -p "${DIR}"	
+    _process "→ Creating' directory at ${DIR} and setting permissions"
+    mkdir -p "${DIR}"	
 
-	_process "→ Downloading repository to /tmp directory"
-	curl  -#fLo /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
+    _process "→ Downloading repository to /tmp directory"
+    curl  -#fLo /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
 
-	_process "→ Extracting files to ${DIR}"
-	tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
+    _process "→ Extracting files to ${DIR}"
+    tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
 
-	_process "→ Removing tarball from /tmp directory"
-	rm -rf /tmp/${GITHUB_REPO}.tar.gz
+    _process "→ Removing tarball from /tmp directory"
+    rm -rf /tmp/${GITHUB_REPO}.tar.gz
 
     [[ $? ]] && _success "${DIR} created, repository downloaded and extracted"
 
@@ -62,38 +62,9 @@ link_dotfiles() {
         [[ $? ]] && _success "All files have been copied"
     fi
 }
-
-setup_git_authorship() {
-	GIT_AUTHOR_NAME="$(git config user.name)"
-	GIT_AUTHOR_EMAIL="$(git config user.email)"
-
-	if [[ ! -z "$GIT_AUTHOR_NAME" ]]; then
-		_process "→ Setting up Git author"
-
-    	read USER_GIT_AUTHOR_NAME
-    	if [[ ! -z "$USER_GIT_AUTHOR_NAME" ]]; then
-      		GIT_AUTHOR_NAME="${USER_GIT_AUTHOR_NAME}"
-      		$(git config --global user.name "$GIT_AUTHOR_NAME")
-		else
-      		_warning "No Git user name has been set. Please update manually"
-    	fi
-
-    	read USER_GIT_AUTHOR_EMAIL
-    	if [[ ! -z "$USER_GIT_AUTHOR_EMAIL" ]]; then
-      		GIT_AUTHOR_EMAIL="${USER_GIT_AUTHOR_EMAIL}"
-      		$(git config --global user.email "$GIT_AUTHOR_EMAIL")
-    	else
-      		_warning "No Git user email has been set.  Please update manually"
-    	fi
-		else
-    	_process "→ Git author already set, moving on..."
-  	fi
-}
-
 install() {
  download_dotfiles
  link_dotfiles
- setup_git_authorship
 }
 
 install
