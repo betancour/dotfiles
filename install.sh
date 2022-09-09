@@ -3,8 +3,6 @@
 LOG="${HOME}/opt/dotfiles.log"
 GITHUB_USER="betancour"
 GITHUB_REPO="dotfiles"
-USER_GIT_AUTHOR_NAME="Yitzhak B. Solorzano"
-USER_GIT_AUTHOR_EMAIL="betancour@gmail.com"
 DIR="${HOME}/opt/${GITHUB_REPO}"
 
 _process() {
