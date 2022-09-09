@@ -18,7 +18,7 @@ _success() {
 }
 
 download_dotfiles() {
-	_process "→ Creating directory at ${DIR} and setting permissions"
+	_process "→ Creating' directory at ${DIR} and setting permissions"
 	mkdir -p "${DIR}"	
 
 	_process "→ Downloading repository to /tmp directory"
@@ -64,8 +64,8 @@ link_dotfiles() {
 }
 
 setup_git_authorship() {
-	GIT_AUTHOR_NAME=eval "$(git 'config user.name')"
-	GIT_AUTHOR_EMAIL=eval "$(git 'config user.email')"
+	GIT_AUTHOR_NAME="$(git config user.name)"
+	GIT_AUTHOR_EMAIL="$(git config user.email)"
 
 	if [[ ! -z "$GIT_AUTHOR_NAME" ]]; then
 		_process "→ Setting up Git author"
