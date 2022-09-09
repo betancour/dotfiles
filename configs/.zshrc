@@ -1,4 +1,5 @@
-export ZSH="$HOME/.oh-my-zsh"
+export ZSH=$HOME/.oh-my-zsh
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 ZSH_THEME="robbyrussell"
 
@@ -27,5 +28,8 @@ if [ -f ~/.aliases ]; then
     . ~/.aliases
 fi
 
+source $ZSH/oh-my-zsh.sh
+
 export PROMPT_DIRTRIM=4
+export LANG=en_US.UTF-8
 umask 022
