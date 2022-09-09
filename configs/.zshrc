@@ -27,9 +27,5 @@ if [ -f ~/.aliases ]; then
     . ~/.aliases
 fi
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 export PROMPT_DIRTRIM=4
 umask 022
