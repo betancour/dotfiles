@@ -7,4 +7,4 @@ So, use is not guaranteed.
 
 to run script 
 
-bash -c "$(curl -#fL raw.github.com/betancour/dotfiles/main/install.sh)"
+bash -c "$(curl -#fL raw.github.com/betancour/dotfiles/Bash/install.sh)"
