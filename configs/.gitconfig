@@ -1,5 +1,5 @@
 [user]
-  name = Yitzhak B. Solorzano
+	name = Yitzhak B. Solórzano
   email = betancour@gmail.com 
   username = betancour
 [core]
@@ -24,7 +24,14 @@
   whitespace = red reverse
 [color "status"]
   added = green bold
-  changed = yellow bold
+  changed = blue bold
   untracked = red bold
 [gitflow "prefix"]
   versiontag = v
+[alias]
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
