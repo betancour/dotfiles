@@ -31,4 +31,4 @@ set spell
 set noswapfile
 syntax on
 filetype plugin indent on
-colorscheme blue
+colorscheme darkblue
