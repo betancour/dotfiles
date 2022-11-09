@@ -50,4 +50,4 @@ if exists ('termguicolors')
   set termguicolors
 endif
 
-colorscheme darkblue
+colorscheme peachpuff 
