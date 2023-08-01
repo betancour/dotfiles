@@ -3,7 +3,7 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 ZSH_THEME="robbyrussell"
 
-plugins=(git)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 
 case $- in
     *i*) ;;
