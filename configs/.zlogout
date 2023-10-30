@@ -1,6 +1,6 @@
 # .zlogin
 # Display a welcome message
 echo "+-----------------------------------------------------------------------------+"
-echo "| Goodbye Yitzhak!                                                            |" 
+echo "| Goodbye Yitzhak!  "Last login: $(date)"                  |" 
 echo "+-----------------------------------------------------------------------------+"
 
