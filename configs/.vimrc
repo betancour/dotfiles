@@ -1,4 +1,4 @@
-" vim-bootstrap 2023-07-31 18:40:33
+" @betancour 2024-04-24 20:30:00
 
 "*****************************************************************************
 "" Vim-Plug core
@@ -11,8 +11,8 @@ else
 endif
 
 let g:vim_bootstrap_langs = "c"
-let g:vim_bootstrap_editor = "vim"				" nvim or vim
-let g:vim_bootstrap_theme = "gruvbox"
+let g:vim_bootstrap_editor = "vim"
+let g:vim_bootstrap_theme = "dracula"
 let g:vim_bootstrap_frams = "svelte"
 
 if !filereadable(vimplug_exists)
@@ -28,8 +28,26 @@ if !filereadable(vimplug_exists)
   autocmd VimEnter * PlugInstall
 endif
 
-" Required:
+"" Required:
 call plug#begin(expand('~/.vim/plugged'))
+
+"" Disable function highlighting (affects both C and C++ files)
+let g:cpp_function_highlight = 1
+
+"" Enable highlighting of C++11 attributes
+let g:cpp_attributes_highlight = 1
+let g:cpp_member_variable_highlight = 1
+
+"" Highlight struct/class member variables (affects both C and C++ files)
+let g:cpp_member_highlight = 1
+
+"" Put all standard C and C++ keywords under Vim's highlight group 'Statement'
+"" (affects both C and C++ files)
+let g:cpp_simple_highlight = 1
+let g:cpp_posix_standard = 1
+
+"" Indent Line configurations
+let g:indentLine_color_term = 239
 
 "*****************************************************************************
 "" Plug install packages
@@ -39,7 +57,6 @@ Plug 'jistr/vim-nerdtree-tabs'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-scripts/grep.vim'
 Plug 'vim-scripts/CSApprox'
@@ -48,9 +65,8 @@ Plug 'majutsushi/tagbar'
 Plug 'dense-analysis/ale'
 Plug 'Yggdroot/indentLine'
 Plug 'editor-bootstrap/vim-bootstrap-updater'
-Plug 'tpope/vim-rhubarb' " required by fugitive to :GBrowse
-Plug 'morhetz/gruvbox'
-Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'tpope/vim-rhubarb' " required by fugitive to :Gbrowse
+Plug 'octol/vim-cpp-enhanced-highlight'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -69,17 +85,17 @@ Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
 
 "" Snippets
+Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 "*****************************************************************************
 "" Custom bundles
 "*****************************************************************************
-
-" c
+"" c
 Plug 'vim-scripts/c.vim', {'for': ['c', 'cpp']}
 Plug 'ludwig/split-manpage.vim'
 
-" svelte
+"" svelte
 Plug 'leafOfTree/vim-svelte-plugin'
 
 "*****************************************************************************
@@ -92,9 +108,8 @@ endif
 
 call plug#end()
 
-" Required:
+"" Required:
 filetype plugin indent on
-
 
 "*****************************************************************************
 "" Basic Setup
@@ -104,7 +119,6 @@ set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8
 set ttyfast
-set background=dark
 
 "" Fix backspace indent
 set backspace=indent,eol,start
@@ -113,11 +127,7 @@ set backspace=indent,eol,start
 set tabstop=4
 set softtabstop=0
 set shiftwidth=4
-set noexpandtab
-
-set colorcolumn=80
-highlight ColorColumn ctermbg=white
-highlight ColorColumn guibg=white
+set expandtab
 
 "" Map leader to ,
 let mapleader=','
@@ -139,7 +149,7 @@ else
     set shell=/bin/sh
 endif
 
-" session management
+"" session management
 let g:session_directory = "~/.vim/session"
 let g:session_autoload = "no"
 let g:session_autosave = "no"
@@ -153,9 +163,10 @@ set ruler
 set number
 
 let no_buffers_menu=1
-colorscheme dracula
+let g:dracula_colorterm = 0
+colorscheme peachpuff
 
-" Better command line completion 
+"" Better command line completion
 set wildmenu
 
 " mouse support
@@ -174,13 +185,12 @@ if has("gui_running")
 else
   let g:CSApprox_loaded = 1
 
-  " IndentLine
+  "" IndentLine
   let g:indentLine_enabled = 1
   let g:indentLine_concealcursor = ''
   let g:indentLine_char = '┆'
   let g:indentLine_faster = 1
 
-  
   if $COLORTERM == 'gnome-terminal'
     set term=gnome-256color
   else
@@ -188,14 +198,11 @@ else
       set term=xterm-256color
     endif
   endif
-  
 endif
-
 
 if &term =~ '256color'
   set t_ut=
 endif
-
 
 "" Disable the blinking cursor.
 set gcr=a:blinkon0
@@ -216,8 +223,8 @@ set titlestring=%F
 
 set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\
 
-" Search mappings: These will make it so that going to the next one in a
-" search will center on the line it's found in.
+"" Search mappings: These will make it so that going to the next one in a
+"" search will center on the line it's found in.
 nnoremap n nzzzv
 nnoremap N Nzzzv
 
@@ -225,8 +232,8 @@ if exists("*fugitive#statusline")
   set statusline+=%{fugitive#statusline()}
 endif
 
-" vim-airline
-let g:airline_theme = 'dracula'
+"" vim-airline
+let g:airline_theme = 'dark'
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
@@ -260,15 +267,14 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite,*node_modules/
 nnoremap <silent> <F2> :NERDTreeFind<CR>
 nnoremap <silent> <F3> :NERDTreeToggle<CR>
 
-" grep.vim
+"" grep.vim
 nnoremap <silent> <leader>f :Rgrep<CR>
 let Grep_Default_Options = '-IR'
 let Grep_Skip_Files = '*.log *.db'
 let Grep_Skip_Dirs = '.git node_modules'
 
-" terminal emulation
+"" terminal emulation
 nnoremap <silent> <leader>sh :terminal<CR>
-
 
 "*****************************************************************************
 "" Commands
@@ -335,7 +341,7 @@ noremap <Leader>gb :Git blame<CR>
 noremap <Leader>gd :Gvdiffsplit<CR>
 noremap <Leader>gr :GRemove<CR>
 
-" session management
+"" session management
 nnoremap <leader>so :OpenSession<Space>
 nnoremap <leader>ss :SaveSession<Space>
 nnoremap <leader>sd :DeleteSession<CR>
@@ -360,13 +366,13 @@ set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
 
-" The Silver Searcher
+"" The Silver Searcher
 if executable('ag')
   let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
   set grepprg=ag\ --nogroup\ --nocolor
 endif
 
-" ripgrep
+"" ripgrep
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
   set grepprg=rg\ --vimgrep
@@ -376,23 +382,23 @@ endif
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>e :FZF -m<CR>
-"Recovery commands from history through FZF
+""Recovery commands from history through FZF
 nmap <leader>y :History:<CR>
 
-" snippets
+"" snippets
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 let g:UltiSnipsEditSplit="vertical"
 
-" ale
+"" ale
 let g:ale_linters = {}
 
-" Tagbar
+"" Tagbar
 nmap <silent> <F4> :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
 
-" Disable visualbell
+"" Disable visualbell
 set noerrorbells visualbell t_vb=
 if has('autocmd')
   autocmd GUIEnter * set visualbell t_vb=
@@ -408,7 +414,7 @@ noremap <leader>p "+gP<CR>
 noremap XX "+x<CR>
 
 if has('macunix')
-  " pbcopy for OSX copy/paste
+  "" pbcopy for OSX copy/paste
   vmap <C-x> :!pbcopy<CR>
   vmap <C-c> :w !pbcopy<CR><CR>
 endif
@@ -440,35 +446,18 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 "" Open current line on GitHub
-nnoremap <Leader>o :.GBrowse<CR>
+nnoremap <Leader>o :.Gbrowse<CR>
 
 "*****************************************************************************
 "" Custom configs
 "*****************************************************************************
 
-" c
+"" c
 autocmd FileType c setlocal tabstop=4 shiftwidth=4 expandtab
 autocmd FileType cpp setlocal tabstop=4 shiftwidth=4 expandtab
 
-" Custom Configs for C Development
-autocmd FileType c setlocal tabstop=4 shiftwidth=4 noexpandtab
-
-" Disable function highlighting (affects both C and C++ files)
-let g:cpp_function_highlight = 0
-
-" Enable highlighting of C++11 attributes
-let g:cpp_attributes_highlight = 1
-
-" Highlight struct/class member variables (affects both C and C++ files)
-let g:cpp_member_highlight = 1
-
-" Put all standard C and C++ keywords under Vim's highlight group 'Statement'
-" (affects both C and C++ files)
-let g:cpp_simple_highlight = 1
-
-" svelte
+"" svelte
 let g:vim_svelte_plugin_load_full_syntax = 1
-
 
 "*****************************************************************************
 "*****************************************************************************
@@ -482,7 +471,7 @@ endif
 "" Convenience variables
 "*****************************************************************************
 
-" vim-airline
+"" vim-airline
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
 endif
@@ -508,7 +497,7 @@ else
   let g:airline#extensions#tabline#left_sep = ''
   let g:airline#extensions#tabline#left_alt_sep = ''
 
-  " powerline symbols
+ "" powerline symbols
   let g:airline_left_sep = ''
   let g:airline_left_alt_sep = ''
   let g:airline_right_sep = ''

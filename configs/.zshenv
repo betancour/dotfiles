@@ -3,9 +3,7 @@
 ## This file defines the colors to use for different file types and attributes
 # in the ls command.
 #
-# # Light theme
+## Light theme
 export LSCOLORS="exfxcxdxbxegedabagacad"
-
-# # Dark theme
+## Dark theme
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
-
