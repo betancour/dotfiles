@@ -1,5 +1,0 @@
-configs/.profiles .profiles
-configs/.profile .profile
-configs/.aliases .aliases
-configs/.zshrc .zshrc
-configs/init.vim .config/nvim/init.vim

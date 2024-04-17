@@ -25,3 +25,4 @@ source $ZSH/oh-my-zsh.sh
 export PROMPT_DIRTRIM=4
 export LANG=en_US.UTF-8
 umask 022
+if [[ ! $TERM =~ screen ]]; then exec tmux new-session -A -s main; fi
