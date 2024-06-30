@@ -44,10 +44,12 @@ set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)"
 "***************************************************************************** 
 
 syntax enable
-autocmd FileType c setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
 
 set makeprg=gcc\ -Wall\ -o\ %<\ % 
 set errorformat=%A%f:%l:%c:%m 
+
+let mapleader = "\<C-b>"
+nnoremap <Leader>v :Explore<CR>
 
 autocmd FileType c setlocal errorformat=%A\ %#%f:%l:%c:%m 
 autocmd FileType c nmap <buffer> <Leader>cc :make<CR> 
