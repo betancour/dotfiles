@@ -21,6 +21,7 @@ set colorcolumn=80
 set wildmenu
 set t_Co=256
 set guioptions=egmrti
+set background=light
 colorscheme default
 
 if &term =~ '256color'
