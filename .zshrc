@@ -39,7 +39,7 @@ vcs_prompt() {
     else
       status_icon="%F{green}✓%f"
     fi
-    echo " [%F{green}${vcs_info_msg_0_} $status_icon]"
+    echo " [%F{blue}${vcs_info_msg_0_} $status_icon]"
   fi
 }
 
