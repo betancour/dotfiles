@@ -1,6 +1,0 @@
-configs/.bash_profiles .bash_profiles
-configs/.bash_aliases .bash_aliases
-configs/.bashrc .bashrc
-configs/.gitconfig .gitconfig
-configs/.profile .profile
-configs/.vimrc .vimrc
