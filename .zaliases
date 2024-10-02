@@ -1,0 +1,19 @@
+#Aliases for Zsh
+
+alias gg='grep -ril --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git --exclude-dir=.idea'
+alias basheng='LANG=en_US.UTF-8 zsh'
+alias python='python3'
+alias password="openssl rand -base64 32"
+alias free='top -l 1 -s 0 | grep PhysMem: | awk '\''{print "Free: " $6/1024 "MB"}'\'''
+alias df='df -h'
+alias sl="sl -e"
+alias x="exit"
+alias ls="ls --color=auto"
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias cls='clear'
+alias vi='nvim'
