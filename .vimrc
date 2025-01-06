@@ -19,8 +19,8 @@ set modeline
 set laststatus=2
 set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)
 
-set list
-set listchars=space:·,tab:>-
+"set list
+"set listchars=space:·,tab:>-
 highlight SpecialKey ctermfg=gray guifg=gray
 
 if &term =~ '256color'
