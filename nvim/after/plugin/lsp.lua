@@ -1,7 +1,7 @@
 vim.api.nvim_create_autocmd('LspAttach', {
-    group = vim.api.nvim_create_augroup('user_lsp_attach', {clear = true}),
+    group = vim.api.nvim_create_augroup('user_lsp_attach', { clear = true }),
     callback = function(event)
-        local opts = {buffer = event.buf}
+        local opts = { buffer = event.buf }
 
         vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition() end, opts)
         vim.keymap.set('n', 'K', function() vim.lsp.buf.hover() end, opts)
@@ -15,4 +15,3 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('i', '<C-h>', function() vim.lsp.buf.signature_help() end, opts)
     end,
 })
-
