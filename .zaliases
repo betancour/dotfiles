@@ -8,7 +8,14 @@ alias free='top -l 1 -s 0 | grep PhysMem: | awk '\''{print "Free: " $6/1024 "MB"
 alias df='df -h'
 alias sl="sl -e"
 alias x="exit"
-alias ls="ls -G"  # Changed from --color=auto to -G for macOS color support
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    alias ls="ls --color=auto"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    alias ls="ls -G"
+fi
+alias l="ls -CF"
+
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
