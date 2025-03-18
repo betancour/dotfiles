@@ -1,4 +1,4 @@
-#Aliases for Zsh
+# Aliases for Zsh (macOS optimized)
 
 alias gg='grep -ril --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git --exclude-dir=.idea'
 alias basheng='LANG=en_US.UTF-8 zsh'
@@ -8,12 +8,12 @@ alias free='top -l 1 -s 0 | grep PhysMem: | awk '\''{print "Free: " $6/1024 "MB"
 alias df='df -h'
 alias sl="sl -e"
 alias x="exit"
-alias ls="ls --color=auto"
+alias ls="ls -G"  # Changed from --color=auto to -G for macOS color support
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias ll='ls -alF'
 alias la='ls -A'
-alias l='ls -CF'
+alias l='ls -CF'  # This is fine as-is, but will inherit ls -G behavior
 alias cls='clear'
 alias vi='nvim'
