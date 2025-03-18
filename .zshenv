@@ -4,23 +4,16 @@
 # in the ls command.
 #
 
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then  # For Linux
-    # Check if dark mode is enabled (customize this logic based on your setup)
-    if [[ $(gsettings get org.gnome.desktop.interface color-scheme) == "'prefer-dark'" ]]; then
-        export LS_COLORS='di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43' # Dark theme
-    else
-        export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43' # Light theme
-    fi
+    export LS_COLORS='di=1;0;40:ln=0;1;44:so=35;1;46:pi=30;41:ex=1;31;40:bd=1;36;40:cd=30;1;46:su=0;1;42:sg=0;1;41' # Dark theme
 elif [[ "$OSTYPE" == "darwin"* ]]; then  # For macOS
     export CLICOLOR=1
-    # Check for dark mode (use macOS-specific commands)
-    if [[ $(defaults read -g AppleInterfaceStyle 2>/dev/null) == "Dark" ]]; then
-        export LSCOLORS="GxFxCxDxBxEgEdAgAc" # Dark theme
-    else
-        export LSCOLORS="ExFxBxDxCxegedabagacad" # Light theme
-    fi
+    export LSCOLORS="EafGaEadBaGafHaDa" # Dark theme
 else
     echo "Unsupported OS"
 fi
 
-. "$HOME/.cargo/env"
+#. "$HOME/.cargo/env"
