@@ -4,8 +4,10 @@
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
+export CLICOLOR=1
+
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then  # For Linux
-    export LS_COLORS="di=1;32:ln=0;1;44:so=30;1;46:pi=0;43:ex=1;31;40:bd=1;36;40:cd=0;1;45:su=0;1;41:sg=0;1;42:tw=1;31;44:ow=1;0"
+    export LS_COLORS="di=1;36:ln=1;35:so=1;32:pi=1;33:ex=1;31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=34;43"
 elif [[ "$OSTYPE" == "darwin"* ]]; then   # For macOS
     export LSCOLORS="GxFxCxDxBxegedabagaced"
 else
