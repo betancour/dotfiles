@@ -4,9 +4,11 @@ alias gg='grep -ril --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=
 alias basheng='LANG=en_US.UTF-8 zsh'
 alias python='python3'
 alias password="openssl rand -base64 32"
-alias free='top -l 1 -s 0 | grep PhysMem: | awk '\''{print "Free: " $6/1024 "MB"}'\'''
+
+# Memory Usage for macOS
+alias free="vm_stat | awk '/Pages free/ {print \"Free: \" \$3*4096/1024/1024 \"MB\"}'"
+
 alias df='df -h'
-alias sl="sl -e"
 alias x="exit"
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -14,13 +16,33 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     alias ls="ls -G"
 fi
-alias l="ls -CF"
 
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+
+alias l="ls -CF"
 alias ll='ls -alF'
 alias la='ls -A'
-alias l='ls -CF'  # This is fine as-is, but will inherit ls -G behavior
 alias cls='clear'
-alias vi='nvim'
+alias reload="exec $SHELL -l"
+
+# Networking tools
+alias wget="curl -O"                # Use curl instead of wget
+alias ping="ping -c 5"              # Ping with 5 packets only
+alias nmap-fast="nmap -T4 -F"       # Quick network scan
+alias myip="curl ifconfig.me"       # Get your external IP
+alias ports="netstat -tuln"         # Show open ports
+
+# Grep color optimization (only if GNU grep is installed)
+if command -v ggrep &>/dev/null; then
+    alias grep='ggrep --color=auto'
+    alias fgrep='ggrep -F --color=auto'
+    alias egrep='ggrep -E --color=auto'
+fi
+
+# Vim alias (only if nvim exists)
+command -v nvim &>/dev/null && alias vi='nvim'
+
+
