@@ -42,15 +42,15 @@ vcs_prompt() {
   if [[ -n $vcs_info_msg_0_ ]]; then
     local status_icon
     if [[ -n $(git status --porcelain 2>/dev/null) ]]; then
-      status_icon="%B%F{#eb6f92}𝙭%f%b"
+      status_icon="%B%F{#ff3333}𝙭%f%b"
     else
-      status_icon="%B%F{#31748f}✓%f%b"
+      status_icon="%B%F{#4a8f00}✓%f%b"
     fi
-    echo "%F{#31748f}[%F{#9ccfd8}${vcs_info_msg_0_} $status_icon%F{#31748f}]%f"
+    echo "%F{#4a8f00}[%F{#d4d4d4}${vcs_info_msg_0_} $status_icon%F{#4a8f00}]%f"
   fi
 }
 
-PROMPT='%B%F{#ebbcb}$USER%b%f %F{#31748f}[%(4~|…/%3~|%~)]$(vcs_prompt)%f %F{#9ccfd8}➜%f '
+PROMPT='%B%F{#ff9500}$USER%b%f %F{#a100ff}[%(4~|…/%3~|%~)]%f$(vcs_prompt)%f %F{#00c4b4}➜%f '
 
 [ -r "/etc/zshrc_$TERM_PROGRAM" ] && . "/etc/zshrc_$TERM_PROGRAM"
 
