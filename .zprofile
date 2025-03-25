@@ -16,10 +16,4 @@ fi
 if [ -d "$HOME/.local/bin" ]; then
 	PATH="$HOME/.local/bin:$PATH"
 fi
-# Set up the PATH
-export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
-# Set environment variables
-export ZSH_COMPDUMP="$HOME/.cache/zcompdump"
-export TERM="$TERM"
-export LANG="en_US.UTF-8"
-export GIT_HOME="$HOME/.git"
+
