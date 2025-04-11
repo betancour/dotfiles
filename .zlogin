@@ -3,8 +3,26 @@
 WIDTH=77
 datetime=$(date '+%A, %d %B %Y – %H:%M:%S')
 hostname=$(hostname)
-ip=$(hostname -I 2>/dev/null | awk '{print $1}')
-uptime=$(uptime -p)
+
+# Get IP address: try hostname -I for Linux, fallback to ipconfig/ifconfig for macOS
+if [[ $(uname) == "Linux" ]]; then
+  ip=$(hostname -I 2>/dev/null | awk '{print $1}')
+elif [[ $(uname) == "Darwin" ]]; then
+  ip=$(ipconfig getifaddr en0 2>/dev/null || ifconfig en0 | grep 'inet ' | awk '{print $2}' | head -n 1)
+else
+  ip="unknown"
+fi
+[[ -z "$ip" ]] && ip="none"
+
+# Handle uptime differently for Linux and macOS
+if [[ $(uname) == "Linux" ]]; then
+  uptime=$(uptime -p 2>/dev/null || echo "uptime not available")
+elif [[ $(uname) == "Darwin" ]]; then
+  # macOS uptime parsing
+  uptime=$(uptime | awk '{print $3 " " $4 " " $5}' | sed 's/,//')
+else
+  uptime="uptime not available"
+fi
 
 message="Welcome Yitzhak | $datetime"
 hostinfo="Host: $hostname | IP: $ip | $uptime"
@@ -21,4 +39,3 @@ center "$message"
 center "$hostinfo"
 echo "+$(printf '%*s' $((WIDTH - 2)) '' | tr ' ' '-')+"
 echo ""
-
