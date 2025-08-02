@@ -55,7 +55,9 @@ __bash_prompt() {
         if [ -n "$branch" ]; then
             gitbranch="\[\033[0;36m\](\[\033[1;31m\]$branch"
             if [ -n "$(git status --porcelain --untracked-files=no 2>/dev/null)" ]; then
-                gitbranch="$gitbranch \[\033[1;33m\]✗"
+                gitbranch="$gitbranch \[\033[1;33m\]x"
+            else
+                gitbranch="$gitbranch \[\033[1;32m\]ok"
             fi
             gitbranch="$gitbranch\[\033[0;36m\])"
         fi
