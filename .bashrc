@@ -44,7 +44,7 @@ fi
 __bash_prompt() {
     local userpart='`export XIT=$? \
         && [ ! -z "${GITHUB_USER}" ] && echo -n "\[\033[0;32m\]@${GITHUB_USER} " || echo -n "\[\033[0;32m\]\u " \
-        && [ "$XIT" -ne "0" ] && echo -n "\[\033[1;31m\]->" || echo -n "\[\033[0m\]->"`'
+        && [ "$XIT" -ne "0" ] && echo -n "\[\033[1;31m\]$" || echo -n "\[\033[0m\]$"`'
     local gitbranch='`\
         export BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null); \
         if [ "${BRANCH}" = "HEAD" ]; then \
