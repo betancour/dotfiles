@@ -54,8 +54,8 @@ __bash_prompt() {
         local branch=$(git symbolic-ref --short HEAD 2>/dev/null || git describe --tags --always 2>/dev/null)
         if [ -n "$branch" ]; then
             gitbranch="\[\033[0;36m\](\[\033[1;31m\]$branch"
-            if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
-                gitbranch="$gitbranch \[\033[1;33m\]x"
+            if [ -n "$(git status --porcelain --untracked-files=no 2>/dev/null)" ]; then
+                gitbranch="$gitbranch \[\033[1;33m\]✗"
             fi
             gitbranch="$gitbranch\[\033[0;36m\])"
         fi
@@ -96,6 +96,7 @@ fi
 export EDITOR=vim
 export VISUAL=vim
 export LS_COLORS='di=1;34:ln=1;36:pi=40;33:so=1;35:bd=40;33;01:cd=40;33;01:or=41;33;01:ex=1;32'
+
 
 # Add user bin directory to PATH if it exists
 if [ -d "$HOME/bin" ]; then
