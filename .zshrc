@@ -37,21 +37,45 @@ setopt promptsubst
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' formats '%b'
 
+# VCS prompt configuration
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*' formats '%b'
+
 vcs_prompt() {
   vcs_info
   if [[ -n $vcs_info_msg_0_ ]]; then
+    # Define customizable symbols and colors
+    local clean_icon="✓"          # Symbol for clean repo
+    local dirty_icon="●"          # Smaller, cleaner symbol for dirty repo
+    local clean_color="%F{#4a8f00}"  # Green for clean
+    local dirty_color="%F{#ff5555}"  # Softer red for dirty
+    local branch_color="%F{#d4d4d4}" # Neutral gray for branch name
+    local bracket_color="%F{#4a8f00}" # Green for brackets
+
+    # Check Git status
     local status_icon
     if [[ -n $(git status --porcelain 2>/dev/null) ]]; then
-      status_icon="%B%F{#ff3333}𝙭%f%b"
+      status_icon="${dirty_color}${dirty_icon}%f"
     else
-      status_icon="%B%F{#4a8f00}✓%f%b"
+      status_icon="${clean_color}${clean_icon}%f"
     fi
-    echo "%F{#4a8f00}[%F{#d4d4d4}${vcs_info_msg_0_} $status_icon%F{#4a8f00}]%f"
+
+    # Output formatted prompt
+    echo "${bracket_color}[${branch_color}${vcs_info_msg_0_} ${status_icon}${bracket_color}]%f"
   fi
 }
 
-PROMPT='%B%F{#ff9500}$USER%b%f %F{#a100ff}[%(4~|…/%3~|%~)]%f$(vcs_prompt)%f %F{#00c4b4}➜%f '
+# Define colors for consistency
+local user_color="%F{#ff9500}"    # Orange for user, kept from original
+local path_color="%F{#d4d4d4}"    # Gray for path, matches vcs_prompt branch
+local arrow_color="%F{#4a8f00}"   # Green for arrow, matches vcs_prompt brackets
+local reset_color="%f"
+
+# Simplified prompt with a smaller arrow
+PROMPT='${user_color}%n${reset_color} ${path_color}[%3~]${reset_color}$(vcs_prompt) ${arrow_color}❯${reset_color} '
 
 [ -r "/etc/zshrc_$TERM_PROGRAM" ] && . "/etc/zshrc_$TERM_PROGRAM"
 
 umask 022
+source ~/.zaliases
