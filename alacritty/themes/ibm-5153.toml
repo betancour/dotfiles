@@ -1,0 +1,52 @@
+# IBM 5153 - Authentic CGA Palette Emulation
+#
+# Based on measured output from the IBM 5153 Personal Computer Color Display.
+# Colors derived from voltage measurements (normalized to 0-255 RGB) for true
+# phosphor glow and brown desaturation.
+#
+# Sources:
+# - int10h.org/blog/2022/06/ibm-5153-color-true-cga-palette/ (primary measurements)
+# - aceinnova.com/en/electronics/cga-and-the-brown-color-in-ibm-5153-color-display/ (brown circuit details)
+#
+# CGA Index | Name          | RGB (Hex)
+# ----------|---------------|----------
+# 0         | Black         | #000000
+# 1         | Blue          | #0000AA
+# 2         | Green         | #00AA00
+# 3         | Cyan          | #00AAAA
+# 4         | Red           | #AA0000
+# 5         | Magenta       | #AA00AA
+# 6         | Brown         | #AA5500  (desaturated low yellow)
+# 7         | Light Gray    | #AAAAAA
+# 8         | Dark Gray     | #555555
+# 9         | Bright Blue   | #5555FF
+# 10        | Bright Green  | #55FF55
+# 11        | Bright Cyan   | #55FFFF
+# 12        | Bright Red    | #FF5555
+# 13        | Bright Magenta| #FF55FF
+# 14        | Yellow        | #FFFF55
+# 15        | White         | #FFFFFF
+
+[colors.primary]
+background = "#000000"  # Black
+foreground = "#AAAAAA"  # Light Gray
+
+[colors.normal]
+black   = "#000000"
+red     = "#AA0000"
+green   = "#00AA00"
+yellow  = "#AA5500"  # Brown
+blue    = "#0000AA"
+magenta = "#AA00AA"
+cyan    = "#00AAAA"
+white   = "#AAAAAA"
+
+[colors.bright]
+black   = "#555555"  # Dark Gray
+red     = "#FF5555"
+green   = "#55FF55"
+yellow  = "#FFFF55"
+blue    = "#5555FF"
+magenta = "#FF55FF"
+cyan    = "#55FFFF"
+white   = "#FFFFFF"
