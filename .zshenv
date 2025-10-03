@@ -15,6 +15,8 @@ else
 fi
 
 # Set up the PATH
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
 export ZSH_COMPDUMP="$HOME/.cache/zcompdump"
 export TERM="$TERM"

@@ -1,0 +1,24 @@
+#[env]
+
+#TERM = "xterm-256color"
+
+[terminal.shell]
+program = "/bin/zsh"
+args = ["-l", "-c", "/opt/homebrew/bin/zellij"]
+
+[window]
+padding.x = 16
+padding.y = 14
+decorations = "None"
+opacity = 0.98
+
+dimensions.columns = 160
+dimensions.lines = 50
+
+position.x = 80  # Start ~100 points from left edge
+position.y = 120  # Start ~150 points from top (accounting for menu bar)
+
+[keyboard]
+bindings = [
+{ key = "F11", action = "ToggleFullscreen" }
+]
