@@ -1,0 +1,157 @@
+# .bashrc.local.template
+# ======================
+# Template file for local Bash customizations
+# Copy this file to .bashrc.local and customize as needed
+# This file is sourced at the end of .bashrc and allows for
+# machine-specific or personal customizations without modifying
+# the main dotfiles.
+
+# Local Environment Variables
+# ===========================
+# Add machine-specific environment variables here
+# export CUSTOM_VAR="value"
+# export PROJECT_ROOT="$HOME/projects"
+# export EDITOR="code"  # Override default editor
+
+# Local Aliases
+# =============
+# Add machine-specific aliases here
+# alias myserver="ssh user@myserver.com"
+# alias mydb="mysql -u root -p mydatabase"
+# alias work="cd $HOME/work && ls"
+
+# Local Functions
+# ===============
+# Add custom functions here
+# work() {
+#     cd "$HOME/work/$1" 2>/dev/null || {
+#         echo "Project '$1' not found"
+#         ls "$HOME/work"
+#     }
+# }
+
+# Local PATH Additions
+# ====================
+# Add local directories to PATH
+# export PATH="$HOME/local/bin:$PATH"
+
+# API Keys and Secrets
+# ====================
+# Add API keys and other sensitive information
+# NEVER commit this file to version control if it contains secrets
+# export GITHUB_TOKEN="your_token_here"
+# export OPENAI_API_KEY="your_key_here"
+# export AWS_ACCESS_KEY_ID="your_key_here"
+# export AWS_SECRET_ACCESS_KEY="your_secret_here"
+
+# Work-specific Configuration
+# ===========================
+# Company or project-specific settings
+# export COMPANY_PROXY="http://proxy.company.com:8080"
+# export JIRA_URL="https://company.atlassian.net"
+# export CONFLUENCE_URL="https://company.atlassian.net/wiki"
+
+# Development Environment
+# =======================
+# Local development settings
+# export NODE_ENV="development"
+# export DJANGO_DEBUG="True"
+# export RAILS_ENV="development"
+
+# Local Prompt Customization
+# ===========================
+# Override prompt colors or format if needed
+# You can modify the color variables used in .bashrc
+# Example:
+# if [[ "$color_prompt" == "yes" ]]; then
+#     PS1='\[\033[1;31m\]\u@\h\[\033[0m\] \[\033[1;34m\][\w]\[\033[0m\]$(__git_prompt) \[\033[1;33m\][\D{%H:%M:%S}]\[\033[0m\]\n\[\033[1;36m\]❯\[\033[0m\] '
+# fi
+
+# Completion Customizations
+# ==========================
+# Add custom completion rules
+# complete -F _git gitcp gitbr gitlog
+
+# Key Bindings
+# ============
+# Custom key bindings
+# bind '"\C-g": "\C-a\C-kgit status\C-m"'  # Ctrl+G for git status
+
+# Plugin Configuration
+# ====================
+# Configure shell behavior with local settings
+# HISTSIZE=100000
+# HISTFILESIZE=100000
+
+# Local Tool Initialization
+# ==========================
+# Initialize tools that are installed locally
+# if command -v pyenv >/dev/null 2>&1; then
+#     eval "$(pyenv init -)"
+# fi
+#
+# if [[ -f "$HOME/.nvm/nvm.sh" ]]; then
+#     source "$HOME/.nvm/nvm.sh"
+# fi
+
+# Machine-specific Optimizations
+# ===============================
+# Performance tweaks for specific machines
+# if [[ $(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1) -gt 8 ]]; then
+#     export MAKEFLAGS="-j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null)"
+# fi
+
+# Notes for Customization
+# =======================
+# 1. Keep sensitive information (API keys, passwords) in this file
+#    and ensure it's not tracked by git
+# 2. Use this file for machine-specific paths and configurations
+# 3. Add work-specific aliases and functions here
+# 4. Override any dotfile settings that don't work on this machine
+# 5. Test changes by sourcing the file: source ~/.bashrc.local
+
+# Example: Work Project Navigation
+# ================================
+# Uncomment and modify for your projects
+# projects() {
+#     local project_dir="$HOME/projects"
+#     if [[ $# -eq 0 ]]; then
+#         echo "Available projects:"
+#         ls "$project_dir"
+#         return
+#     fi
+#
+#     local project="$1"
+#     if [[ -d "$project_dir/$project" ]]; then
+#         cd "$project_dir/$project"
+#         echo "Switched to project: $project"
+#         # Auto-activate virtual environment if it exists
+#         [[ -f "venv/bin/activate" ]] && source venv/bin/activate
+#         [[ -f ".nvmrc" ]] && command -v nvm >/dev/null 2>&1 && nvm use
+#     else
+#         echo "Project '$project' not found"
+#         ls "$project_dir"
+#     fi
+# }
+#
+# # Add completion for projects function
+# _projects_completion() {
+#     local project_dir="$HOME/projects"
+#     if [[ -d "$project_dir" ]]; then
+#         COMPREPLY=($(compgen -W "$(ls "$project_dir")" -- "${COMP_WORDS[COMP_CWORD]}"))
+#     fi
+# }
+# complete -F _projects_completion projects
+
+# Example: Quick SSH connections
+# ==============================
+# ssh_dev() {
+#     ssh -i ~/.ssh/dev_key user@dev.company.com
+# }
+#
+# ssh_prod() {
+#     ssh -i ~/.ssh/prod_key user@prod.company.com
+# }
+
+# Remember to source this file in your main .bashrc:
+# [[ -f "$HOME/.bashrc.local" ]] && source "$HOME/.bashrc.local"
