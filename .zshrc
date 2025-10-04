@@ -254,6 +254,9 @@ if command -v fzf >/dev/null 2>&1; then
     if command -v fd >/dev/null 2>&1; then
         export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
         export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    elif command -v fdfind >/dev/null 2>&1; then
+        export FZF_DEFAULT_COMMAND="fdfind --type f --hidden --follow --exclude .git"
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     elif command -v rg >/dev/null 2>&1; then
         export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git/*'"
         export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

@@ -46,21 +46,21 @@ fi
 
 if command -v fzf &> /dev/null; then
     if command -v bat &> /dev/null; then
-        alias ff='fzf --preview "bat --style=numbers --color=always --line-range :500 {}"'
+        alias fzf_preview='fzf --preview "bat --style=numbers --color=always --line-range :500 {}"'
         alias fzh='history | fzf'
     else
-        alias ff='fzf --preview "cat {}"'
+        alias fzf_preview='fzf --preview "cat {}"'
         alias fzh='history | fzf'
     fi
 fi
 
-# Handle fd vs fdfind naming
+# Handle fd vs fdfind naming - use fdcmd to avoid conflict with finddir function
 if command -v fd &> /dev/null; then
-    alias fd='fd'
+    alias fdcmd='fd'
 elif command -v fdfind &> /dev/null; then
-    alias fd='fdfind'
+    alias fdcmd='fdfind'
 else
-    alias fd='find'
+    alias fdcmd='find . -name'
 fi
 
 # File viewing with bat (enhanced cat) - with fallbacks
@@ -88,7 +88,6 @@ alias df='df -h'
 alias wget="curl -O"  # Use curl instead of wget
 alias ping="ping -c 5"  # Ping with 5 packets only
 alias nmap-fast="nmap -T4 -F"  # Quick network scan
-alias myip="curl ifconfig.me"  # Get external IP
 alias ports="netstat -tuln"  # Show open ports
 
 # Editor (prefer nvim if installed)
