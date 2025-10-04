@@ -15,24 +15,52 @@ disable log
 
 # Save command history.
 HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
-HISTSIZE=2000
-SAVEHIST=1000
+HISTSIZE=10000
+SAVEHIST=5000
 
-setopt BEEP
+# History options
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
 
+# Other useful options
+setopt AUTO_CD
+setopt CORRECT
+setopt NO_BEEP
+
+# Enable colors in terminal
 case "$TERM" in
   xterm-color|*-256color) color_prompt=yes ;;
 esac
-# Plugins
 
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+# Oh My Zsh setup (if installed)
+if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    export ZSH="$HOME/.oh-my-zsh"
+    plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+    source $ZSH/oh-my-zsh.sh
+else
+    # Manual plugin loading if Oh My Zsh is not installed
+    # Load zsh-autosuggestions if available
+    if [[ -f "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+        source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    fi
 
-# GIT
+    # Load zsh-syntax-highlighting if available
+    if [[ -f "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+        source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    fi
+fi
+
+# GIT and VCS setup
 autoload -U compinit colors vcs_info
 colors
 compinit
 
-setopt promptsubst
+setopt PROMPT_SUBST
 
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' formats '%b'
@@ -67,15 +95,43 @@ vcs_prompt() {
 }
 
 # Define colors for consistency
-local user_color="%F{#ff9500}"    # Orange for user, kept from original
-local path_color="%F{#d4d4d4}"    # Gray for path, matches vcs_prompt branch
-local arrow_color="%F{#4a8f00}"   # Green for arrow, matches vcs_prompt brackets
+local user_color="%F{#ff9500}"    # Orange for user
+local path_color="%F{#d4d4d4}"    # Gray for path
+local arrow_color="%F{#4a8f00}"   # Green for arrow
 local reset_color="%f"
 
 # Simplified prompt with a smaller arrow
 PROMPT='${user_color}%n${reset_color} ${path_color}[%3~]${reset_color}$(vcs_prompt) ${arrow_color}❯${reset_color} '
 
+# Load system-specific configurations
 [ -r "/etc/zshrc_$TERM_PROGRAM" ] && . "/etc/zshrc_$TERM_PROGRAM"
 
+# Set proper umask
 umask 022
-source ~/.zaliases
+
+# Source aliases if available
+[[ -f ~/.zaliases ]] && source ~/.zaliases
+
+# Initialize zoxide if available
+if command -v zoxide &> /dev/null; then
+    eval "$(zoxide init zsh)"
+fi
+
+# Initialize fzf if available
+if command -v fzf &> /dev/null; then
+    # Set up fzf key bindings and fuzzy completion
+    if [[ -f ~/.fzf.zsh ]]; then
+        source ~/.fzf.zsh
+    elif [[ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
+        source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+        source /opt/homebrew/opt/fzf/shell/completion.zsh
+    elif [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
+        source /usr/share/fzf/key-bindings.zsh
+        source /usr/share/fzf/completion.zsh
+    fi
+fi
+
+# Auto-completion enhancements
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"

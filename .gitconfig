@@ -1,11 +1,11 @@
 [user]
     name = Yitzhak B. Solórzano
-    email = betancour@gmail.com 
+    email = betancour@gmail.com
     username = betancour
 [core]
     editor = vim
     whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
-    excludefiles = ~/.gitignore
+    excludesfile = ~/.gitignore
 [color]
     ui = auto
 [diff]
