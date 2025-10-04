@@ -72,18 +72,18 @@ extract() {
 # ===============
 
 # Find file by name
-ff() {
+findfile() {
     if [[ $# -eq 0 ]]; then
-        echo "Usage: ff <filename>"
+        echo "Usage: findfile <filename>"
         return 1
     fi
     find . -type f -iname "*$1*" 2>/dev/null
 }
 
 # Find directory by name
-fd() {
+finddir() {
     if [[ $# -eq 0 ]]; then
-        echo "Usage: fd <dirname>"
+        echo "Usage: finddir <dirname>"
         return 1
     fi
     find . -type d -iname "*$1*" 2>/dev/null
@@ -431,8 +431,8 @@ help() {
     echo "  extract <archive>  - Extract various archive formats"
     echo
     echo "File Operations:"
-    echo "  ff <name>          - Find file by name"
-    echo "  fd <name>          - Find directory by name"
+    echo "  findfile <name>    - Find file by name"
+    echo "  finddir <name>     - Find directory by name"
     echo "  fsize <file>       - Get file size in human readable format"
     echo "  backup <file>      - Create timestamped backup of file"
     echo
@@ -492,5 +492,5 @@ reload_functions() {
 # Add basic completion for functions that take file arguments
 if command -v compdef >/dev/null 2>&1; then
     compdef '_files' backup fsize extract count replace
-    compdef '_directories' mkcd cdf
+    compdef '_directories' mkcd cdf finddir
 fi

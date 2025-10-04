@@ -75,7 +75,7 @@ fi
 # Virtual environment management
 if [[ -f "$HOME/.pyenv/bin/pyenv" ]]; then
     export PYENV_ROOT="$HOME/.pyenv"
-    [[ -d $PYENV_ROOT/bin ]] && path=("$PYENV_ROOT/bin" $path)
+    [[ -d $PYENV_ROOT/bin ]] && PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
 fi
 
@@ -92,7 +92,7 @@ fi
 # ======================
 # rbenv (Ruby version manager)
 if [[ -d "$HOME/.rbenv" ]]; then
-    path=("$HOME/.rbenv/bin" $path)
+    PATH="$HOME/.rbenv/bin:$PATH"
     eval "$(rbenv init - --no-rehash)"
 fi
 

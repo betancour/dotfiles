@@ -26,48 +26,52 @@ export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-$USER}"
 
 # PATH Configuration
 # ==================
-# Use typeset -U to keep only unique entries and maintain order
-typeset -U PATH path
+# Use traditional PATH method for better compatibility
+typeset -U PATH
 
-# Initialize path array with system defaults
-path=(
-    # User binaries
-    "$HOME/bin"
-    "$HOME/.local/bin"
+# Helper function to add to PATH if directory exists
+add_to_path() {
+    if [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]]; then
+        PATH="$1:$PATH"
+    fi
+}
 
-    # System paths (keep existing)
-    $path
-)
+# Add user directories
+add_to_path "$HOME/bin"
+add_to_path "$HOME/.local/bin"
 
 # macOS specific paths (Homebrew)
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Apple Silicon Homebrew
-    [[ -d "/opt/homebrew/bin" ]] && path=("/opt/homebrew/bin" $path)
-    [[ -d "/opt/homebrew/sbin" ]] && path=("/opt/homebrew/sbin" $path)
+    add_to_path "/opt/homebrew/bin"
+    add_to_path "/opt/homebrew/sbin"
 
     # Intel Homebrew (fallback)
-    [[ -d "/usr/local/bin" ]] && path=("/usr/local/bin" $path)
-    [[ -d "/usr/local/sbin" ]] && path=("/usr/local/sbin" $path)
+    add_to_path "/usr/local/bin"
+    add_to_path "/usr/local/sbin"
 
     # Homebrew formula paths
-    [[ -d "/opt/homebrew/opt/ruby/bin" ]] && path=("/opt/homebrew/opt/ruby/bin" $path)
-    [[ -d "/opt/homebrew/opt/python@3.11/bin" ]] && path=("/opt/homebrew/opt/python@3.11/bin" $path)
-    [[ -d "/opt/homebrew/opt/openjdk/bin" ]] && path=("/opt/homebrew/opt/openjdk/bin" $path)
-    [[ -d "/opt/homebrew/opt/gnu-sed/libexec/gnubin" ]] && path=("/opt/homebrew/opt/gnu-sed/libexec/gnubin" $path)
-    [[ -d "/opt/homebrew/opt/grep/libexec/gnubin" ]] && path=("/opt/homebrew/opt/grep/libexec/gnubin" $path)
+    add_to_path "/opt/homebrew/opt/ruby/bin"
+    add_to_path "/opt/homebrew/opt/python@3.11/bin"
+    add_to_path "/opt/homebrew/opt/openjdk/bin"
+    add_to_path "/opt/homebrew/opt/gnu-sed/libexec/gnubin"
+    add_to_path "/opt/homebrew/opt/grep/libexec/gnubin"
 fi
 
 # Linux specific paths
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    [[ -d "/usr/local/bin" ]] && path=("/usr/local/bin" $path)
-    [[ -d "/usr/local/sbin" ]] && path=("/usr/local/sbin" $path)
-    [[ -d "$HOME/.cargo/bin" ]] && path=("$HOME/.cargo/bin" $path)
+    add_to_path "/usr/local/bin"
+    add_to_path "/usr/local/sbin"
+    add_to_path "$HOME/.cargo/bin"
 fi
 
 # Development tool paths
-[[ -d "$HOME/.cargo/bin" ]] && path=("$HOME/.cargo/bin" $path)
-[[ -d "$HOME/go/bin" ]] && path=("$HOME/go/bin" $path)
-[[ -d "$HOME/.npm-global/bin" ]] && path=("$HOME/.npm-global/bin" $path)
+add_to_path "$HOME/.cargo/bin"
+add_to_path "$HOME/go/bin"
+add_to_path "$HOME/.npm-global/bin"
+
+# Clean up helper function
+unset -f add_to_path
 
 # Export the PATH
 export PATH
@@ -75,15 +79,16 @@ export PATH
 # Editor and Pager
 # ================
 # Set preferred editor (check for availability)
-if command -v nvim >/dev/null 2>&1; then
+export EDITOR="vi"
+export VISUAL="vi"
+
+# Override with better editors if available
+if which nvim >/dev/null 2>&1; then
     export EDITOR="nvim"
     export VISUAL="nvim"
-elif command -v vim >/dev/null 2>&1; then
+elif which vim >/dev/null 2>&1; then
     export EDITOR="vim"
     export VISUAL="vim"
-else
-    export EDITOR="vi"
-    export VISUAL="vi"
 fi
 
 export PAGER="less"
