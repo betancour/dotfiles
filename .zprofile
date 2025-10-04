@@ -177,6 +177,8 @@ if [[ -n "$ZSH_PROFILE_STARTUP" ]]; then
     echo "$(date): .zprofile completed" >> "${XDG_STATE_HOME:-$HOME/.local/state}/zsh/startup.log"
 fi
 
+
+
 # Load local profile customizations
 # ==================================
 [[ -r "${ZDOTDIR:-$HOME}/.zprofile.local" ]] && source "${ZDOTDIR:-$HOME}/.zprofile.local"

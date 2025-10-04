@@ -27,9 +27,8 @@ export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-$USER}"
 # PATH Configuration
 # ==================
 # Use traditional PATH method for better compatibility
-typeset -U PATH
 
-# Helper function to add to PATH if directory exists
+# Helper function to add to PATH if directory exists and not already present
 add_to_path() {
     if [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]]; then
         PATH="$1:$PATH"
