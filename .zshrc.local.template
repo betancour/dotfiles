@@ -1,0 +1,151 @@
+# .zshrc.local.template
+# =====================
+# Template file for local ZSH customizations
+# Copy this file to .zshrc.local and customize as needed
+# This file is sourced at the end of .zshrc and allows for
+# machine-specific or personal customizations without modifying
+# the main dotfiles.
+
+# Local Environment Variables
+# ===========================
+# Add machine-specific environment variables here
+# export CUSTOM_VAR="value"
+# export PROJECT_ROOT="$HOME/projects"
+# export EDITOR="code"  # Override default editor
+
+# Local Aliases
+# =============
+# Add machine-specific aliases here
+# alias myserver="ssh user@myserver.com"
+# alias mydb="mysql -u root -p mydatabase"
+# alias work="cd $HOME/work && ls"
+
+# Local Functions
+# ===============
+# Add custom functions here
+# work() {
+#     cd "$HOME/work/$1" 2>/dev/null || {
+#         echo "Project '$1' not found"
+#         ls "$HOME/work"
+#     }
+# }
+
+# Local PATH Additions
+# ====================
+# Add local directories to PATH
+# path=("$HOME/local/bin" $path)
+# export PATH
+
+# API Keys and Secrets
+# ====================
+# Add API keys and other sensitive information
+# NEVER commit this file to version control if it contains secrets
+# export GITHUB_TOKEN="your_token_here"
+# export OPENAI_API_KEY="your_key_here"
+# export AWS_ACCESS_KEY_ID="your_key_here"
+# export AWS_SECRET_ACCESS_KEY="your_secret_here"
+
+# Work-specific Configuration
+# ===========================
+# Company or project-specific settings
+# export COMPANY_PROXY="http://proxy.company.com:8080"
+# export JIRA_URL="https://company.atlassian.net"
+# export CONFLUENCE_URL="https://company.atlassian.net/wiki"
+
+# Development Environment
+# =======================
+# Local development settings
+# export NODE_ENV="development"
+# export DJANGO_DEBUG="True"
+# export RAILS_ENV="development"
+
+# Local Prompt Customization
+# ===========================
+# Override prompt colors or format if needed
+# user_color="%F{red}"    # Change user color to red
+# path_color="%F{yellow}" # Change path color to yellow
+# PROMPT='${user_color}%n${reset} ${path_color}[%2~]${reset}$(vcs_prompt) ❯ '
+
+# Completion Customizations
+# ==========================
+# Add custom completion rules
+# zstyle ':completion:*:*:mycommand:*' file-patterns '*.txt:text-files'
+
+# Key Bindings
+# ============
+# Custom key bindings
+# bindkey '^[[1;5C' forward-word    # Ctrl+Right Arrow
+# bindkey '^[[1;5D' backward-word   # Ctrl+Left Arrow
+
+# Plugin Configuration
+# ====================
+# Configure plugins with local settings
+# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=cyan"
+# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern)
+
+# Local Tool Initialization
+# ==========================
+# Initialize tools that are installed locally
+# if command -v pyenv >/dev/null 2>&1; then
+#     eval "$(pyenv init -)"
+# fi
+#
+# if [[ -f "$HOME/.nvm/nvm.sh" ]]; then
+#     source "$HOME/.nvm/nvm.sh"
+# fi
+
+# Machine-specific Optimizations
+# ===============================
+# Performance tweaks for specific machines
+# if [[ $(sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null) -gt 8 ]]; then
+#     export MAKEFLAGS="-j$(nproc)"
+# fi
+
+# Local History Settings
+# ======================
+# Override history settings if needed
+# HISTSIZE=100000
+# SAVEHIST=100000
+
+# Notes for Customization
+# =======================
+# 1. Keep sensitive information (API keys, passwords) in this file
+#    and ensure it's not tracked by git
+# 2. Use this file for machine-specific paths and configurations
+# 3. Add work-specific aliases and functions here
+# 4. Override any dotfile settings that don't work on this machine
+# 5. Test changes by sourcing the file: source ~/.zshrc.local
+
+# Example: Work Project Navigation
+# ================================
+# Uncomment and modify for your projects
+# projects() {
+#     local project_dir="$HOME/projects"
+#     if [[ $# -eq 0 ]]; then
+#         echo "Available projects:"
+#         ls "$project_dir"
+#         return
+#     fi
+#
+#     local project="$1"
+#     if [[ -d "$project_dir/$project" ]]; then
+#         cd "$project_dir/$project"
+#         echo "Switched to project: $project"
+#         # Auto-activate virtual environment if it exists
+#         [[ -f "venv/bin/activate" ]] && source venv/bin/activate
+#         [[ -f ".nvmrc" ]] && nvm use
+#     else
+#         echo "Project '$project' not found"
+#         ls "$project_dir"
+#     fi
+# }
+#
+# # Add completion for projects function
+# _projects_completion() {
+#     local project_dir="$HOME/projects"
+#     [[ -d "$project_dir" ]] && compadd $(ls "$project_dir")
+# }
+# compdef _projects_completion projects
+
+# Remember to source this file in your main .zshrc:
+# [[ -f "${ZDOTDIR:-$HOME}/.zshrc.local" ]] && source "${ZDOTDIR:-$HOME}/.zshrc.local"
