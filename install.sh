@@ -178,6 +178,15 @@ setup_directories() {
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.cache"
 
+    # Create XDG directories
+    mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}"
+    mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}"
+    mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}"
+
+    # Create ZSH-specific directories
+    mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+    mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+
     print_success "Created necessary directories"
 }
 
@@ -208,6 +217,15 @@ main() {
     create_link ".zprofile" ".zprofile"
     create_link ".zlogin" ".zlogin"
     create_link ".zlogout" ".zlogout"
+    create_link ".zfunctions" ".zfunctions"
+
+    # Create local customization files if they don't exist
+    if [[ ! -f "$HOME/.zshrc.local" ]]; then
+        if [[ -f "$DOTFILES_DIR/.zshrc.local.template" ]]; then
+            cp "$DOTFILES_DIR/.zshrc.local.template" "$HOME/.zshrc.local"
+            print_success "Created .zshrc.local from template"
+        fi
+    fi
 
     # Git configuration
     create_link ".gitconfig" ".gitconfig"
@@ -236,7 +254,9 @@ main() {
     print_status "Next steps:"
     echo "  1. Restart your terminal or run: source ~/.zshrc"
     echo "  2. Open Neovim and run: :Lazy to install plugins"
-    echo "  3. Customize any settings to your preference"
+    echo "  3. Edit ~/.zshrc.local for machine-specific customizations"
+    echo "  4. Type 'help' in your shell to see available custom functions"
+    echo "  5. Customize any settings to your preference"
     echo
 
     # Ask to change shell to zsh

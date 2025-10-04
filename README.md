@@ -5,24 +5,48 @@ Welcome to my dotfiles repository! This collection of configurations is designed
 ## 📋 Table of Contents
 
 - [Shell Configuration (ZSH)](#shell-configuration-zsh)
+- [ZSH Configuration Files](#zsh-configuration-files)
 - [Neovim Setup](#neovim-setup)
 - [Alacritty Terminal](#alacritty-terminal)
 - [Git Configuration](#git-configuration)
 - [Installation](#installation)
 - [Dependencies](#dependencies)
+- [Customization](#customization)
+- [Performance Features](#performance-features)
 
 ## 🐚 Shell Configuration (ZSH)
 
-This setup includes a comprehensive ZSH configuration with:
-- Custom prompt with Git integration
-- Extensive aliases for modern CLI tools
-- Environment variables for optimal shell experience
-- Login/logout messages
+This setup includes a comprehensive, professional-grade ZSH configuration with:
 
-### Key Features
-- **Smart Git Prompt**: Shows branch status with clean/dirty indicators
-- **Modern CLI Tools**: Aliases for `eza`, `bat`, `ripgrep`, `fzf`, and more
-- **Cross-platform**: Works on both macOS and Linux
+- **Complete initialization chain**: Proper `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, `.zlogout` setup
+- **Custom prompt with Git integration**: Real-time Git status with clean/dirty indicators
+- **Extensive aliases with fallbacks**: Modern CLI tools with graceful degradation
+- **50+ custom functions**: Enhanced productivity with built-in utilities
+- **Performance optimizations**: Fast startup, lazy loading, efficient completion
+- **Cross-platform support**: Works seamlessly on macOS and Linux
+- **XDG Base Directory compliance**: Clean, organized configuration
+- **Security features**: Proper agent management and cleanup
+
+### ZSH Configuration Files
+
+This dotfiles repository includes a complete set of ZSH initialization files following best practices:
+
+#### Core Files
+- **`.zshenv`** - Environment variables and PATH (always loaded)
+- **`.zprofile`** - Login shell initialization and tool setup
+- **`.zshrc`** - Interactive shell configuration and user experience
+- **`.zlogin`** - Post-interactive setup and welcome messages
+- **`.zlogout`** - Session cleanup and farewell
+- **`.zaliases`** - Smart aliases with fallbacks for missing tools
+- **`.zfunctions`** - 50+ custom utility functions
+
+#### Key Features
+- **Smart Tool Detection**: Aliases work even without modern CLI tools installed
+- **Lazy Loading**: Heavy tools like NVM load on-demand for faster startup
+- **Session Management**: Comprehensive login/logout with system information
+- **Development Integration**: Git, Docker, Node.js, Python, Ruby, Rust, Go support
+- **Performance Monitoring**: Optional startup profiling and optimization
+- **Local Customization**: Template for machine-specific settings
 
 ## 🎨 Neovim Setup
 
@@ -159,6 +183,73 @@ source ~/.zshrc
 ### Editor
 - Use `n` to open Neovim in current directory or with files
 - Use `vi` (aliased to `nvim`) for quick edits
+
+## 🎨 Customization
+
+### Machine-Specific Settings
+Create local customizations without modifying the main dotfiles:
+
+```bash
+# Copy the template and customize
+cp .zshrc.local.template ~/.zshrc.local
+# Edit for your specific needs
+```
+
+### Available Customizations
+- Local environment variables and API keys
+- Machine-specific aliases and functions
+- Work-specific configurations
+- Custom prompt modifications
+- Local tool initialization
+
+### Custom Functions
+Type `help` in your shell to see all available custom functions:
+- Directory operations (`mkcd`, `up`, `extract`)
+- File utilities (`backup`, `fsize`)
+- System information (`sysinfo`, `myip`)
+- Development tools (`gitcp`, `dps`)
+- Text processing (`count`, `replace`)
+- Utilities (`weather`, `genpass`)
+
+## 🚀 Performance Features
+
+### Startup Optimization
+- Conditional loading prevents errors on missing tools
+- Lazy loading for heavy tools (NVM loads on-demand)
+- Efficient completion system with caching
+- Background task management
+
+### Monitoring
+Enable startup profiling:
+```bash
+ZSH_PROFILE_STARTUP=1 zsh
+```
+
+### Session Management
+- Automatic history backups
+- Session duration tracking
+- Performance monitoring
+- Resource cleanup on exit
+
+## 📚 Documentation
+
+- **[ZSH_CONFIG.md](ZSH_CONFIG.md)** - Comprehensive ZSH configuration guide
+- **[.zshrc.local.template](.zshrc.local.template)** - Local customization examples
+- Individual file headers contain detailed documentation
+
+## 🔧 Troubleshooting
+
+### Common Issues
+- **Slow startup**: Use `ZSH_PROFILE_STARTUP=1` to identify bottlenecks
+- **Missing tools**: All aliases have fallbacks to standard UNIX tools
+- **Path issues**: Check `.zshenv` for PATH configuration
+
+### Reset Configuration
+```bash
+# Backup and reset if needed
+mv ~/.zshrc ~/.zshrc.backup
+./install.sh
+```
 
 ## 🤝 Contributing
 
