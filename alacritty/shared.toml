@@ -4,7 +4,7 @@
 
 [terminal.shell]
 program = "/bin/zsh"
-args = ["-l", "-c", "/opt/homebrew/bin/zellij"]
+args = ["-l"]
 
 [window]
 padding.x = 16
