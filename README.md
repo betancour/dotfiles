@@ -251,6 +251,41 @@ mv ~/.zshrc ~/.zshrc.backup
 ./install.sh
 ```
 
+## 📜 Scripts
+
+The `scripts/` directory contains utility scripts for system management:
+
+### Zellij Session Management
+- **`cleanup-zellij.sh`** - Interactive script for managing Zellij sessions
+
+#### Installation
+Make scripts executable and accessible:
+```bash
+# Make script executable
+chmod +x ~/dotfiles/scripts/cleanup-zellij.sh
+
+# Optional: Add scripts directory to PATH in .zshrc.local
+echo 'export PATH="$HOME/dotfiles/scripts:$PATH"' >> ~/.zshrc.local
+```
+
+#### Usage
+```bash
+# Clean up exited sessions (recommended alias: zclean)
+~/dotfiles/scripts/cleanup-zellij.sh --clean
+
+# List all sessions
+~/dotfiles/scripts/cleanup-zellij.sh --list
+
+# Interactive cleanup mode
+~/dotfiles/scripts/cleanup-zellij.sh --interactive
+
+# Clean sessions older than N days
+~/dotfiles/scripts/cleanup-zellij.sh --old 7 --clean
+
+# See all options
+~/dotfiles/scripts/cleanup-zellij.sh --help
+```
+
 ## 🤝 Contributing
 
 Feel free to fork this repository and customize it for your needs. If you find improvements or fixes, pull requests are welcome!

@@ -150,9 +150,7 @@ get_system_info() {
 }
 
 # Show system information for interactive login shells
-# Only show once per session and not in Zellij sub-panes
-if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]] && [[ -z "$ZELLIJ_LOGIN_SHOWN" ]]; then
-    export ZELLIJ_LOGIN_SHOWN=1
+if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]]; then
     get_system_info
 fi
 
@@ -318,7 +316,7 @@ export ZSH_LOGIN_TIME="$(date '+%Y-%m-%d %H:%M:%S')"
 
 # Print helpful tips occasionally
 # ================================
-if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]] && [[ -z "$ZELLIJ_LOGIN_SHOWN" ]] && [[ $((RANDOM % 10)) -eq 0 ]]; then
+if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]] && [[ $((RANDOM % 10)) -eq 0 ]]; then
     local tips=(
         "💡 Tip: Use 'z <directory>' for smart directory jumping with zoxide"
         "💡 Tip: Use 'fzf' (Ctrl+T) for fuzzy file finding"
