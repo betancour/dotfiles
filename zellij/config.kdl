@@ -1,0 +1,278 @@
+// Zellij Configuration - Tokyo Night Theme
+// ========================================
+// Proper configuration with correct mode names for Zellij 0.43.1
+
+// Basic settings
+default_shell "/bin/zsh"
+default_layout "default"
+default_mode "normal"
+mouse_mode true
+pane_frames true
+theme "tokyo-night"
+simplified_ui false
+session_serialization false
+pane_viewports true
+mirror_session false
+
+// Copy settings (macOS)
+copy_command "pbcopy"
+copy_clipboard "system"
+copy_on_select false
+
+// Scroll and performance
+scroll_buffer_size 10000
+styled_underlines true
+auto_layout true
+
+// Tokyo Night Theme Definition
+themes {
+    tokyo-night {
+        bg "#1a1b26"
+        fg "#c0caf5"
+        red "#f7768e"
+        green "#9ece6a"
+        blue "#7aa2f7"
+        yellow "#e0af68"
+        magenta "#bb9af7"
+        orange "#ff9e64"
+        cyan "#7dcfff"
+        black "#15161e"
+        white "#c0caf5"
+    }
+}
+
+// Keybindings with correct mode names
+keybinds clear-defaults=true {
+    normal {
+        // System controls
+        bind "Ctrl g" { SwitchToMode "locked"; }
+        bind "Ctrl q" { Quit; }
+
+        // Pane management
+        bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
+        bind "Alt l" "Alt Right" { MoveFocusOrTab "Right"; }
+        bind "Alt j" "Alt Down" { MoveFocus "Down"; }
+        bind "Alt k" "Alt Up" { MoveFocus "Up"; }
+        bind "Alt n" { NewPane "Down"; }
+        bind "Alt m" { NewPane "Right"; }
+        bind "Alt x" { CloseFocus; }
+
+        // Tab management
+        bind "Alt t" { NewTab; }
+        bind "Alt w" { CloseTab; }
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        bind "Alt 6" { GoToTab 6; }
+        bind "Alt 7" { GoToTab 7; }
+        bind "Alt 8" { GoToTab 8; }
+        bind "Alt 9" { GoToTab 9; }
+
+        // Mode switches
+        bind "Alt r" { SwitchToMode "resize"; }
+        bind "Alt p" { SwitchToMode "pane"; }
+        bind "Alt s" { SwitchToMode "scroll"; }
+        bind "Alt /" { SwitchToMode "search"; }
+        bind "Ctrl p" { SwitchToMode "pane"; }
+        bind "Ctrl t" { SwitchToMode "tab"; }
+
+        // Toggle features
+        bind "Alt f" { ToggleFocusFullscreen; }
+        bind "Alt z" { TogglePaneFrames; }
+        bind "Alt d" { Detach; }
+    }
+
+    locked {
+        bind "Ctrl g" { SwitchToMode "normal"; }
+    }
+
+    resize {
+        bind "Ctrl c" "q" "Esc" { SwitchToMode "normal"; }
+        bind "Ctrl n" { SwitchToMode "normal"; }
+        bind "h" "Left" { Resize "Increase Left"; }
+        bind "j" "Down" { Resize "Increase Down"; }
+        bind "k" "Up" { Resize "Increase Up"; }
+        bind "l" "Right" { Resize "Increase Right"; }
+        bind "H" { Resize "Decrease Left"; }
+        bind "J" { Resize "Decrease Down"; }
+        bind "K" { Resize "Decrease Up"; }
+        bind "L" { Resize "Decrease Right"; }
+        bind "=" "+" { Resize "Increase"; }
+        bind "-" { Resize "Decrease"; }
+    }
+
+    pane {
+        bind "Ctrl c" "q" "Esc" { SwitchToMode "normal"; }
+        bind "Ctrl p" { SwitchToMode "normal"; }
+        bind "h" "Left" { MoveFocus "Left"; }
+        bind "l" "Right" { MoveFocus "Right"; }
+        bind "j" "Down" { MoveFocus "Down"; }
+        bind "k" "Up" { MoveFocus "Up"; }
+        bind "p" { SwitchFocus; }
+        bind "n" { NewPane; SwitchToMode "normal"; }
+        bind "d" { NewPane "Down"; SwitchToMode "normal"; }
+        bind "r" { NewPane "Right"; SwitchToMode "normal"; }
+        bind "x" { CloseFocus; SwitchToMode "normal"; }
+        bind "f" { ToggleFocusFullscreen; SwitchToMode "normal"; }
+        bind "z" { TogglePaneFrames; SwitchToMode "normal"; }
+        bind "w" { ToggleFloatingPanes; SwitchToMode "normal"; }
+        bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "normal"; }
+        bind "c" { SwitchToMode "renamepane"; PaneNameInput 0;}
+    }
+
+    move {
+        bind "Ctrl c" "q" "Esc" { SwitchToMode "normal"; }
+        bind "Ctrl h" { SwitchToMode "normal"; }
+        bind "n" "Tab" { MovePane; }
+        bind "p" { MovePaneBackwards; }
+        bind "h" "Left" { MovePane "Left"; }
+        bind "j" "Down" { MovePane "Down"; }
+        bind "k" "Up" { MovePane "Up"; }
+        bind "l" "Right" { MovePane "Right"; }
+    }
+
+    tab {
+        bind "Ctrl c" "q" "Esc" { SwitchToMode "normal"; }
+        bind "Ctrl t" { SwitchToMode "normal"; }
+        bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
+        bind "h" "Left" "Up" "k" { GoToPreviousTab; }
+        bind "l" "Right" "Down" "j" { GoToNextTab; }
+        bind "n" { NewTab; SwitchToMode "normal"; }
+        bind "x" { CloseTab; SwitchToMode "normal"; }
+        bind "s" { ToggleActiveSyncTab; SwitchToMode "normal"; }
+        bind "1" { GoToTab 1; SwitchToMode "normal"; }
+        bind "2" { GoToTab 2; SwitchToMode "normal"; }
+        bind "3" { GoToTab 3; SwitchToMode "normal"; }
+        bind "4" { GoToTab 4; SwitchToMode "normal"; }
+        bind "5" { GoToTab 5; SwitchToMode "normal"; }
+        bind "6" { GoToTab 6; SwitchToMode "normal"; }
+        bind "7" { GoToTab 7; SwitchToMode "normal"; }
+        bind "8" { GoToTab 8; SwitchToMode "normal"; }
+        bind "9" { GoToTab 9; SwitchToMode "normal"; }
+        bind "Tab" { ToggleTab; }
+    }
+
+    scroll {
+        bind "Ctrl c" "q" "Esc" { SwitchToMode "normal"; }
+        bind "Ctrl s" { SwitchToMode "normal"; }
+        bind "e" { EditScrollback; SwitchToMode "normal"; }
+        bind "s" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "Ctrl c" { ScrollToBottom; SwitchToMode "normal"; }
+        bind "j" "Down" { ScrollDown; }
+        bind "k" "Up" { ScrollUp; }
+        bind "Ctrl f" "PageDown" "Right" "l" { PageScrollDown; }
+        bind "Ctrl b" "PageUp" "Left" "h" { PageScrollUp; }
+        bind "d" { HalfPageScrollDown; }
+        bind "u" { HalfPageScrollUp; }
+    }
+
+    search {
+        bind "Ctrl c" "q" "Esc" { SwitchToMode "normal"; }
+        bind "Ctrl s" { SwitchToMode "normal"; }
+        bind "Ctrl c" { ScrollToBottom; SwitchToMode "normal"; }
+        bind "j" "Down" { ScrollDown; }
+        bind "k" "Up" { ScrollUp; }
+        bind "Ctrl f" "PageDown" "Right" "l" { PageScrollDown; }
+        bind "Ctrl b" "PageUp" "Left" "h" { PageScrollUp; }
+        bind "d" { HalfPageScrollDown; }
+        bind "u" { HalfPageScrollUp; }
+        bind "n" { Search "down"; }
+        bind "p" { Search "up"; }
+        bind "c" { SearchToggleOption "CaseSensitivity"; }
+        bind "w" { SearchToggleOption "Wrap"; }
+        bind "o" { SearchToggleOption "WholeWord"; }
+    }
+
+    entersearch {
+        bind "Ctrl c" "Esc" { SwitchToMode "scroll"; }
+        bind "Enter" { SwitchToMode "search"; }
+    }
+
+    session {
+        bind "Ctrl c" "q" "Esc" { SwitchToMode "normal"; }
+        bind "Ctrl o" { SwitchToMode "normal"; }
+        bind "d" { Detach; }
+    }
+
+    renametab {
+        bind "Ctrl c" { SwitchToMode "normal"; }
+        bind "Esc" { UndoRenameTab; SwitchToMode "tab"; }
+    }
+
+    renamepane {
+        bind "Ctrl c" { SwitchToMode "normal"; }
+        bind "Esc" { UndoRenamePane; SwitchToMode "pane"; }
+    }
+
+    shared_except "normal" "locked" {
+        bind "Enter" "Esc" { SwitchToMode "normal"; }
+    }
+
+    shared_except "locked" {
+        bind "Ctrl g" { SwitchToMode "locked"; }
+        bind "Ctrl q" { Quit; }
+        bind "Alt n" { NewPane; }
+        bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
+        bind "Alt l" "Alt Right" { MoveFocusOrTab "Right"; }
+        bind "Alt j" "Alt Down" { MoveFocus "Down"; }
+        bind "Alt k" "Alt Up" { MoveFocus "Up"; }
+        bind "Alt =" "Alt +" { Resize "Increase"; }
+        bind "Alt -" { Resize "Decrease"; }
+    }
+
+    shared_except "pane" "locked" {
+        bind "Ctrl p" { SwitchToMode "pane"; }
+    }
+}
+
+// Plugin configuration
+plugins {
+    tab-bar { path "tab-bar"; }
+    status-bar { path "status-bar"; }
+    strider { path "strider"; }
+    compact-bar { path "compact-bar"; }
+}
+
+// Layout with login shells
+layouts {
+    default {
+        tab name="main" focus=true {
+            pane size=1 borderless=true {
+                plugin location="zellij:tab-bar"
+            }
+            pane focus=true {
+                command "/bin/zsh"
+                args "-l"
+            }
+            pane size=2 borderless=true {
+                plugin location="zellij:status-bar"
+            }
+        }
+    }
+
+    compact {
+        tab {
+            pane {
+                command "/bin/zsh"
+                args "-l"
+            }
+        }
+    }
+}
+
+// Environment variables
+env {
+    ZELLIJ_AUTO_ATTACH "true"
+    ZELLIJ_AUTO_EXIT "true"
+    SHELL "/bin/zsh"
+}
+
+// UI configuration
+ui {
+    pane_frames {
+        rounded_corners true
+        hide_session_name false
+    }
+}

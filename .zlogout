@@ -173,13 +173,13 @@ show_farewell_message() {
 
         # Colors for output
         if [[ "$TERM" != "dumb" ]]; then
-            local BLUE='\033[34m'
-            local GREEN='\033[32m'
-            local YELLOW='\033[33m'
-            local CYAN='\033[36m'
-            local BOLD='\033[1m'
-            local DIM='\033[2m'
-            local RESET='\033[0m'
+            local BLUE=$'\033[34m'
+            local GREEN=$'\033[32m'
+            local YELLOW=$'\033[33m'
+            local CYAN=$'\033[36m'
+            local BOLD=$'\033[1m'
+            local DIM=$'\033[2m'
+            local RESET=$'\033[0m'
         else
             local BLUE='' GREEN='' YELLOW='' CYAN='' BOLD='' DIM='' RESET=''
         fi
@@ -187,17 +187,21 @@ show_farewell_message() {
         # Helper function to center text
         center_text() {
             local text="$1"
-            local color="${2:-$RESET}"
+            local color="${2:-}"
             local plain_text=$(echo "$text" | sed 's/\x1B\[[0-9;]*[JKmsu]//g')
             local plain_length=${#plain_text}
 
             if [[ $plain_length -gt $((WIDTH - 4)) ]]; then
-                text="${plain_text:0:$((WIDTH - 7))}..."
-                plain_length=${#text}
+                plain_text="${plain_text:0:$((WIDTH - 7))}..."
+                plain_length=${#plain_text}
             fi
 
             local padding=$(( (WIDTH - 2 - plain_length) / 2 ))
-            printf "|%*s%b%s%b%*s|\n" $padding "" "$color" "$text" "$RESET" $((WIDTH - 2 - padding - plain_length)) ""
+            if [[ -n "$color" ]]; then
+                printf "|%*s%s%s%s%*s|\n" $padding "" "$color" "$plain_text" "$RESET" $((WIDTH - 2 - padding - plain_length)) ""
+            else
+                printf "|%*s%s%*s|\n" $padding "" "$plain_text" $((WIDTH - 2 - padding - plain_length)) ""
+            fi
         }
 
         # Create separator line
@@ -209,7 +213,7 @@ show_farewell_message() {
         # Display farewell message
         echo
         separator_line "═"
-        center_text "${BOLD}Goodbye, $USER!${RESET}" "$CYAN"
+        center_text "Goodbye, $USER!" "$BOLD$CYAN"
         separator_line "─"
         center_text "Session ended: $session_end_time" "$GREEN"
         center_text "Session duration: $session_duration" "$YELLOW"

@@ -48,6 +48,94 @@ setopt NUMERIC_GLOB_SORT        # Sort globs numerically when possible
 setopt NOMATCH                  # Print error if pattern matches nothing
 
 # Other useful options
+setopt INTERACTIVE_COMMENTS     # Allow comments in interactive mode
+setopt LONG_LIST_JOBS          # List jobs in the long format by default
+setopt NOTIFY                  # Report status of background jobs immediately
+setopt NO_BG_NICE              # Don't run all background jobs at a lower priority
+setopt NO_HUP                  # Don't kill jobs on shell exit
+setopt NO_CHECK_JOBS           # Don't report on jobs when shell exit
+
+# Zellij Integration
+# ==================
+# Handle proper login/logout when using Zellij terminal multiplexer
+
+# Function to simulate login shell behavior in Zellij panes (but avoid duplicate calls)
+zellij_login_simulation() {
+    # Only run for new Zellij panes that aren't the main session
+    if [[ -n "$ZELLIJ" && -z "$ZELLIJ_PANE_INITIALIZED" ]]; then
+        export ZELLIJ_PANE_INITIALIZED=1
+
+        # Only show login info for new panes (not the first one that already showed it)
+        # Check if this is a secondary pane and we haven't shown login info yet in this session
+        if [[ -n "$ZELLIJ_PANE_ID" && "$ZELLIJ_PANE_ID" != "0" && -z "$ZELLIJ_SESSION_LOGIN_SHOWN" ]]; then
+            # Mark that we've shown login for this Zellij session
+            export ZELLIJ_SESSION_LOGIN_SHOWN=1
+
+            # Set up session variables like a login shell would
+            export ZSH_SESSION_ID="${ZELLIJ_SESSION_NAME:-zellij}_${ZELLIJ_PANE_ID}_$(date +%s)"
+            export ZSH_LOGIN_TIME="$(date '+%Y-%m-%d %H:%M:%S')"
+
+            # Source login configuration if it exists and we're interactive
+            if [[ -r "$HOME/.zlogin" && -t 1 ]]; then
+                # Temporarily set login option to simulate login shell
+                local was_login=false
+                [[ -o login ]] && was_login=true
+                setopt login
+
+                # Prevent the login script from showing info again
+                export ZELLIJ_LOGIN_SHOWN=1
+                source "$HOME/.zlogin"
+
+                # Restore login option state
+                $was_login || unsetopt login
+            fi
+        fi
+
+        # Set up logout handler for Zellij panes (but only for secondary panes)
+        if [[ -n "$ZELLIJ_PANE_ID" && "$ZELLIJ_PANE_ID" != "0" ]]; then
+            zellij_logout_handler() {
+                if [[ -r "$HOME/.zlogout" && -t 1 ]]; then
+                    # Temporarily set login option to simulate login shell
+                    local was_login=false
+                    [[ -o login ]] && was_login=true
+                    setopt login
+
+                    source "$HOME/.zlogout"
+
+                    # Restore login option state
+                    $was_login || unsetopt login
+                fi
+            }
+
+            # Set up trap for pane exit
+            trap zellij_logout_handler EXIT INT TERM
+        fi
+    fi
+}
+
+# Run Zellij integration if applicable
+zellij_login_simulation
+
+# Auto-start Zellij
+# =================
+# Automatically start Zellij when opening a new terminal session
+# Only start if we're in an interactive login shell and not already in Zellij
+
+auto_start_zellij() {
+    # Only run for interactive login shells
+    if [[ -o interactive ]] && [[ -o login ]] && [[ -z "$ZELLIJ" ]] && [[ "$SHLVL" -eq 1 ]]; then
+        # Check if zellij is available
+        if command -v zellij >/dev/null 2>&1; then
+            # Start zellij and when it exits, continue with normal shell
+            zellij
+        else
+            echo "Zellij not found in PATH. Continuing with regular shell session."
+        fi
+    fi
+}
+
+# Auto-start Zellij if conditions are met
+auto_start_zellij
 setopt CORRECT                  # Try to correct spelling of commands
 setopt CORRECT_ALL              # Try to correct spelling of all arguments
 setopt NO_BEEP                  # Don't beep on errors

@@ -23,15 +23,15 @@ WIDTH=${COLUMNS:-$(tput cols 2>/dev/null || echo 80)}
 
 # Colors for output
 if [[ -t 1 ]] && [[ "$TERM" != "dumb" ]]; then
-    local BLUE='\033[34m'
-    local GREEN='\033[32m'
-    local YELLOW='\033[33m'
-    local CYAN='\033[36m'
-    local MAGENTA='\033[35m'
-    local RED='\033[31m'
-    local BOLD='\033[1m'
-    local DIM='\033[2m'
-    local RESET='\033[0m'
+    local BLUE=$'\033[34m'
+    local GREEN=$'\033[32m'
+    local YELLOW=$'\033[33m'
+    local CYAN=$'\033[36m'
+    local MAGENTA=$'\033[35m'
+    local RED=$'\033[31m'
+    local BOLD=$'\033[1m'
+    local DIM=$'\033[2m'
+    local RESET=$'\033[0m'
 else
     local BLUE=''
     local GREEN=''
@@ -47,20 +47,23 @@ fi
 # Helper function to center text
 center_text() {
     local text="$1"
-    local color="${2:-$RESET}"
-    local text_length=${#text}
+    local color="${2:-}"
 
     # Remove ANSI codes for length calculation
     local plain_text=$(echo "$text" | sed 's/\x1B\[[0-9;]*[JKmsu]//g')
     local plain_length=${#plain_text}
 
     if [[ $plain_length -gt $((WIDTH - 4)) ]]; then
-        text="${plain_text:0:$((WIDTH - 7))}..."
-        plain_length=${#text}
+        plain_text="${plain_text:0:$((WIDTH - 7))}..."
+        plain_length=${#plain_text}
     fi
 
     local padding=$(( (WIDTH - 2 - plain_length) / 2 ))
-    printf "|%*s%b%s%b%*s|\n" $padding "" "$color" "$text" "$RESET" $((WIDTH - 2 - padding - plain_length)) ""
+    if [[ -n "$color" ]]; then
+        printf "|%*s%s%s%s%*s|\n" $padding "" "$color" "$plain_text" "$RESET" $((WIDTH - 2 - padding - plain_length)) ""
+    else
+        printf "|%*s%s%*s|\n" $padding "" "$plain_text" $((WIDTH - 2 - padding - plain_length)) ""
+    fi
 }
 
 # Helper function to create separator line
@@ -135,7 +138,7 @@ get_system_info() {
     # Display the information
     echo
     separator_line "═"
-    center_text "${BOLD}Welcome back, $username!${RESET}" "$CYAN"
+    center_text "Welcome back, $username!" "$BOLD$CYAN"
     separator_line "─"
     center_text "$datetime" "$GREEN"
     center_text "Host: $hostname | IP: $ip" "$BLUE"
@@ -147,7 +150,9 @@ get_system_info() {
 }
 
 # Show system information for interactive login shells
-if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]]; then
+# Only show once per session and not in Zellij sub-panes
+if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]] && [[ -z "$ZELLIJ_LOGIN_SHOWN" ]]; then
+    export ZELLIJ_LOGIN_SHOWN=1
     get_system_info
 fi
 
@@ -313,7 +318,7 @@ export ZSH_LOGIN_TIME="$(date '+%Y-%m-%d %H:%M:%S')"
 
 # Print helpful tips occasionally
 # ================================
-if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]] && [[ $((RANDOM % 10)) -eq 0 ]]; then
+if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]] && [[ -z "$ZELLIJ_LOGIN_SHOWN" ]] && [[ $((RANDOM % 10)) -eq 0 ]]; then
     local tips=(
         "💡 Tip: Use 'z <directory>' for smart directory jumping with zoxide"
         "💡 Tip: Use 'fzf' (Ctrl+T) for fuzzy file finding"
