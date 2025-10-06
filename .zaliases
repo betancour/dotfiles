@@ -134,26 +134,16 @@ fi
 
 # Zellij Session Management
 # =========================
-# Aliases for managing Zellij terminal multiplexer sessions
+# Simple aliases for managing Zellij terminal multiplexer sessions
 
 # List all Zellij sessions
 alias zls='zellij list-sessions'
-alias zsessions='zellij list-sessions'
-
-# Clean up exited Zellij sessions
-alias zclean='echo "Cleaning up exited Zellij sessions..." && for session in $(zellij list-sessions | grep EXITED | sed "s/\x1b\[[0-9;]*m//g" | awk "{print \$1}"); do echo "Deleting \$session..."; zellij delete-session "\$session" && echo "✓ Deleted" || echo "✗ Failed"; done && echo "Cleanup complete!"'
-
-# Clean up ALL Zellij sessions (active and exited)
-alias zclean-all='echo "⚠️  This will delete ALL Zellij sessions (active and exited)" && read "confirm?Are you sure? (y/N): " && if [[ "\$confirm" =~ ^[Yy]$ ]]; then for session in $(zellij list-sessions | sed "s/\x1b\[[0-9;]*m//g" | awk "{print \$1}"); do echo "Deleting \$session..."; zellij delete-session "\$session" && echo "✓ Deleted" || echo "✗ Failed"; done; echo "All sessions cleaned!"; else echo "Cancelled."; fi'
 
 # Attach to a Zellij session
 alias za='zellij attach'
-alias zattach='zellij attach'
 
 # Create a new named Zellij session
 alias znew='zellij --session'
-alias zsession='zellij --session'
 
-# Kill current Zellij session and exit
-alias zexit='zellij kill-session'
-alias zkill='zellij kill-session'
+# Clean up script (run from dotfiles/scripts directory)
+alias zclean='~/dotfiles/scripts/cleanup-zellij.sh --clean'
