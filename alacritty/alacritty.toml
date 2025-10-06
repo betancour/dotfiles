@@ -1,14 +1,1 @@
-general.import = [ "~/.config/alacritty/theme.toml", "~/.config/alacritty/font.toml", "~/.config/alacritty/font-size.toml", "~/.config/alacritty/shared.toml" ]
-[window]
-padding.x = 16
-padding.y = 14
-
-decorations = "none"
-
-opacity = 0.87
-
-[keyboard] 
-bindings = [
-{ key = "F11", action = "ToggleFullscreen" }
-]
-
+general.import = [ "~/.config/alacritty/theme.toml", "~/.config/alacritty/font.toml", "~/.config/alacritty/font-size.toml", "~/.config/alacritty/shared.toml", "~/.config/alacritty/pane.toml"  ]
