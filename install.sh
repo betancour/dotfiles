@@ -2,6 +2,9 @@
 
 # Dotfiles Installation Script
 # This script will backup existing dotfiles and create symbolic links to the new ones
+#
+# Note: For Zed editor compatibility, run ./install-zed-fixes.sh instead
+# or run this script followed by ./install-zed-fixes.sh
 
 set -e
 

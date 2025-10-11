@@ -12,11 +12,11 @@ padding.y = 14
 decorations = "None"
 opacity = 0.98
 
-dimensions.columns = 160
-dimensions.lines = 50
+dimensions.columns = 147
+dimensions.lines = 47
 
-position.x = 80
-position.y = 120
+position.x = 200
+position.y = 150
 
 [keyboard]
 bindings = [

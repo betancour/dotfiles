@@ -61,7 +61,22 @@ setopt NO_CHECK_JOBS           # Don't report on jobs when shell exit
 
 auto_start_zellij() {
     # Only run for interactive login shells, not already in Zellij
+    # Exclude Zed and other editors that spawn shell processes
     if [[ -o interactive ]] && [[ -o login ]] && [[ -z "$ZELLIJ" ]] && [[ "$SHLVL" -eq 1 ]]; then
+        # Skip if running from Zed or other editors
+        if [[ -n "$ZED" ]] || [[ -n "$VSCODE_PID" ]] || [[ -n "$TERM_PROGRAM" && "$TERM_PROGRAM" =~ "(vscode|zed)" ]]; then
+            return
+        fi
+        # Skip if parent process is an editor or IDE
+        local parent_cmd=$(ps -p $PPID -o comm= 2>/dev/null)
+        if [[ "$parent_cmd" =~ "(zed|code|nvim|vim)" ]]; then
+            return
+        fi
+        # Skip if TERM suggests we're in an editor's integrated terminal
+        if [[ "$TERM" =~ "(dumb|unknown)" ]] || [[ -z "$TERM" ]]; then
+            return
+        fi
+
         if command -v zellij >/dev/null 2>&1; then
             exec zellij
         fi
