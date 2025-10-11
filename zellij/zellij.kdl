@@ -2,15 +2,6 @@ theme "tokyo-night"
 default_layout "compact"
 on_force_close "quit"
 
-// Essential macOS and shell configuration
-default_shell "/bin/zsh"
-copy_command "pbcopy"
-copy_clipboard "system"
-
-// UI fixes for macOS - disable Alt-key menu and clean status bar
-simplified_ui true
-keyhints false
-
 default_mode "locked"
 keybinds clear-defaults=true {
     locked {
@@ -219,30 +210,5 @@ keybinds clear-defaults=true {
     }
     renamepane {
         bind "Esc" { UndoRenamePane; SwitchToMode "pane"; }
-    }
-}
-
-// Tokyo Night Theme
-themes {
-    tokyo-night {
-        bg "#1a1b26"
-        fg "#c0caf5"
-        red "#f7768e"
-        green "#9ece6a"
-        blue "#7aa2f7"
-        yellow "#e0af68"
-        magenta "#bb9af7"
-        orange "#ff9e64"
-        cyan "#7dcfff"
-        black "#15161e"
-        white "#c0caf5"
-    }
-}
-
-// UI configuration
-ui {
-    pane_frames {
-        rounded_corners true
-        hide_session_name true
     }
 }
