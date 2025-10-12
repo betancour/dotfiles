@@ -55,36 +55,8 @@ setopt NO_BG_NICE              # Don't run all background jobs at a lower priori
 setopt NO_HUP                  # Don't kill jobs on shell exit
 setopt NO_CHECK_JOBS           # Don't report on jobs when shell exit
 
-# Auto-start Zellij
-# =================
-# Automatically start Zellij when opening a new terminal session
-
-auto_start_zellij() {
-    # Only run for interactive login shells, not already in Zellij
-    # Exclude Zed and other editors that spawn shell processes
-    if [[ -o interactive ]] && [[ -o login ]] && [[ -z "$ZELLIJ" ]] && [[ "$SHLVL" -eq 1 ]]; then
-        # Skip if running from Zed or other editors
-        if [[ -n "$ZED" ]] || [[ -n "$VSCODE_PID" ]] || [[ -n "$TERM_PROGRAM" && "$TERM_PROGRAM" =~ "(vscode|zed)" ]]; then
-            return
-        fi
-        # Skip if parent process is an editor or IDE
-        local parent_cmd=$(ps -p $PPID -o comm= 2>/dev/null)
-        if [[ "$parent_cmd" =~ "(zed|code|nvim|vim)" ]]; then
-            return
-        fi
-        # Skip if TERM suggests we're in an editor's integrated terminal
-        if [[ "$TERM" =~ "(dumb|unknown)" ]] || [[ -z "$TERM" ]]; then
-            return
-        fi
-
-        if command -v zellij >/dev/null 2>&1; then
-            exec zellij
-        fi
-    fi
-}
-
-# Auto-start Zellij if conditions are met
-auto_start_zellij
+# Zellij is now launched directly by Alacritty terminal emulator
+# This keeps the shell decoupled from terminal multiplexer concerns
 setopt CORRECT                  # Try to correct spelling of commands
 setopt CORRECT_ALL              # Try to correct spelling of all arguments
 setopt NO_BEEP                  # Don't beep on errors
