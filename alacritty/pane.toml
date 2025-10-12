@@ -3,7 +3,7 @@
   padding.y = 10
   decorations = "None"
   opacity = 0.90
-  dimensions.columns = 145
+  dimensions.columns = 140
   dimensions.lines = 45
-  position.x = 145
-  position.y = 10
+  position.x = 200
+  position.y = 685
