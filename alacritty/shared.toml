@@ -1,24 +1,5 @@
 [env]
-
-TERM = "xterm-256color"
-
+  TERM = "xterm-256color"
 [terminal.shell]
-program = "/bin/zsh"
-args = ["-l"]
-
-[window]
-padding.x = 16
-padding.y = 14
-decorations = "None"
-opacity = 0.98
-
-dimensions.columns = 147
-dimensions.lines = 47
-
-position.x = 200
-position.y = 150
-
-[keyboard]
-bindings = [
-{ key = "F11", action = "ToggleFullscreen" }
-]
+  program = "/bin/zsh"
+  args = ["-l", "-c", "zellij"]

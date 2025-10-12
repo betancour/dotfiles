@@ -16,7 +16,7 @@ This document provides a quick reference for the dotfiles setup and where to pla
 
 ### 3. Missing .zlogout
 - **Problem**: Goodbye message not displaying
-- **Solution**: Proper shell exit handling with `exec zellij` in .zshrc
+- **Solution**: Proper shell exit handling with decoupled Zellij startup
 - **Result**: Logout cleanup and farewell message work correctly
 
 ## 📁 File Locations & Installation
@@ -129,7 +129,7 @@ zclean                                    # --clean
 ## 🔧 Configuration Summary
 
 ### What Works Now
-- ✅ **Alacritty**: Starts with login shell → auto-starts Zellij
+- ✅ **Alacritty**: Directly launches Zellij (properly coupled)
 - ✅ **Zellij**: Tokyo Night theme, clean original design, no parsing errors
 - ✅ **Login**: Welcome message displays once with system info
 - ✅ **Logout**: Farewell message displays when exiting Zellij/shell
@@ -138,16 +138,16 @@ zclean                                    # --clean
 ### Key Changes Made
 1. **Minimal Zellij fixes**: Only fixed parsing errors, kept original design
 2. **Simplified .zshrc**: Removed complex duplicate prevention logic
-3. **Clean Alacritty setup**: Just runs `zsh -l` with auto-start in .zshrc
+3. **Clean Alacritty setup**: Directly launches Zellij (decoupled architecture)
 4. **Proper script location**: Organized in `~/dotfiles/scripts/`
 5. **Simple aliases**: Clean, functional Zellij management commands
 
 ### Files Modified
 - `~/.config/zellij/config.kdl` - Fixed parsing errors, added Tokyo Night
-- `~/dotfiles/.zshrc` - Simplified Zellij auto-start
+- `~/dotfiles/.zshrc` - Removed automatic Zellij startup (decoupled)
 - `~/dotfiles/.zlogin` - Removed duplicate prevention complexity
 - `~/dotfiles/.zaliases` - Added simple Zellij management aliases
-- `~/dotfiles/alacritty/shared.toml` - Simplified to `zsh -l`
+- `~/dotfiles/alacritty/shared.toml` - Changed to launch Zellij directly
 
 ## 🎯 Next Steps
 
