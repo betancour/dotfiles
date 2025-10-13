@@ -340,6 +340,19 @@ if command -v docker >/dev/null 2>&1; then
     :
 fi
 
+# GRC (Generic Colouriser) for colorized command output
+if [[ "$(uname)" == "Darwin" ]]; then
+  # macOS (Homebrew)
+  if [[ -s "/opt/homebrew/etc/grc.zsh" ]]; then
+    source /opt/homebrew/etc/grc.zsh
+  elif [[ -s "/usr/local/etc/grc.zsh" ]]; then
+    source /usr/local/etc/grc.zsh
+  fi
+elif [[ "$(uname)" == "Linux" ]]; then
+  # Linux
+  [[ -s "/etc/grc.zsh" ]] && source /etc/grc.zsh
+fi
+
 # Load aliases
 # ============
 [[ -f "${ZDOTDIR:-$HOME}/.zaliases" ]] && source "${ZDOTDIR:-$HOME}/.zaliases"
