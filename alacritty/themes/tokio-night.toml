@@ -1,0 +1,37 @@
+# Tokyonight Theme for Alacritty
+# A dark, modern theme inspired by the Tokyo night sky, optimized for coding.
+# Based on tokyonight-night variant from https://github.com/folke/tokyonight.nvim
+# Author: Adapted from Folke's Tokyonight.nvim
+# Version: 1.0 (Customized for Alacritty)
+
+[colors.primary]
+# Background and foreground colors
+background = "0x1a1b26"  # Deep blue-black background
+foreground = "0xc0caf5"  # Soft lavender foreground
+
+# Cursor colors (visible when custom_cursor_colors is true)
+[colors.cursor]
+text = "0x1a1b26"       # Matches background for contrast
+cursor = "0xc0caf5"      # Matches foreground for visibility
+
+# Normal color palette
+[colors.normal]
+black   = "0x15161e"    # Darker shade for black
+red     = "0xf7768e"    # Vibrant pinkish-red for errors
+green   = "0x9ece6a"    # Fresh green for success
+yellow  = "0xe0af68"    # Warm yellow for warnings
+blue    = "0x7aa2f7"    # Bright blue for info
+magenta = "0xbb9af7"    # Purple for special
+cyan    = "0x7dcfff"    # Light cyan for highlights
+white   = "0xa9b1d6"    # Light gray for white
+
+# Bright color palette (bold or highlighted text)
+[colors.bright]
+black   = "0x414868"    # Lighter gray for black
+red     = "0xf7768e"    # Same red as normal (bold variant)
+green   = "0x9ece6a"    # Same green as normal (bold variant)
+yellow  = "0xe0af68"    # Same yellow as normal (bold variant)
+blue    = "0x7aa2f7"    # Same blue as normal (bold variant)
+magenta = "0xbb9af7"    # Same magenta as normal (bold variant)
+cyan    = "0x7dcfff"    # Same cyan as normal (bold variant)
+white   = "0xc0caf5"    # Brighter lavender for emphasis
