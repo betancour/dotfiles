@@ -1,0 +1,89 @@
+@import url("../omarchy/current/theme/waybar.css");
+
+/* ---------- GLOBAL ---------- */
+* {
+  background-color: @background;
+  color: @foreground;
+  border: none;
+  border-radius: 0;
+  font-family: "CaskaydiaMono Nerd Font", monospace;
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+}
+
+/* ---------- MODULE CONTAINERS ---------- */
+.modules-left,
+.modules-center,
+.modules-right {
+  margin: 0 6px;
+}
+
+/* ---------- WORKSPACES ---------- */
+#workspaces button {
+  all: unset;
+  padding: 0 6px;
+  margin: 0 1px;
+}
+
+#workspaces button.active {
+  color: @accent;
+  font-weight: bold;
+}
+
+/* ---------- ICONS & SPACING ---------- */
+#custom-omarchy,
+#custom-update,
+#custom-screenrecording-indicator,
+#bluetooth,
+#network,
+#pulseaudio,
+#memory,
+#cpu,
+#battery,
+#tray {
+  padding: 0 6px;
+  margin: 0 1px;
+  min-width: 0;
+}
+
+/* ---------- CLOCK ---------- */
+#clock {
+  margin: 0 8px;
+  font-weight: 500;
+}
+
+/* ---------- TOOLTIP ---------- */
+tooltip {
+  background-color: alpha(@background, 0.96);
+  color: @foreground;
+  border-radius: 4px;
+  padding: 4px 8px;
+  border: 1px solid alpha(@foreground, 0.2);
+}
+
+/* ---------- UPDATE ICON ---------- */
+#custom-update {
+  font-size: 11px;
+}
+
+/* ---------- SCREEN RECORD INDICATOR ---------- */
+#custom-screenrecording-indicator.active {
+  color: #a55555;
+  font-weight: bold;
+}
+
+/* ---------- TRAY ---------- */
+#tray {
+  padding-left: 10px;
+}
+
+/* ---------- BATTERY STATES ---------- */
+#battery.warning {
+  color: #f9e2af;
+}
+#battery.critical {
+  color: #f38ba8;
+}
+
