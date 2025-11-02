@@ -1,339 +1,338 @@
 # .zlogin
-# =======
-# This file is sourced by login shells after .zshrc.
-# It should contain commands that should be run after the interactive
-# environment is fully set up. This is the last file sourced for login shells.
+# TR-101 MACHINE REPORT – ZSH LOGIN
+# EXACT REPLICA of machine_report.txt (no welcome line)
+# Copyright © 2025
 
-# Only proceed if this is a login shell
-[[ -o login ]] || return
+# === CONFIG ===
+MIN_NAME_LEN=5
+MAX_NAME_LEN=12
+MIN_DATA_LEN=5
+MAX_DATA_LEN=40
+BORDERS_AND_PADDING=7
 
-# Performance monitoring
-if [[ -n "$ZSH_PROFILE_STARTUP" ]]; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S'): .zlogin started" >> "${XDG_STATE_HOME:-$HOME/.local/state}/zsh/startup.log"
-fi
+# === GLOBALS ===
+CURRENT_LEN=0
+report_title="ZSH LOGIN REPORT"
+zfs_present=0
+zfs_filesystem=""
 
-# System Information Display
-# ==========================
-# Display system information on login
-
-# Terminal width for formatting
-WIDTH=${COLUMNS:-$(tput cols 2>/dev/null || echo 80)}
-[[ $WIDTH -gt 100 ]] && WIDTH=100
-[[ $WIDTH -lt 60 ]] && WIDTH=60
-
-# Colors for output
-if [[ -t 1 ]] && [[ "$TERM" != "dumb" ]]; then
-    local BLUE=$'\033[34m'
-    local GREEN=$'\033[32m'
-    local YELLOW=$'\033[33m'
-    local CYAN=$'\033[36m'
-    local MAGENTA=$'\033[35m'
-    local RED=$'\033[31m'
-    local BOLD=$'\033[1m'
-    local DIM=$'\033[2m'
-    local RESET=$'\033[0m'
+# === COLORS ===
+if [[ -t 1 ]] && [[ "$TERM" != dumb ]]; then
+    BLUE=$'\033[34m' GREEN=$'\033[32m' YELLOW=$'\033[33m'
+    CYAN=$'\033[36m' MAGENTA=$'\033[35m' BOLD=$'\033[1m'
+    DIM=$'\033[2m' RESET=$'\033[0m'
 else
-    local BLUE=''
-    local GREEN=''
-    local YELLOW=''
-    local CYAN=''
-    local MAGENTA=''
-    local RED=''
-    local BOLD=''
-    local DIM=''
-    local RESET=''
+    BLUE='' GREEN='' YELLOW='' CYAN='' MAGENTA='' BOLD='' DIM='' RESET=''
 fi
 
-# Helper function to center text
-center_text() {
+# === UTILS ===
+max_length() {
+    local max=$MIN_DATA_LEN
+    for s; do (( ${#s} > max )) && max=${#s}; done
+    (( max > MAX_DATA_LEN )) && max=$MAX_DATA_LEN
+    printf '%d' "$max"
+}
+
+set_current_len() {
+    CURRENT_LEN=$(max_length \
+        "$os_name" \
+        "$os_kernel" \
+        "$net_hostname" \
+        "$net_machine_ip" \
+        "$net_client_ip" \
+        "$cpu_model" \
+        "$cpu_cores vCPU(s) / $cpu_sockets Socket(s)" \
+        "$cpu_hypervisor" \
+        "$cpu_freq GHz" \
+        "████████████████████████████████████████" \
+        "████████████████████████████████████████" \
+        "████████████████████████████████████████" \
+        "$zfs_used_gb/$zfs_available_gb GiB [$disk_percent%]" \
+        "████████████████████████████████████████" \
+        "$zfs_health" \
+        "$root_used_gb/$root_total_gb GiB [$disk_percent%]" \
+        "${mem_used_gb}/${mem_total_gb} GiB [${mem_percent}%]" \
+        "████████████████████████████████████████" \
+        "$last_login_time" \
+        "$last_login_ip" \
+        "$sys_uptime"
+    )
+}
+
+# === PRINT FUNCTIONS (EXACT FROM machine_report.txt) ===
+PRINT_DECORATED_HEADER() {
+    local length=$((CURRENT_LEN + MAX_NAME_LEN + BORDERS_AND_PADDING))
+    local top="┌" bottom="├"
+    for ((i=0; i<length-2; i++)); do
+        top+='┬'; bottom+='┴'
+    done
+    printf '%s┐\n' "$top"
+    printf '%s┤\n' "$bottom"
+}
+
+PRINT_CENTERED_DATA() {
     local text="$1"
-    local color="${2:-}"
+    local max_len=$((CURRENT_LEN + MAX_NAME_LEN - BORDERS_AND_PADDING))
+    local total_width=$((max_len + 12))
+    local text_len=${#text}
+    local padding_left=$(( (total_width - text_len) / 2 ))
+    local padding_right=$(( total_width - text_len - padding_left ))
+    printf "│%${padding_left}s%s%${padding_right}s│\n" "" "$text" ""
+}
 
-    # Remove ANSI codes for length calculation
-    local plain_text=$(echo "$text" | sed 's/\x1B\[[0-9;]*[JKmsu]//g')
-    local plain_length=${#plain_text}
+PRINT_DIVIDER() {
+    local side="${1:-middle}"
+    local left middle right
+    case "$side" in
+        top)    left="├"; middle="┬"; right="┤" ;;
+        bottom) left="├"; middle="┴"; right="┤" ;;
+        end)    left="└"; middle="┴"; right="┘" ;;
+        *)     :Polygon left="├"; middle="┼"; right="┤" ;;
+    esac
+    local length=$((CURRENT_LEN + MAX_NAME_LEN + BORDERS_AND_PADDING))
+    local divider="$left"
+    for ((i=0; i<length-3; i++)); do
+        (( i == MAX_NAME_LEN + 1 )) && divider+="$middle" || divider+='─'
+    done
+    printf '%s%s\n' "$divider" "$right"
+}
 
-    if [[ $plain_length -gt $((WIDTH - 4)) ]]; then
-        plain_text="${plain_text:0:$((WIDTH - 7))}..."
-        plain_length=${#plain_text}
-    fi
+PRINT_DATA() {
+    local name="$1" data="$2"
+    local name_len=${#name}
+    (( name_len < MIN_NAME_LEN )) && name=$(printf "%-${MIN_NAME_LEN}s" "$name")
+    (( name_len > MAX_NAME_LEN )) && name="${name:0:$((MAX_NAME_LEN-1))}…"
 
-    local padding=$(( (WIDTH - 2 - plain_length) / 2 ))
-    if [[ -n "$color" ]]; then
-        printf "|%*s%s%s%s%*s|\n" $padding "" "$color" "$plain_text" "$RESET" $((WIDTH - 2 - padding - plain_length)) ""
+    local data_len=${#data}
+    if (( data_len > MAX_DATA_LEN )); then
+        data="${data:0:$((MAX_DATA_LEN-1))}…"
     else
-        printf "|%*s%s%*s|\n" $padding "" "$plain_text" $((WIDTH - 2 - padding - plain_length)) ""
+        data=$(printf "%-${CURRENT_LEN}s" "$data")
     fi
+
+    printf "│ %-${MAX_NAME_LEN}s │ %s │\n" "$name" "$data"
 }
 
-# Helper function to create separator line
-separator_line() {
-    local char="${1:-─}"
-    printf "+%*s+\n" $((WIDTH - 2)) "" | tr ' ' "$char"
+PRINT_BAR() {
+    PRINT_DATA "$1" "$2"
 }
 
-# Get system information
-get_system_info() {
-    local datetime=$(date '+%A, %B %d, %Y – %H:%M:%S')
-    local hostname=$(hostname -s 2>/dev/null || hostname)
-    local username="$USER"
+bar_graph() {
+    local used=$1 total=$2
+    local percent=0 num_blocks=0 width=$CURRENT_LEN graph=""
 
-    # Get IP address
-    local ip="unknown"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        ip=$(ifconfig en0 2>/dev/null | awk '/inet / {print $2}' | head -n1)
-        [[ -z "$ip" ]] && ip=$(ifconfig en1 2>/dev/null | awk '/inet / {print $2}' | head -n1)
-        [[ -z "$ip" ]] && ip=$(route get default 2>/dev/null | awk '/interface:/ {print $2}' | head -n1 | xargs ifconfig 2>/dev/null | awk '/inet / {print $2}' | head -n1)
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # Linux
-        ip=$(hostname -I 2>/dev/null | awk '{print $1}')
-        [[ -z "$ip" ]] && ip=$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7; exit}')
-        [[ -z "$ip" ]] && ip=$(ifconfig 2>/dev/null | awk '/inet / && !/127.0.0.1/ {print $2; exit}' | cut -d: -f2)
-    fi
-    [[ -z "$ip" ]] && ip="unavailable"
+    (( total == 0 )) && percent=0 || \
+        percent=$(awk -v used="$used" -v total="$total" 'BEGIN { printf "%.0f", (used / total) * 100 }')
 
-    # Get uptime
-    local uptime_info="unknown"
-    if command -v uptime >/dev/null 2>&1; then
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-            uptime_info=$(uptime | sed 's/.*up \([^,]*\).*/\1/' | xargs)
-        elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-            uptime_info=$(uptime -p 2>/dev/null | sed 's/up //' || uptime | sed 's/.*up \([^,]*\).*/\1/' | xargs)
-        fi
-    fi
+    num_blocks=$(awk -v percent="$percent" -v width="$width" 'BEGIN { printf "%d", (percent / 100) * width }')
 
-    # Get load average
-    local load="unknown"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        load=$(uptime | awk -F'load average:' '{print $2}' | sed 's/^ *//' | cut -d',' -f1 | xargs)
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        load=$(cat /proc/loadavg 2>/dev/null | cut -d' ' -f1 || echo "unknown")
-    fi
+    for ((i=0; i<num_blocks; i++)); do graph+='█'; done
+    for ((i=0; i<width; i++)); do graph+='░'; done
 
-    # Get memory usage (simplified)
-    local memory="unknown"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        if command -v vm_stat >/dev/null 2>&1; then
-            local pages_free=$(vm_stat | awk '/Pages free/ {print $3}' | sed 's/\.//')
-            local pages_inactive=$(vm_stat | awk '/Pages inactive/ {print $3}' | sed 's/\.//')
-            if [[ -n "$pages_free" && -n "$pages_inactive" ]]; then
-                local free_mb=$(( (pages_free + pages_inactive) * 4096 / 1024 / 1024 ))
-                memory="${free_mb}MB free"
-            fi
-        fi
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        if [[ -r /proc/meminfo ]]; then
-            local mem_available=$(awk '/MemAvailable/ {print int($2/1024)"MB"}' /proc/meminfo 2>/dev/null)
-            [[ -n "$mem_available" ]] && memory="$mem_available available"
-        fi
-    fi
-
-    # Get disk usage for home directory
-    local disk_usage="unknown"
-    if command -v df >/dev/null 2>&1; then
-        disk_usage=$(df -h "$HOME" 2>/dev/null | awk 'NR==2 {print $4 " available (" $5 " used)"}')
-    fi
-
-    # Display the information
-    echo
-    separator_line "═"
-    center_text "Welcome back, $username!" "$BOLD$CYAN"
-    separator_line "─"
-    center_text "$datetime" "$GREEN"
-    center_text "Host: $hostname | IP: $ip" "$BLUE"
-    center_text "Uptime: $uptime_info | Load: $load" "$YELLOW"
-    [[ "$memory" != "unknown" ]] && center_text "Memory: $memory" "$MAGENTA"
-    [[ "$disk_usage" != "unknown" ]] && center_text "Disk: $disk_usage" "$CYAN"
-    separator_line "═"
-    echo
+    printf '%s' "$graph"
 }
 
-# Show system information for interactive login shells
-if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]]; then
-    get_system_info
+# === DATA COLLECTION ===
+[[ -o login ]] || return
+[[ -t 1 ]] || return
+[[ $SHLVL -eq 1 ]] || return
+
+# OS
+if [[ -f /etc/os-release ]]; then
+    source /etc/os-release 2>/dev/null
+    os_name="${NAME} ${VERSION} ${VERSION_CODENAME:-}"
+else
+    os_name="macOS $(sw_vers -productVersion 2>/dev/null || echo Unknown)"
+fi
+os_kernel="$(uname) $(uname -r)"
+
+# Network
+net_hostname=$(hostname -s 2>/dev/null || hostname)
+net_machine_ip=$(
+    if [[ $OSTYPE == darwin* ]]; then
+        ifconfig en0 2>/dev/null | awk '/inet / {print $2; exit}'
+    else
+        hostname -I 2>/dev/null | awk '{print $1}' || ip route get 1 2>/dev/null | awk '{print $7; exit}'
+    fi
+)
+[[ -z $net_machine_ip ]] && net_machine_ip="unknown"
+
+net_client_ip=$(who am i 2>/dev/null | awk '{print $NF}' | tr -d '()')
+[[ -z $net_client_ip ]] && net_client_ip="local"
+
+# CPU
+case $OSTYPE in
+    darwin*)
+        cpu_model=$(sysctl -n machdep.cpu.brand_string | cut -d'@' -f1 | xargs)
+        cpu_cores=$(sysctl -n hw.logicalcpu)
+        cpu_sockets=$(sysctl -n hw.physicalcpu)
+        cpu_hypervisor="Bare Metal"
+        cpu_freq=$(sysctl -n hw.cpufrequency | awk '{printf "%.2f", $1/1000000000}')
+        ;;
+    linux-gnu*)
+        cpu_model=$(lscpu | awk -F: '/Model name/ {gsub(/^ +/, "", $2); print $2; exit}')
+        cpu_cores=$(nproc --all)
+        cpu_sockets=$(lscpu | awk -F: '/Socket\(s\)/ {print $2; exit}')
+        cpu_hypervisor=$(lscpu | awk -F: '/Hypervisor vendor/ {gsub(/^ +/, "", $2); print $2; exit}')
+        [[ -z $cpu_hypervisor ]] && cpu_hypervisor="Bare Metal"
+        cpu_freq=$(awk '/cpu MHz/ {printf "%.2f", $2/1000; exit}' /proc/cpuinfo)
+        ;;
+esac
+
+# Load
+load_line=$(uptime | sed 's/.*load averages\?: //; s/.*load average: //')
+load_1min=$(echo "$load_line" | cut -d, -f1 | xargs)
+load_5min=$(echo "$load_line" | cut -d, -f2 | xargs)
+load_15min=$(echo "$load_line" | cut -d, -f3 | xargs)
+
+# Memory (GiB)
+case $OSTYPE in
+    darwin*)
+        mem_total_kb=$(sysctl -n hw.memsize)
+        pages_free=$(vm_stat | awk '/Pages free/ {print $3}' | tr -d '.')
+        pages_inactive=$(vm_stat | awk '/Pages inactive/ {print $3}' | tr -d '.')
+        mem_available_kb=$(( (pages_free + pages_inactive) * 4096 / 1024 ))
+        ;;
+    linux-gnu*)
+        mem_total_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+        mem_available_kb=$(awk '/MemAvailable/ {print $2}' /proc/meminfo)
+        ;;
+esac
+mem_used_kb=$(( mem_total_kb - mem_available_kb ))
+mem_total_gb=$(awk -v t="$mem_total_kb" 'BEGIN { printf "%.2f", t/(1024*1024) }')
+mem_used_gb=$(awk -v u="$mem_used_kb" 'BEGIN { printf "%.2f", u/(1024*1024) }')
+mem_percent=$(awk -v u="$mem_used_kb" -v t="$mem_total_kb" 'BEGIN { printf "%.0f", u/t*100 }')
+
+# Disk
+zfs_present=0
+if command -v zpool >/dev/null 2>&1 && zpool list >/dev/null 2>&1; then
+    zfs_filesystem=$(zpool list -H -o name | tail -n1)
+    zfs_used=$(zfs get -Hp used "$zfs_filesystem" | awk '{print $3}')
+    zfs_available=$(zfs get -Hp available "$zfs_filesystem" | awk '{print $3}')
+    zfs_used_gb=$(awk -v u="$zfs_used" 'BEGIN { printf "%.2f", u/(1024^3) }')
+    zfs_available_gb=$(awk -v a="$zfs_available" 'BEGIN { printf "%.2f", a/(1024^3) }')
+    disk_percent=$(awk -v u="$zfs_used" -v a="$zfs_available" 'BEGIN { printf "%.0f", u/(u+a)*100 }')
+    zfs_health=$(zpool status -x "$zfs_filesystem" | grep -q "healthy" && echo "HEALTH O.K." || echo "DEGRADED")
+    zfs_present=1
+else
+    df_line=$(df -h "$HOME" 2>/dev/null | awk 'NR==2')
+    root_used_gb=$(echo "$df_line" | awk '{gsub(/G.*/, "", $3); print $3}')
+    root_total_gb=$(awk -v u="$root_used_gb" -v a="$(echo "$df_line" | awk '{gsub(/G.*/, "", $4); print $4}')" 'BEGIN { printf "%.2f", u+a }')
+    disk_percent=$(echo "$df_line" | awk '{gsub(/%/, "", $5); print $5}')
 fi
 
-# Development Environment Status
-# ==============================
-# Show status of development tools and services
+# Uptime
+sys_uptime=$(uptime | sed 's/.*up \([^,]*\).*/\1/' | xargs)
 
+# Last login
+last_login_time="Never logged in"
+last_login_ip_present=0
+if command -v lastlog >/dev/null 2>&1; then
+    line=$(lastlog -u "$USER" | tail -n1)
+    ip=$(echo "$line" | awk '{print $3}')
+    if [[ $ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        last_login_ip="$ip"
+        last_login_time=$(echo "$line" | awk '{print $5,$6,$7,$8}')
+        last_login_ip_present=1
+    else
+        last_login_time=$(echo "$line" | awk '{print $4,$5,$6,$7}')
+    fi
+fi
+
+# === CALCULATE WIDTH ===
+set_current_len
+
+# === GRAPHS ===
+load_1min_bar=$(bar_graph "$load_1min" "$cpu_cores")
+load_5min_bar=$(bar_graph "$load_5min" "$cpu_cores")
+load_15min_bar=$(bar_graph "$load_15min" "$cpu_cores")
+mem_bar_graph=$(bar_graph "$mem_used_kb" "$mem_total_kb")
+
+if (( zfs_present )); then
+    disk_bar_graph=$(bar_graph "$zfs_used" "$(( zfs_used + zfs_available ))")
+else
+    root_used_mb=$(df -m "$HOME" 2>/dev/null | awk 'NR==2 {print $3}')
+    root_total_mb=$(df -m "$HOME" 2>/dev/null | awk 'NR==2 {print $2}')
+    disk_bar_graph=$(bar_graph "$root_used_mb" "$root_total_mb")
+fi
+
+# === RENDER ===
+{
+    PRINT_DECORATED_HEADER
+    PRINT_CENTERED_DATA "${BOLD}${CYAN}$report_title${RESET}"
+    PRINT_DIVIDER "top"
+
+    PRINT_DATA "OS" "$os_name"
+    PRINT_DATA "KERNEL" "$os_kernel"
+    PRINT_DIVIDER
+    PRINT_DATA "HOSTNAME" "$net_hostname"
+    PRINT_DATA "MACHINE IP" "$net_machine_ip"
+    PRINT_DATA "CLIENT  IP" "$net_client_ip"
+    PRINT_DIVIDER
+    PRINT_DATA "PROCESSOR" "$cpu_model"
+    PRINT_DATA "CORES" "$cpu_cores vCPU(s) / $cpu_sockets Socket(s)"
+    PRINT_DATA "HYPERVISOR" "$cpu_hypervisor"
+    PRINT_DATA "CPU FREQ" "$cpu_freq GHz"
+    PRINT_BAR "LOAD  1m" "$load_1min_bar"
+    PRINT_BAR "LOAD  5m" "$load_5min_bar"
+    PRINT_BAR "LOAD 15m" "$load_15min_bar"
+
+    if (( zfs_present )); then
+        PRINT_DIVIDER
+        PRINT_DATA "VOLUME" "$zfs_used_gb/$zfs_available_gb GiB [$disk_percent%]"
+        PRINT_BAR "DISK USAGE" "$disk_bar_graph"
+        PRINT_DATA "ZFS HEALTH" "$zfs_health"
+    else
+        PRINT_DIVIDER
+        PRINT_DATA "VOLUME" "$root_used_gb/$root_total_gb GiB [$disk_percent%]"
+        PRINT_BAR "DISK USAGE" "$disk_bar_graph"
+    fi
+
+    PRINT_DIVIDER
+    PRINT_DATA "MEMORY" "${mem_used_gb}/${mem_total_gb} GiB [${mem_percent}%]"
+    PRINT_BAR "USAGE" "$mem_bar_graph"
+    PRINT_DIVIDER
+    PRINT_DATA "LAST LOGIN" "$last_login_time"
+    (( last_login_ip_present )) && PRINT_DATA "" "$last_login_ip"
+    PRINT_DATA "UPTIME" "$sys_uptime"
+    PRINT_DIVIDER "end"
+    echo
+} 2>/dev/null
+
+# === ORIGINAL .zlogin FEATURES ===
 show_dev_status() {
-    local status_items=()
-
-    # Check Git status
-    if command -v git >/dev/null 2>&1 && git rev-parse --git-dir >/dev/null 2>&1; then
-        local git_branch=$(git branch --show-current 2>/dev/null)
-        local git_status=$(git status --porcelain 2>/dev/null | wc -l | xargs)
-        if [[ -n "$git_branch" ]]; then
-            status_items+=("${GREEN}Git${RESET}: ${CYAN}$git_branch${RESET} ($git_status changes)")
-        fi
-    fi
-
-    # Check if we're in a Python virtual environment
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-        local venv_name=$(basename "$VIRTUAL_ENV")
-        status_items+=("${GREEN}Python${RESET}: ${CYAN}$venv_name${RESET} (venv)")
-    elif [[ -n "$CONDA_DEFAULT_ENV" ]]; then
-        status_items+=("${GREEN}Python${RESET}: ${CYAN}$CONDA_DEFAULT_ENV${RESET} (conda)")
-    fi
-
-    # Check Node.js version if available
-    if command -v node >/dev/null 2>&1; then
-        local node_version=$(node --version 2>/dev/null)
-        status_items+=("${GREEN}Node${RESET}: ${CYAN}${node_version}${RESET}")
-    fi
-
-    # Check if Docker is running
-    if command -v docker >/dev/null 2>&1; then
-        if docker info >/dev/null 2>&1; then
-            local containers=$(docker ps -q 2>/dev/null | wc -l | xargs)
-            status_items+=("${GREEN}Docker${RESET}: ${CYAN}running${RESET} ($containers containers)")
-        else
-            status_items+=("${YELLOW}Docker${RESET}: ${DIM}not running${RESET}")
-        fi
-    fi
-
-    # Show development status if there are any items
-    if [[ ${#status_items[@]} -gt 0 ]]; then
-        echo "${DIM}Development Status:${RESET}"
-        for item in "${status_items[@]}"; do
-            echo "  $item"
-        done
+    local items=()
+    git rev-parse --git-dir >/dev/null 2>&1 && {
+        branch=$(git branch --show-current)
+        changes=$(git status --porcelain | wc -l | xargs)
+        items+=("${GREEN}Git${RESET}: ${CYAN}$branch${RESET} ($changes)")
+    }
+    [[ -n $VIRTUAL_ENV ]] && items+=("${GREEN}Python${RESET}: ${CYAN}$(basename "$VIRTUAL_ENV")${RESET}")
+    command -v node >/dev/null 2>&1 && items+=("${GREEN}Node${RESET}: ${CYAN}$(node -v)${RESET}")
+    (( ${#items[@]} )) && {
+        echo "${DIM}Dev Status:${RESET}"
+        printf '  %s\n' "${items[@]}"
         echo
-    fi
+    }
 }
+[[ -o interactive ]] && show_dev_status
 
-# Show development status for interactive sessions
-if [[ -t 1 ]] && [[ -o interactive ]]; then
-    show_dev_status
-fi
-
-# Check for system updates (optional)
-# ====================================
-check_updates() {
-    # Only check once per day to avoid slowing down login
-    local update_check_file="${XDG_CACHE_HOME:-$HOME/.cache}/zsh_update_check"
-    local current_day=$(date +%Y%m%d)
-    local last_check=""
-
-    [[ -f "$update_check_file" ]] && last_check=$(cat "$update_check_file" 2>/dev/null)
-
-    if [[ "$last_check" != "$current_day" ]]; then
-        echo "$current_day" > "$update_check_file"
-
-        if [[ "$OSTYPE" == "darwin"* ]] && command -v brew >/dev/null 2>&1; then
-            # Check for Homebrew updates (non-blocking)
-            (
-                local outdated=$(brew outdated --quiet 2>/dev/null | wc -l | xargs)
-                if [[ "$outdated" -gt 0 ]]; then
-                    echo "${YELLOW}Notice:${RESET} $outdated Homebrew packages can be updated. Run ${CYAN}brew upgrade${RESET}"
-                fi
-            ) &
-        elif [[ "$OSTYPE" == "linux-gnu"* ]] && command -v apt >/dev/null 2>&1; then
-            # Check for apt updates (non-blocking)
-            (
-                if [[ -f /var/lib/apt/periodic/update-success-stamp ]]; then
-                    local last_update=$(stat -c %Y /var/lib/apt/periodic/update-success-stamp 2>/dev/null)
-                    local current_time=$(date +%s)
-                    local days_since_update=$(( (current_time - last_update) / 86400 ))
-
-                    if [[ $days_since_update -gt 7 ]]; then
-                        echo "${YELLOW}Notice:${RESET} Package database is $days_since_update days old. Consider running ${CYAN}sudo apt update${RESET}"
-                    fi
-                fi
-            ) &
-        fi
-    fi
-}
-
-# Check for updates (only for primary login shells)
-if [[ "$SHLVL" -eq 1 ]] && [[ -t 1 ]]; then
-    check_updates
-fi
-
-# SSH Agent Integration
-# =====================
-# Ensure SSH agent is properly set up for the session
-
-setup_ssh_agent() {
-    # If SSH_AUTH_SOCK is not set, try to find an existing agent
-    if [[ -z "$SSH_AUTH_SOCK" ]] && [[ -f "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env" ]]; then
-        source "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env" >/dev/null 2>&1
-
-        # Test if the agent is still running
-        if ! ssh-add -l >/dev/null 2>&1; then
-            unset SSH_AUTH_SOCK SSH_AGENT_PID
-        fi
-    fi
-}
-
-setup_ssh_agent
-
-# Cleanup and Maintenance
-# =======================
-# Perform light cleanup tasks on login
+[[ -z $SSH_AUTH_SOCK && -f "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env" ]] && \
+    source "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env" >/dev/null
 
 perform_cleanup() {
-    # Clean up old temporary files (older than 7 days)
-    if [[ -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" ]]; then
-        find "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" -name "*.tmp" -mtime +7 -delete 2>/dev/null || true
-    fi
-
-    # Clean up old history backups (keep last 5)
-    if [[ -d "${XDG_STATE_HOME:-$HOME/.local/state}/zsh" ]]; then
-        ls -t "${XDG_STATE_HOME:-$HOME/.local/state}/zsh"/history.bak.* 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null || true
-    fi
-
-    # Compact zsh completion dump if it's large
-    local compdump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completion"
-    if [[ -f "$compdump" ]] && [[ $(wc -l < "$compdump" 2>/dev/null || echo 0) -gt 1000 ]]; then
-        # Rebuild completion dump in background
-        (
-            sleep 1
-            autoload -U compinit
-            compinit -d "$compdump"
-        ) &
-    fi
+    find "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" -name "*.tmp" -mtime +7 -delete 2>/dev/null
 }
-
-# Perform cleanup tasks in background
 perform_cleanup &
 
-# Load local login customizations
-# ===============================
 [[ -r "${ZDOTDIR:-$HOME}/.zlogin.local" ]] && source "${ZDOTDIR:-$HOME}/.zlogin.local"
 
-# Final performance monitoring
-if [[ -n "$ZSH_PROFILE_STARTUP" ]]; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S'): .zlogin completed" >> "${XDG_STATE_HOME:-$HOME/.local/state}/zsh/startup.log"
-fi
-
-# Set up session-specific variables
-# ==================================
 export ZSH_SESSION_ID="$$_$(date +%s)"
 export ZSH_LOGIN_TIME="$(date '+%Y-%m-%d %H:%M:%S')"
 
-# Print helpful tips occasionally
-# ================================
-if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]] && [[ $((RANDOM % 10)) -eq 0 ]]; then
-    local tips=(
-        "💡 Tip: Use 'z <directory>' for smart directory jumping with zoxide"
-        "💡 Tip: Use 'fzf' (Ctrl+T) for fuzzy file finding"
-        "💡 Tip: Use 'rg <pattern>' for fast text searching"
-        "💡 Tip: Use 'bat <file>' for syntax-highlighted file viewing"
-        "💡 Tip: Use 'eza -la' for enhanced directory listings"
-        "💡 Tip: Use 'gcm \"message\"' for quick git commits"
-        "💡 Tip: Use 'lzg' to launch LazyGit for visual git management"
-        "💡 Tip: Press Ctrl+R for interactive history search"
-        "💡 Tip: Use '..' and '...' for quick directory navigation"
-        "💡 Tip: Type 'help' to see available custom commands"
-    )
+(( RANDOM % 10 == 0 )) && {
+    tips=("z <dir>" "Ctrl+T fzf" "rg pattern")
+    echo "${DIM}Tip: ${tips[RANDOM % ${#tips[@]}]}${RESET}\n"
+}
 
-    local random_tip=${tips[$((RANDOM % ${#tips[@]} + 1))]}
-    echo "${DIM}${random_tip}${RESET}"
-    echo
-fi
-
-# Wait for background tasks to complete (with timeout)
 wait 2>/dev/null || true
