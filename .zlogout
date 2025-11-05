@@ -212,9 +212,9 @@ show_farewell_message() {
 
         # Display farewell message
         echo
-        separator_line "═"
+        separator_line "="
         center_text "Goodbye, $USER!" "$BOLD$CYAN"
-        separator_line "─"
+        separator_line "-"
         center_text "Session ended: $session_end_time" "$GREEN"
         center_text "Session duration: $session_duration" "$YELLOW"
 
@@ -240,7 +240,7 @@ show_farewell_message() {
         local random_farewell=${farewells[$((RANDOM % ${#farewells[@]} + 1))]}
         center_text "$random_farewell" "$CYAN"
 
-        separator_line "═"
+        separator_line "="
         echo
     fi
 }
