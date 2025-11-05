@@ -137,15 +137,15 @@ get_system_info() {
 
     # Display the information
     echo
-    separator_line "═"
+    separator_line "="
     center_text "Welcome back, $username!" "$BOLD$CYAN"
-    separator_line "─"
+    separator_line "-"
     center_text "$datetime" "$GREEN"
     center_text "Host: $hostname | IP: $ip" "$BLUE"
     center_text "Uptime: $uptime_info | Load: $load" "$YELLOW"
     [[ "$memory" != "unknown" ]] && center_text "Memory: $memory" "$MAGENTA"
     [[ "$disk_usage" != "unknown" ]] && center_text "Disk: $disk_usage" "$CYAN"
-    separator_line "═"
+    separator_line "="
     echo
 }
 
