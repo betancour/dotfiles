@@ -69,7 +69,12 @@ center_text() {
 # Helper function to create separator line
 separator_line() {
     local char="${1:-─}"
-    printf "+%*s+\n" $((WIDTH - 2)) "" | tr ' ' "$char"
+    local i
+    printf "+"
+    for ((i=0; i<WIDTH-2; i++)); do
+        printf "%s" "$char"
+    done
+    printf "+\n"
 }
 
 # Get system information
@@ -330,7 +335,7 @@ if [[ -t 1 ]] && [[ "$SHLVL" -eq 1 ]] && [[ $((RANDOM % 10)) -eq 0 ]]; then
         "💡 Tip: Type 'help' to see available custom commands"
     )
 
-    local random_tip=${tips[$((RANDOM % ${#tips[@]} + 1))]}
+    local random_tip=${tips[$((RANDOM % ${#tips[@]}))]}
     echo "${DIM}${random_tip}${RESET}"
     echo
 fi

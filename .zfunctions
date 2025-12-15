@@ -279,7 +279,7 @@ count() {
     for file in "$@"; do
         if [[ -f "$file" ]]; then
             echo "File: $file"
-            wc -lwc "$file"
+            wc -l -w -c "$file"
             echo
         else
             echo "Error: '$file' is not a valid file"
@@ -301,8 +301,12 @@ replace() {
     for file in "$@"; do
         if [[ -f "$file" ]]; then
             if command -v sed >/dev/null 2>&1; then
-                sed -i.bak "s/$search/$replace/g" "$file"
-                echo "Replaced in: $file (backup: ${file}.bak)"
+                if [[ "$OSTYPE" == "darwin"* ]]; then
+                    sed -i '' "s/$search/$replace/g" "$file"
+                else
+                    sed -i.bak "s/$search/$replace/g" "$file"
+                fi
+                echo "Replaced in: $file"
             else
                 echo "sed not found"
                 return 1
@@ -410,7 +414,14 @@ timeit() {
     "$@"
     local exit_code=$?
     local end_time=$(date +%s.%N)
-    local duration=$(echo "$end_time - $start_time" | bc 2>/dev/null || echo "Unknown")
+    
+    local duration
+    if command -v bc >/dev/null 2>&1; then
+        duration=$(echo "$end_time - $start_time" | bc 2>/dev/null)
+    else
+        # Fallback: use printf to do arithmetic (integer only)
+        duration=$((${end_time%.*} - ${start_time%.*}))
+    fi
 
     echo "Command executed in: ${duration}s (exit code: $exit_code)"
     return $exit_code

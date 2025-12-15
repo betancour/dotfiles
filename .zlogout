@@ -94,12 +94,8 @@ manage_ssh_agent() {
     if [[ -n "$SSH_AGENT_PID" ]] && [[ "$SHLVL" -eq 1 ]]; then
         # Check if this agent process belongs to us
         if kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
-            # Check if there are other shells using this agent
-            local agent_users=$(pgrep -f "ssh-agent" -u "$USER" | wc -l)
-            if [[ "$agent_users" -eq 1 ]]; then
-                ssh-agent -k >/dev/null 2>&1 || true
-                rm -f "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env" 2>/dev/null || true
-            fi
+            ssh-agent -k >/dev/null 2>&1 || true
+            rm -f "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env" 2>/dev/null || true
         fi
     fi
 }
@@ -109,11 +105,7 @@ manage_ssh_agent() {
 manage_gpg_agent() {
     # Clean up GPG agent if we're the last shell
     if [[ "$SHLVL" -eq 1 ]] && command -v gpgconf >/dev/null 2>&1; then
-        # Only kill if no other user processes are running
-        local user_processes=$(ps -u "$USER" | wc -l)
-        if [[ "$user_processes" -lt 10 ]]; then  # Arbitrary threshold
-            gpgconf --kill gpg-agent 2>/dev/null || true
-        fi
+        gpgconf --kill gpg-agent 2>/dev/null || true
     fi
 }
 
@@ -142,7 +134,9 @@ cleanup_background_processes() {
 cleanup_dev_environment() {
     # Save current directory for next session
     if [[ -n "$PWD" && "$PWD" != "$HOME" ]]; then
-        echo "$PWD" > "${XDG_STATE_HOME:-$HOME/.local/state}/zsh/last_dir" 2>/dev/null || true
+        local state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+        [[ ! -d "$state_dir" ]] && mkdir -p "$state_dir" 2>/dev/null || true
+        echo "$PWD" > "$state_dir/last_dir" 2>/dev/null || true
     fi
 
     # Clean up any development server processes we might have started
@@ -207,7 +201,12 @@ show_farewell_message() {
         # Create separator line
         separator_line() {
             local char="${1:-─}"
-            printf "+%*s+\n" $((WIDTH - 2)) "" | tr ' ' "$char"
+            local i
+            printf "+"
+            for ((i=0; i<WIDTH-2; i++)); do
+                printf "%s" "$char"
+            done
+            printf "+\n"
         }
 
         # Display farewell message
@@ -237,8 +236,7 @@ show_farewell_message() {
             "Have a great day! ☀️"
         )
 
-        local random_farewell=${farewells[$((RANDOM % ${#farewells[@]} + 1))]}
-        center_text "$random_farewell" "$CYAN"
+        local random_farewell=${farewells[$((RANDOM % ${#farewells[@]}))]}
 
         separator_line "="
         echo

@@ -81,14 +81,20 @@ alias reload="exec $SHELL -l"
 alias x="exit"
 
 # Memory and disk usage for macOS
-alias free="vm_stat | awk '/Pages free/ {print \"Free: \" \$3*4096/1024/1024 \"MB\"}'"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias free="vm_stat | awk '/Pages free/ {print \"Free: \" \$3*4096/1024/1024 \"MB\"}'"
+fi
 alias df='df -h'
 
 # Networking tools
 alias wget="curl -O"  # Use curl instead of wget
 alias ping="ping -c 5"  # Ping with 5 packets only
 alias nmap-fast="nmap -T4 -F"  # Quick network scan
-alias ports="netstat -tuln"  # Show open ports
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias ports="lsof -i -P -n"  # macOS: Show open ports
+else
+    alias ports="netstat -tuln"  # Linux: Show open ports
+fi
 
 # Editor (prefer nvim if installed)
 if command -v nvim &> /dev/null; then
@@ -146,4 +152,6 @@ alias za='zellij attach'
 alias znew='zellij --session'
 
 # Clean up script (run from dotfiles/scripts directory)
-alias zclean='~/dotfiles/scripts/cleanup-zellij.sh --clean'
+if [[ -f ~/dotfiles/scripts/cleanup-zellij.sh ]]; then
+    alias zclean='~/dotfiles/scripts/cleanup-zellij.sh --clean'
+fi
