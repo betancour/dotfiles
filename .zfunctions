@@ -244,9 +244,10 @@ gitlog() {
 }
 
 # Docker helpers
-dps() {
+dpshow() {
     if command -v docker >/dev/null 2>&1; then
         docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+        return 0
     else
         echo "Docker not found"
         return 1
@@ -462,7 +463,7 @@ help() {
     echo "  gitcp <msg>        - Quick git commit and push"
     echo "  gitbr <name>       - Create and switch to new branch"
     echo "  gitlog [count]     - Show git log in nice format"
-    echo "  dps                - Show Docker containers"
+    echo "  dpshow             - Show Docker containers (detailed format)"
     echo "  dclean             - Docker cleanup"
     echo
     echo "Text Processing:"
