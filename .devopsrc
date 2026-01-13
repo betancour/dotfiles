@@ -1,0 +1,31 @@
+# DevOps Repository Configuration
+# Senior Engineer Standards Compliance
+
+# Repository Structure
+# ├── config/           - All configuration files
+# │   ├── shell/       - Shell configuration (.zshrc, .zshenv, etc.)
+# │   ├── terminal/    - Terminal emulator configs (alacritty, iTerm, etc.)
+# │   └── editor/      - Editor/IDE configurations (nvim, waybar, zellij, etc.)
+# ├── storage/         - Data storage and artifacts
+# │   ├── backups/     - Backup files
+# │   └── logs/        - Log files
+# ├── docs/            - Documentation
+# ├── .github/         - GitHub Actions workflows
+# ├── LICENSE          - License file
+# ├── README.md        - Main documentation
+# ├── .gitconfig       - Git configuration
+# └── .gitignore       - Git ignore rules
+
+# Standards Applied:
+# - Separation of concerns (configuration by type)
+# - Clear directory hierarchy
+# - Centralized documentation
+# - No root-level shell scripts
+# - Infrastructure-as-code ready
+# - Monorepo-friendly structure
+
+# Environment Setup
+export DOTFILES_HOME="${DOTFILES_HOME:-.}"
+export CONFIG_DIR="${DOTFILES_HOME}/config"
+export DOCS_DIR="${DOTFILES_HOME}/docs"
+export STORAGE_DIR="${DOTFILES_HOME}/storage"
