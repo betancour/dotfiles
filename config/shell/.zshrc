@@ -60,14 +60,8 @@ setopt NO_CHECK_JOBS           # Don't report on jobs when shell exit
 setopt CORRECT                  # Try to correct spelling of commands
 setopt CORRECT_ALL              # Try to correct spelling of all arguments
 setopt NO_BEEP                  # Don't beep on errors
-setopt NOTIFY                   # Report job status immediately
 setopt PROMPT_SUBST             # Allow parameter expansion in prompts
-setopt INTERACTIVE_COMMENTS     # Allow comments in interactive shells
-setopt LONG_LIST_JOBS           # List jobs in long format
 setopt AUTO_RESUME              # Resume background jobs with single word commands
-setopt NO_BG_NICE               # Don't nice background commands
-setopt NO_HUP                   # Don't send HUP to background jobs when shell exits
-setopt CHECK_JOBS               # Warn about background jobs before exiting
 
 # Locale and encoding
 export LANG=${LANG:-en_US.UTF-8}
@@ -75,17 +69,18 @@ export LC_ALL=${LC_ALL:-en_US.UTF-8}
 
 # Enable colors in terminal
 case "$TERM" in
-    xterm-color|*-256color|*-color) color_prompt=yes ;;
+    xterm-color|*-256color|*-color) : ;; # Colors are enabled
 esac
 
 # Initialize completion system
 # ============================
 autoload -U compinit
 # Check if we need to rebuild completion dump
-if [[ -n "$ZSH_COMPDUMP"(#qN.mh+24) ]]; then
-    compinit -d "$ZSH_COMPDUMP"
+# If the dump is older than 24 hours, rebuild it; otherwise use cached version
+if [[ -f "$ZSH_COMPDUMP" ]] && [[ -z "$(find "$ZSH_COMPDUMP" -mtime -1 2>/dev/null)" ]]; then
+    compinit -d "$ZSH_COMPDUMP"      # Rebuild if old (1+ day old)
 else
-    compinit -C -d "$ZSH_COMPDUMP"
+    compinit -C -d "$ZSH_COMPDUMP"   # Use cached version if fresh
 fi
 
 # Load additional completions
@@ -193,10 +188,10 @@ vcs_prompt() {
 
             if [[ -n "$status_output" ]]; then
                 # Check for different types of changes
-                if echo "$status_output" | grep -q "^M\|^A\|^D\|^R\|^C"; then
+                if echo "$status_output" | grep -qE "^[MADRCU]"; then
                     git_status="${staged_color}${staged_icon}${reset}"
                 fi
-                if echo "$status_output" | grep -q "^ M\| D\|??"; then
+                if echo "$status_output" | grep -qE "^.[MD]|^\?\?"; then
                     git_status="${git_status}${dirty_color}${dirty_icon}${reset}"
                 fi
                 if echo "$status_output" | grep -q "^??"; then
@@ -297,7 +292,8 @@ fi
 # fi
 
 # NVM lazy loading (for better shell startup performance)
-if [[ -d "$NVM_DIR" ]]; then
+# Only proceed if NVM_DIR is set (typically set in .zprofile)
+if [[ -n "${NVM_DIR:-}" ]] && [[ -d "$NVM_DIR" ]]; then
     # Lazy load NVM to improve shell startup time
     nvm() {
         unset -f nvm
@@ -374,7 +370,7 @@ fi
 # Final setup
 # ===========
 # Ensure proper terminal settings
-stty -ixon  # Disable XON/XOFF flow control
+stty -ixon 2>/dev/null || true  # Disable XON/XOFF flow control (suppress errors if not in TTY)
 
 # Welcome message for new shells (not login shells)
 if [[ ! -o login ]] && [[ -t 1 ]]; then
