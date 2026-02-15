@@ -1,3 +1,4 @@
+umask 022
 # .zshenv
 # ========
 # This file is ALWAYS sourced by zsh, for both interactive and non-interactive shells.
@@ -191,7 +192,7 @@ fi
 export HIST_EXPIRE_DUPS_FIRST=1
 
 # Umask - Default file permissions (owner: rw-, group: r--, other: r--)
-umask 022
+
 
 # Load local environment variables if they exist
 # ==============================================

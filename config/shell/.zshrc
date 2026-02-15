@@ -325,7 +325,7 @@ if [[ -n "${NVM_DIR:-}" ]] && [[ -d "$NVM_DIR" ]]; then
 fi
 
 # Kubectl completion
-if [[ -n "$_KUBECTL_AVAILABLE" ]] && command -v kubectl >/dev/null 2>&1; then
+if [[ -n "$__KUBECTL_AVAILABLE" ]] && command -v kubectl >/dev/null 2>&1; then
     source <(kubectl completion zsh)
 fi
 
