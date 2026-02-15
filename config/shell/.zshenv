@@ -83,10 +83,10 @@ export EDITOR="vi"
 export VISUAL="vi"
 
 # Override with better editors if available
-if which nvim >/dev/null 2>&1; then
+if command -v nvim >/dev/null 2>&1; then
     export EDITOR="nvim"
     export VISUAL="nvim"
-elif which vim >/dev/null 2>&1; then
+elif command -v vim >/dev/null 2>&1; then
     export EDITOR="vim"
     export VISUAL="vim"
 fi
