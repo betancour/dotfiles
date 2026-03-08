@@ -63,9 +63,17 @@ setopt NO_BEEP                  # Don't beep on errors
 setopt PROMPT_SUBST             # Allow parameter expansion in prompts
 setopt AUTO_RESUME              # Resume background jobs with single word commands
 
+# Local Binaries
+export PATH="/usr/bin:/usr/sbin:$PATH"
+
 # Locale and encoding
 export LANG=${LANG:-en_US.UTF-8}
 export LC_ALL=${LC_ALL:-en_US.UTF-8}
+
+# ZSH Completion cache - store in .cache instead of home directory
+# This keeps the home directory clean
+mkdir -p ~/.cache/zsh
+export ZSH_COMPDUMP="$HOME/.cache/zsh/.zcompdump-${(%):-%m}-${ZSH_VERSION}"
 
 # Enable colors in terminal
 case "$TERM" in
