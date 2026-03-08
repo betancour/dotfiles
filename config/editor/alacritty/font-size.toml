@@ -1,2 +1,5 @@
 [font]
-    size = 15
+size = 16.0
+
+[font.offset]
+y = 2
