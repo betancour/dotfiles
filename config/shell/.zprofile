@@ -1,187 +1,153 @@
-# .zprofile
-# =========
-# This file is sourced by login shells after .zshenv but before .zshrc.
-# It should contain commands that should be run once when logging in.
-# This is similar to .bash_profile in bash.
-
-# Only proceed if this is an interactive login shell
+# ~/.zprofile
+# Load only for interactive login shells
 [[ -o login && -o interactive ]] || return
 
-# Source Homebrew environment if available (macOS)
-# =================================================
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # Apple Silicon Homebrew
-    if [[ -x "/opt/homebrew/bin/brew" && ! "$PATH" == */opt/homebrew/bin* ]]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    # Intel Homebrew (fallback)
-    elif [[ -x "/usr/local/bin/brew" && ! "$PATH" == */usr/local/bin* ]]; then
-        eval "$(/usr/local/bin/brew shellenv)"
-    fi
+# ─────────────────────────────
+# OS Detection Helpers
+# ─────────────────────────────
+is_macos() { [[ "$OSTYPE" == darwin* ]]; }
+is_linux() { [[ "$OSTYPE" == linux-gnu* ]]; }
+
+# ─────────────────────────────
+# Homebrew (macOS)
+# ─────────────────────────────
+if is_macos; then
+    for brew_path in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+        if [[ -x "$brew_path" && "$PATH" != *"${brew_path%/bin}"* ]]; then
+            eval "$("$brew_path" shellenv)"
+            break
+        fi
+    done
 fi
 
-# SSH Agent Setup
-# ===============
-# Start SSH agent if not already running and we have SSH keys
-if [[ -z "$SSH_AUTH_SOCK" ]] && [[ -d "$HOME/.ssh" ]]; then
-    # Check if we have any SSH keys
-    if ls "$HOME/.ssh"/id_* >/dev/null 2>&1 || ls "$HOME/.ssh"/*_rsa >/dev/null 2>&1; then
-        # Start ssh-agent and set environment variables
+# ─────────────────────────────
+# SSH Agent
+# ─────────────────────────────
+if [[ -z "$SSH_AUTH_SOCK" && -d "$HOME/.ssh" ]]; then
+    if ls "$HOME/.ssh"/id_* "$HOME/.ssh"/*_rsa >/dev/null 2>&1; then
         eval "$(ssh-agent -s)" >/dev/null 2>&1
-
-        # Add SSH keys to agent
         ssh-add -q "$HOME/.ssh"/id_* "$HOME/.ssh"/*_rsa 2>/dev/null || true
 
-        # Export the agent info for other shells
         if [[ -n "$SSH_AGENT_PID" ]]; then
-            echo "export SSH_AUTH_SOCK='$SSH_AUTH_SOCK'" > "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env"
-            echo "export SSH_AGENT_PID='$SSH_AGENT_PID'" >> "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env"
+            env_file="${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env"
+            {
+                echo "export SSH_AUTH_SOCK='$SSH_AUTH_SOCK'"
+                echo "export SSH_AGENT_PID='$SSH_AGENT_PID'"
+            } > "$env_file"
         fi
     fi
 fi
 
-# GPG Agent Setup
-# ===============
-if command -v gpgconf >/dev/null 2>&1; then
-    # Start GPG agent if not already running
-    if ! pgrep -x -u "${USER}" gpg-agent >/dev/null 2>&1; then
-        gpgconf --launch gpg-agent 2>/dev/null || true
-    fi
-
-    # Set GPG_TTY for proper terminal interaction
+# ─────────────────────────────
+# GPG Agent
+# ─────────────────────────────
+if command -v gpgconf >/dev/null; then
+    pgrep -u "$USER" gpg-agent >/dev/null || gpgconf --launch gpg-agent 2>/dev/null || true
     export GPG_TTY="$(tty)"
 fi
 
-# Java Environment Setup
-# ======================
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS Java setup
-    if [[ -d "/opt/homebrew/opt/openjdk" ]]; then
-        export JAVA_HOME="/opt/homebrew/opt/openjdk"
-    elif [[ -d "/Library/Java/JavaVirtualMachines" ]]; then
-        # Use the latest installed JDK
-        JAVA_HOME="$(/usr/libexec/java_home -v 11+ 2>/dev/null)" && export JAVA_HOME
-    fi
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    # Linux Java setup
-    if [[ -d "/usr/lib/jvm/default-java" ]]; then
-        export JAVA_HOME="/usr/lib/jvm/default-java"
-    elif [[ -d "/usr/lib/jvm/java-11-openjdk" ]]; then
-        export JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
-    fi
+# ─────────────────────────────
+# Java
+# ─────────────────────────────
+if is_macos; then
+    [[ -d "/opt/homebrew/opt/openjdk" ]] && export JAVA_HOME="/opt/homebrew/opt/openjdk"
+    [[ -z "$JAVA_HOME" ]] && JAVA_HOME="$(/usr/libexec/java_home -v 11+ 2>/dev/null)" && export JAVA_HOME
+elif is_linux; then
+    for j in /usr/lib/jvm/default-java /usr/lib/jvm/java-11-openjdk; do
+        [[ -d "$j" ]] && export JAVA_HOME="$j" && break
+    done
 fi
 
-# Python Environment Setup
-# =========================
-# Virtual environment management
-if [[ -f "$HOME/.pyenv/bin/pyenv" ]]; then
+# ─────────────────────────────
+# Language / Toolchains
+# ─────────────────────────────
+
+# Python (pyenv)
+if [[ -x "$HOME/.pyenv/bin/pyenv" ]]; then
     export PYENV_ROOT="$HOME/.pyenv"
-    [[ -d $PYENV_ROOT/bin ]] && PATH="$PYENV_ROOT/bin:$PATH"
+    PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
 fi
 
-# Node.js Environment Setup
-# ==========================
-# Node Version Manager (if installed)
-if [[ -d "$HOME/.nvm" ]]; then
-    export NVM_DIR="$HOME/.nvm"
-    # Don't load nvm here (too slow), just set the directory
-    # It will be loaded on-demand in .zshrc
-fi
+# Node (nvm – lazy load)
+[[ -d "$HOME/.nvm" ]] && export NVM_DIR="$HOME/.nvm"
 
-# Ruby Environment Setup
-# ======================
-# rbenv (Ruby version manager)
+# Ruby (rbenv)
 if [[ -d "$HOME/.rbenv" ]]; then
     PATH="$HOME/.rbenv/bin:$PATH"
     eval "$(rbenv init - --no-rehash)"
 fi
 
-# Rust Environment Setup
-# ======================
-if [[ -f "$HOME/.cargo/env" ]]; then
-    source "$HOME/.cargo/env"
-fi
+# Rust
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
-# Go Environment Setup
-# ====================
-if command -v go >/dev/null 2>&1; then
+# Go
+if command -v go >/dev/null; then
     export GOROOT="$(go env GOROOT)"
-    # GOPATH is already set in .zshenv
 fi
 
-# macOS Specific Login Setup
-# ===========================
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # Set up proper dock and finder behavior for terminal sessions
-    # This ensures GUI applications launched from terminal inherit proper environment
+# ─────────────────────────────
+# Homebrew Tool Overrides
+# ─────────────────────────────
+PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+PATH="/opt/homebrew/lib/ruby/gems/4.0.0/bin:$PATH"
+PATH="/opt/homebrew/opt/node@24/bin:$PATH"
 
-    # Update launchd environment
-    if command -v launchctl >/dev/null 2>&1; then
+# ─────────────────────────────
+# OS-Specific Environment Sync
+# ─────────────────────────────
+
+if is_macos; then
+    if command -v launchctl >/dev/null; then
         launchctl setenv PATH "$PATH" 2>/dev/null || true
         launchctl setenv EDITOR "$EDITOR" 2>/dev/null || true
         launchctl setenv LANG "$LANG" 2>/dev/null || true
     fi
 
-    # Set up proper terminal integration
-    if [[ -n "$TERM_PROGRAM" ]]; then
-        case "$TERM_PROGRAM" in
-            "Apple_Terminal")
-                # Terminal.app specific setup
-                [[ -r "/etc/zshrc_$TERM_PROGRAM" ]] && source "/etc/zshrc_$TERM_PROGRAM"
-                ;;
-            "iTerm.app")
-                # iTerm2 specific setup
-                export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
-                ;;
-        esac
-    fi
-fi
+    case "$TERM_PROGRAM" in
+        Apple_Terminal)
+            [[ -r "/etc/zshrc_Apple_Terminal" ]] && source "/etc/zshrc_Apple_Terminal"
+            ;;
+        iTerm.app)
+            export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
+            ;;
+    esac
 
-# Linux Specific Login Setup
-# ===========================
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    # Setup systemd user environment
-    if command -v systemctl >/dev/null 2>&1 && systemctl --user show-environment >/dev/null 2>&1; then
+elif is_linux; then
+    if command -v systemctl >/dev/null; then
         systemctl --user import-environment PATH EDITOR LANG 2>/dev/null || true
     fi
 
-    # Setup dbus session
-    if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]] && command -v dbus-launch >/dev/null 2>&1; then
+    if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]] && command -v dbus-launch >/dev/null; then
         eval "$(dbus-launch --sh-syntax --exit-with-session)" 2>/dev/null || true
     fi
 fi
 
-# Development Environment Initialization
-# =======================================
-# Initialize development tools that need to run once per login
+# ─────────────────────────────
+# Dev Tools (light init only)
+# ─────────────────────────────
 
-# Docker completion (if installed)
-if [[ -d "/Applications/Docker.app" ]] && [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS Docker Desktop
-    [[ -r "/Applications/Docker.app/Contents/Resources/etc/docker.zsh-completion" ]] && \
-        fpath+="/Applications/Docker.app/Contents/Resources/etc"
+# Docker completion (macOS)
+if is_macos && [[ -d "/Applications/Docker.app" ]]; then
+    docker_comp="/Applications/Docker.app/Contents/Resources/etc"
+    [[ -r "$docker_comp/docker.zsh-completion" ]] && fpath+="$docker_comp"
 fi
 
-# Kubectl completion setup (will be loaded in .zshrc)
-if command -v kubectl >/dev/null 2>&1; then
-    # Just mark that kubectl is available; completion will be set up in .zshrc
-    export _KUBECTL_AVAILABLE=1
-fi
+# Kubectl flag
+command -v kubectl >/dev/null && export _KUBECTL_AVAILABLE=1
 
-# Performance Monitoring
-# ======================
-# Set up any performance monitoring or profiling tools for login shells
-
-# Log login time for performance monitoring (optional)
+# ─────────────────────────────
+# Optional Logging
+# ─────────────────────────────
 if [[ -n "$ZSH_PROFILE_STARTUP" ]]; then
-    echo "$(date): .zprofile completed" >> "${XDG_STATE_HOME:-$HOME/.local/state}/zsh/startup.log"
+    log="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/startup.log"
+    echo "$(date): .zprofile loaded" >> "$log"
 fi
 
-
-
-# Load local profile customizations
-# ==================================
+# ─────────────────────────────
+# Local Overrides
+# ─────────────────────────────
 [[ -r "${ZDOTDIR:-$HOME}/.zprofile.local" ]] && source "${ZDOTDIR:-$HOME}/.zprofile.local"
 
-# Final PATH export after all modifications
+# Final export
 export PATH
