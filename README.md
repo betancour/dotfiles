@@ -2,6 +2,15 @@
 
 Welcome to my dotfiles repository! This collection of configurations is designed to enhance your command-line experience on both **Linux** and **macOS**. Let's make your terminal as awesome as you are!
 
+## Branch Strategy
+
+| Branch | Primary shell | Install command |
+|--------|---------------|-----------------|
+| `main` | Zsh | `make install-zsh` or `./scripts/install.sh zsh` |
+| `bash` | Bash | `make install-bash` or `./scripts/install.sh bash` |
+
+Both branches share the same modular architecture under `config/shell/` and provide feature-equivalent aliases, functions, prompts, and login behavior. Shell-specific differences are isolated to `config/shell/zsh/` and `config/shell/bash/`; shared logic lives in `config/shell/lib/`.
+
 ## 📋 Table of Contents
 
 - [Shell Configuration (ZSH)](#shell-configuration-zsh)
@@ -114,33 +123,25 @@ plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/betancour/dotfiles.git ~/dotfiles
+git clone https://github.com/betancour/dotfiles.git ~/Development/dotfiles
+cd ~/Development/dotfiles
 ```
 
-2. Create symbolic links:
+2. Install shell configuration:
 ```bash
-# ZSH files
-ln -sf ~/dotfiles/.zshrc ~/.zshrc
-ln -sf ~/dotfiles/.zaliases ~/.zaliases
-ln -sf ~/dotfiles/.zshenv ~/.zshenv
-ln -sf ~/dotfiles/.zprofile ~/.zprofile
-ln -sf ~/dotfiles/.zlogin ~/.zlogin
-ln -sf ~/dotfiles/.zlogout ~/.zlogout
+# Zsh (main branch)
+make install-zsh
 
-# Git configuration
-ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
-ln -sf ~/dotfiles/.vimrc ~/.vimrc
+# Bash (bash branch)
+git checkout bash && make install-bash
 
-# Neovim
-ln -sf ~/dotfiles/nvim ~/.config/nvim
-
-# Alacritty
-ln -sf ~/dotfiles/alacritty ~/.config/alacritty
+# Or install both from either branch
+./scripts/install.sh both
 ```
 
 3. Reload your shell:
 ```bash
-source ~/.zshrc
+exec $SHELL -l
 ```
 
 ## 🛠️ Dependencies
