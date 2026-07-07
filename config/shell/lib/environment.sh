@@ -9,8 +9,9 @@ DOTFILES_ENV_LOADED=1
 dotfiles_source_once "${DOTFILES_LIB_DIR}/platform.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/xdg.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
+dotfiles_source_once "${DOTFILES_LIB_DIR}/privacy.sh"
 
-umask 022
+umask 077
 
 # Locale
 export LANG="${LANG:-en_US.UTF-8}"

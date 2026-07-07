@@ -6,6 +6,9 @@
     echo "$(date '+%Y-%m-%d %H:%M:%S'): .zlogout started" >> "${XDG_STATE_HOME:-$HOME/.local/state}/zsh/startup.log"
 }
 
+source "${DOTFILES_LIB_DIR}/history.sh"
+source "${DOTFILES_LIB_DIR}/ssh-agent.sh"
+
 local session_start_time="${ZSH_LOGIN_TIME:-unknown}"
 local session_end_time="$(date '+%Y-%m-%d %H:%M:%S')"
 local session_duration="unknown"
@@ -29,15 +32,25 @@ if [[ "$session_start_time" != unknown ]]; then
     fi
 fi
 
+# Clear secrets and tear down SSH agent in the foreground before exit.
+dotfiles_clear_secret_env
+dotfiles_ssh_agent_teardown
+
+if [[ -f "$HISTFILE" && -s "$HISTFILE" ]]; then
+    local hist_backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+    local backup_file
+    mkdir -p "$hist_backup_dir"
+    chmod 700 "$hist_backup_dir" 2>/dev/null || true
+    backup_file="$hist_backup_dir/history.bak.$(date +%Y%m%d_%H%M%S)"
+    cp "$HISTFILE" "$backup_file" 2>/dev/null && dotfiles_secure_history_backup "$backup_file"
+    ls -t "$hist_backup_dir"/history.bak.* 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null
+fi
+
+# Background cleanup of ephemeral session files.
 (
-    [[ -f "$HISTFILE" && -s "$HISTFILE" ]] && {
-        local hist_backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
-        mkdir -p "$hist_backup_dir"
-        cp "$HISTFILE" "$hist_backup_dir/history.bak.$(date +%Y%m%d_%H%M%S)" 2>/dev/null
-        ls -t "$hist_backup_dir"/history.bak.* 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null
-    }
     [[ -n "${ZSH_SESSION_ID:-}" ]] && find /tmp -name "*${ZSH_SESSION_ID}*" -user "$USER" -delete 2>/dev/null
-    unset AWS_SECRET_ACCESS_KEY GITHUB_TOKEN OPENAI_API_KEY DATABASE_PASSWORD 2>/dev/null
+    [[ -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" ]] && \
+        find "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" -name '*.tmp' -mtime +7 -delete 2>/dev/null
 ) &
 
 if [[ -t 1 && -o interactive ]]; then

@@ -1,4 +1,9 @@
 # .bashrc.local — machine-specific Bash overrides
 # This file is sourced at the end of .bashrc and is not tracked by git.
 
+# Privacy toggles (off by default)
+# export DOTFILES_SHOW_LOGIN_INFO=1
+# export DOTFILES_SHOW_DEV_STATUS=1
+# export DOTFILES_SSH_ADD_CONFIRM=1
+
 # export MY_API_KEY=""

@@ -36,14 +36,22 @@
 # path=("$HOME/local/bin" $path)
 # export PATH
 
+# Privacy toggles
+# ===============
+# Login banner shows hostname, local IP, and system stats when enabled.
+# export DOTFILES_SHOW_LOGIN_INFO=1
+# Git/Docker/Node status block on login when enabled.
+# export DOTFILES_SHOW_DEV_STATUS=1
+# Require per-use SSH key confirmation (shared machines).
+# export DOTFILES_SSH_ADD_CONFIRM=1
+
 # API Keys and Secrets
 # ====================
-# Add API keys and other sensitive information
-# NEVER commit this file to version control if it contains secrets
-# export GITHUB_TOKEN="your_token_here"
-# export OPENAI_API_KEY="your_key_here"
-# export AWS_ACCESS_KEY_ID="your_key_here"
-# export AWS_SECRET_ACCESS_KEY="your_secret_here"
+# Prefer a secrets manager or macOS Keychain over plain env vars.
+# NEVER commit .zshrc.local if it contains secrets.
+# Leading-space prefix keeps commands out of history (HIST_IGNORE_SPACE).
+#  export GITHUB_TOKEN="your_token_here"
+#  export OPENAI_API_KEY="your_key_here"
 
 # Work-specific Configuration
 # ===========================

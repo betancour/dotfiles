@@ -6,6 +6,9 @@ case "$-" in *l*) ;; *) return ;; esac
     echo "$(date '+%Y-%m-%d %H:%M:%S'): .bash_logout started" >> "${XDG_STATE_HOME:-$HOME/.local/state}/bash/startup.log"
 }
 
+source "${DOTFILES_LIB_DIR}/history.sh"
+source "${DOTFILES_LIB_DIR}/ssh-agent.sh"
+
 session_start_time="${BASH_LOGIN_TIME:-unknown}"
 session_end_time="$(date '+%Y-%m-%d %H:%M:%S')"
 session_duration="unknown"
@@ -33,15 +36,20 @@ if [[ "$session_start_time" != unknown ]]; then
     fi
 fi
 
+dotfiles_clear_secret_env
+dotfiles_ssh_agent_teardown
+
+if [[ -f "$HISTFILE" && -s "$HISTFILE" ]]; then
+    hist_backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/bash"
+    backup_file="$hist_backup_dir/history.bak.$(date +%Y%m%d_%H%M%S)"
+    mkdir -p "$hist_backup_dir"
+    chmod 700 "$hist_backup_dir" 2>/dev/null || true
+    cp "$HISTFILE" "$backup_file" 2>/dev/null && dotfiles_secure_history_backup "$backup_file"
+    ls -t "$hist_backup_dir"/history.bak.* 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null
+fi
+
 (
-    [[ -f "$HISTFILE" && -s "$HISTFILE" ]] && {
-        local hist_backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/bash"
-        mkdir -p "$hist_backup_dir"
-        cp "$HISTFILE" "$hist_backup_dir/history.bak.$(date +%Y%m%d_%H%M%S)" 2>/dev/null
-        ls -t "$hist_backup_dir"/history.bak.* 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null
-    }
     [[ -n "${BASH_SESSION_ID:-}" ]] && find /tmp -name "*${BASH_SESSION_ID}*" -user "$USER" -delete 2>/dev/null
-    unset AWS_SECRET_ACCESS_KEY GITHUB_TOKEN OPENAI_API_KEY DATABASE_PASSWORD 2>/dev/null
 ) &
 
 if [[ -t 1 ]]; then

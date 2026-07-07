@@ -115,8 +115,8 @@ pstree() {
 
 myip() {
     local ip service
-    for service in ifconfig.me icanhazip.com ipecho.net/plain ifconfig.co; do
-        ip=$(curl -s --max-time 5 "$service" 2>/dev/null)
+    for service in https://ifconfig.me https://icanhazip.com https://ipecho.net/plain https://ifconfig.co; do
+        ip=$(curl -fsS --proto '=https' --tlsv1.2 --max-time 5 "$service" 2>/dev/null)
         [[ -n "$ip" ]] && { echo "External IP: $ip"; return 0; }
     done
     echo "Unable to determine external IP"
@@ -190,17 +190,23 @@ count() {
     done
 }
 
+_sed_escape() {
+    printf '%s' "$1" | sed 's/[][\/$.^*+?()|{}\\&]/\\&/g'
+}
+
 replace() {
     [[ $# -lt 3 ]] && { echo "Usage: replace <search> <replace> <file...>"; return 1; }
-    local search="$1" repl="$2"
+    local search="$1" repl="$2" escaped_search escaped_repl
     shift 2
+    escaped_search="$(_sed_escape "$search")"
+    escaped_repl="$(_sed_escape "$repl")"
     local file
     for file in "$@"; do
         [[ ! -f "$file" ]] && { echo "Error: '$file' is not a valid file"; continue; }
         if [[ "${OSTYPE:-}" == darwin* ]]; then
-            sed -i '' "s/$search/$repl/g" "$file"
+            sed -i '' "s/${escaped_search}/${escaped_repl}/g" "$file"
         else
-            sed -i.bak "s/$search/$repl/g" "$file"
+            sed -i.bak "s/${escaped_search}/${escaped_repl}/g" "$file"
         fi
         echo "Replaced in: $file"
     done
@@ -209,8 +215,13 @@ replace() {
 weather() {
     local location=${1:-""}
     command -v curl >/dev/null 2>&1 \
-        && curl -s "wttr.in/${location}?format=%C+%t+%h+%w" && echo \
+        && curl -fsS --proto '=https' --tlsv1.2 --max-time 10 \
+            "https://wttr.in/${location}?format=%C+%t+%h+%w" && echo \
         || { echo "curl not found"; return 1; }
+}
+
+password() {
+    genpass "${1:-32}"
 }
 
 genpass() {
@@ -296,7 +307,7 @@ Network:    myip, localip, pingtest
 Git:        gitclean, gitcp, gitbr, gitlog
 Docker:     dpshow, dclean
 Text:       count, replace
-Utilities:  weather, genpass, urlencode, urldecode
+Utilities:  weather, password, genpass, urlencode, urldecode
 Performance: topcpu, topmem, timeit
 
 Use 'help' to show this message again.

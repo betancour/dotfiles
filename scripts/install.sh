@@ -122,7 +122,15 @@ main() {
         *) error "Unknown shell type: ${SHELL_TYPE}"; usage; exit 1 ;;
     esac
 
-    [[ -f "${DOTFILES_DIR}/.gitconfig" ]] && backup_and_link "${DOTFILES_DIR}/.gitconfig" "${HOME}/.gitconfig"
+    if [[ -f "${DOTFILES_DIR}/.gitconfig" ]]; then
+        backup_and_link "${DOTFILES_DIR}/.gitconfig" "${HOME}/.gitconfig"
+        local gitconfig_local_template="${DOTFILES_DIR}/.gitconfig.local.template"
+        if [[ -f "$gitconfig_local_template" && ! -f "${HOME}/.gitconfig.local" ]]; then
+            cp "$gitconfig_local_template" "${HOME}/.gitconfig.local"
+            chmod 600 "${HOME}/.gitconfig.local"
+            success "Created ~/.gitconfig.local from template — edit with your name and email"
+        fi
+    fi
 
     [[ -d "$BACKUP_DIR" ]] && warn "Previous files backed up to: $BACKUP_DIR"
     success "Installation complete. Restart your shell or run: exec \$SHELL -l"

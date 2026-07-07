@@ -12,6 +12,8 @@ fi
 DOTFILES_LOGIN_COMMON_LOADED=1
 
 source "${DOTFILES_LIB_DIR}/platform.sh"
+source "${DOTFILES_LIB_DIR}/privacy.sh"
+source "${DOTFILES_LIB_DIR}/ssh-agent.sh"
 
 # Terminal width for formatting
 _dotfiles_login_width() {
@@ -196,11 +198,7 @@ dotfiles_check_updates() {
 }
 
 dotfiles_setup_ssh_agent() {
-    if [[ -z "${SSH_AUTH_SOCK:-}" && -f "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env" ]]; then
-        # shellcheck source=/dev/null
-        source "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env" 2>/dev/null
-        ssh-add -l >/dev/null 2>&1 || unset SSH_AUTH_SOCK SSH_AGENT_PID
-    fi
+    dotfiles_ssh_agent_setup
 }
 
 dotfiles_show_random_tip() {

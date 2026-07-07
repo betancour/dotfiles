@@ -96,7 +96,7 @@ fi
 
 # General utilities
 alias python='python3'
-alias password='openssl rand -base64 32'
+
 alias cls='clear'
 alias reload="exec ${SHELL:-$0} -l"
 alias x='exit'

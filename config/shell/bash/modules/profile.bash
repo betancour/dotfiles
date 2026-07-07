@@ -13,18 +13,8 @@ if is_macos; then
     done
 fi
 
-if [[ -z "${SSH_AUTH_SOCK:-}" && -d "$HOME/.ssh" ]]; then
-    if ls "$HOME/.ssh"/id_* "$HOME/.ssh"/*_rsa >/dev/null 2>&1; then
-        eval "$(ssh-agent -s)" >/dev/null 2>&1
-        ssh-add -q "$HOME/.ssh"/id_* "$HOME/.ssh"/*_rsa 2>/dev/null || true
-        if [[ -n "${SSH_AGENT_PID:-}" ]]; then
-            {
-                echo "export SSH_AUTH_SOCK='$SSH_AUTH_SOCK'"
-                echo "export SSH_AGENT_PID='$SSH_AGENT_PID'"
-            } > "${XDG_RUNTIME_DIR:-/tmp}/ssh-agent.env"
-        fi
-    fi
-fi
+source "${DOTFILES_LIB_DIR}/ssh-agent.sh"
+dotfiles_ssh_agent_start
 
 if command -v gpgconf >/dev/null 2>&1; then
     pgrep -u "$USER" gpg-agent >/dev/null || gpgconf --launch gpg-agent 2>/dev/null || true
