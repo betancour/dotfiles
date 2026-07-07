@@ -6,7 +6,7 @@
     echo "$(date '+%Y-%m-%d %H:%M:%S'): .zlogin started" >> "${XDG_STATE_HOME:-$HOME/.local/state}/zsh/startup.log"
 }
 
-source "${DOTFILES_LIB_DIR}/login-common.sh"
+dotfiles_source_once "${DOTFILES_LIB_DIR}/login-common.sh"
 
 if [[ -t 1 && "$SHLVL" -eq 1 ]]; then
     dotfiles_show_system_info

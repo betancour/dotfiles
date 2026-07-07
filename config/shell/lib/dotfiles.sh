@@ -30,7 +30,12 @@ dotfiles_source_once() {
         return 1
     fi
 
-    # shellcheck disable=SC2163
-    export "$marker=1"
+    # Shell-local marker only — never export (functions don't inherit across shells).
+    if [[ -n "${ZSH_VERSION:-}" ]]; then
+        typeset -g "${marker}=1"
+    else
+        # shellcheck disable=SC2163
+        declare -g "${marker}=1"
+    fi
     source "$module"
 }

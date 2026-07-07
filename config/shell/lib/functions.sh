@@ -1,7 +1,12 @@
 # functions.sh — shared shell functions (POSIX/bash-compatible)
 
-[[ -n "${DOTFILES_FUNCTIONS_LOADED:-}" ]] && return
-export DOTFILES_FUNCTIONS_LOADED=1
+if [[ -n "${DOTFILES_FUNCTIONS_LOADED:-}" ]]; then
+    if typeset -f help >/dev/null 2>&1 || declare -f help >/dev/null 2>&1; then
+        return 0
+    fi
+    unset DOTFILES_FUNCTIONS_LOADED
+fi
+DOTFILES_FUNCTIONS_LOADED=1
 
 # Editor shortcut
 if command -v nvim >/dev/null 2>&1; then

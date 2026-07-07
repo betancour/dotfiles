@@ -1,7 +1,15 @@
 # login-common.sh — shared login shell routines (POSIX-compatible)
 
-[[ -n "${DOTFILES_LOGIN_COMMON_LOADED:-}" ]] && return
-export DOTFILES_LOGIN_COMMON_LOADED=1
+# Guard against double-source within a shell. If the marker was inherited from a
+# parent environment (exported by an older config), functions won't exist — reload.
+if [[ -n "${DOTFILES_LOGIN_COMMON_LOADED:-}" ]]; then
+    if typeset -f dotfiles_show_system_info >/dev/null 2>&1 \
+        || declare -f dotfiles_show_system_info >/dev/null 2>&1; then
+        return 0
+    fi
+    unset DOTFILES_LOGIN_COMMON_LOADED
+fi
+DOTFILES_LOGIN_COMMON_LOADED=1
 
 source "${DOTFILES_LIB_DIR}/platform.sh"
 
