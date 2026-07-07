@@ -1,57 +1,62 @@
-.PHONY: help install clean lint validate format
-
-# Makefile for Dotfiles Management
-# Senior DevOps Engineer Standards
+.PHONY: help install install-zsh install-bash clean validate validate-zsh validate-bash lint
 
 SHELL := /bin/bash
 .SHELLFLAGS := -o pipefail -c
 MAKEFLAGS += --warn-undefined-variables
-MAKEFLAGS += --no-builtin-rules
 
-# Variables
 DOTFILES_HOME ?= $(shell pwd)
-CONFIG_DIR := $(DOTFILES_HOME)/config
-DOCS_DIR := $(DOTFILES_HOME)/docs
-STORAGE_DIR := $(DOTFILES_HOME)/storage
+SHELL_CONFIG  := $(DOTFILES_HOME)/config/shell
+SCRIPTS_DIR   := $(DOTFILES_HOME)/scripts
 
-# Default target
 help:
-	@echo "Dotfiles Management - Available Targets:"
-	@echo "  make install      - Install/link dotfiles"
-	@echo "  make clean        - Remove broken symlinks"
-	@echo "  make validate     - Validate configuration syntax"
-	@echo "  make lint         - Check for configuration issues"
-	@echo "  make format       - Format configuration files"
-	@echo "  make help         - Show this help message"
+	@echo "Dotfiles Management"
+	@echo "  make install       - Install shell config (auto-detect)"
+	@echo "  make install-zsh   - Install Zsh configuration"
+	@echo "  make install-bash  - Install Bash configuration"
+	@echo "  make validate      - Syntax-check all shell configs"
+	@echo "  make validate-zsh  - Syntax-check Zsh configs"
+	@echo "  make validate-bash - Syntax-check Bash configs"
+	@echo "  make clean         - Remove broken symlinks in HOME"
+	@echo "  make lint          - Run shellcheck on shell modules"
 
-# Install dotfiles
 install:
-	@echo "Installing dotfiles from $(CONFIG_DIR)..."
-	@echo "✓ Configuration structure verified"
+	@bash "$(SCRIPTS_DIR)/install.sh" auto
 
-# Clean up
+install-zsh:
+	@bash "$(SCRIPTS_DIR)/install.sh" zsh
+
+install-bash:
+	@bash "$(SCRIPTS_DIR)/install.sh" bash
+
 clean:
-	@echo "Cleaning up broken symlinks..."
-	@find $(HOME) -xtype l -delete 2>/dev/null || true
-	@echo "✓ Cleanup complete"
+	@find "$(HOME)" -maxdepth 1 -xtype l -delete 2>/dev/null || true
+	@echo "Removed broken symlinks in HOME"
 
-# Validate configurations
-validate:
-	@echo "Validating configuration files..."
-	@echo "✓ Shell configs present"
-	@echo "✓ Terminal configs present"
-	@echo "✓ Editor configs present"
+validate: validate-zsh validate-bash
 
-# Lint
+validate-zsh:
+	@echo "Validating Zsh configuration..."
+	@zsh -n "$(SHELL_CONFIG)/zsh/.zshenv"
+	@zsh -n "$(SHELL_CONFIG)/zsh/.zprofile"
+	@zsh -n "$(SHELL_CONFIG)/zsh/.zshrc"
+	@zsh -n "$(SHELL_CONFIG)/zsh/.zlogin"
+	@zsh -n "$(SHELL_CONFIG)/zsh/.zlogout"
+	@zsh -n "$(SHELL_CONFIG)/.zaliases"
+	@zsh -n "$(SHELL_CONFIG)/.zfunctions"
+	@echo "Zsh syntax OK"
+
+validate-bash:
+	@echo "Validating Bash configuration..."
+	@bash -n "$(SHELL_CONFIG)/bash/.bash_env"
+	@bash -n "$(SHELL_CONFIG)/bash/.bash_profile"
+	@bash -n "$(SHELL_CONFIG)/bash/.bashrc"
+	@bash -n "$(SHELL_CONFIG)/bash/.bash_login"
+	@bash -n "$(SHELL_CONFIG)/bash/.bash_logout"
+	@echo "Bash syntax OK"
+
 lint:
-	@echo "Linting configuration files..."
-	@echo "✓ No critical issues found"
-
-# Format
-format:
-	@echo "Formatting configuration files..."
-	@echo "✓ Formatting complete"
-
-# Version info
-version:
-	@echo "Dotfiles Repository v1.0.0"
+	@if command -v shellcheck >/dev/null 2>&1; then \
+		shellcheck -x "$(SHELL_CONFIG)/lib/"*.sh "$(SHELL_CONFIG)/bash/modules/"*.bash; \
+	else \
+		echo "shellcheck not installed — skipping"; \
+	fi
