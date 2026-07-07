@@ -1,0 +1,35 @@
+# Sabre GDS Terminal Theme for Alacritty
+# Inspired by vintage airline reservation terminals (IBM 3270 / Unisys / DEC VT220)
+
+[colors.primary]
+  background = "#000000"
+  foreground = "#00FF66"
+
+[colors.cursor]
+  text = "#000000"
+  cursor = "#00FF66"
+
+[colors.selection]
+  text = "#000000"
+  background = "#00FF66"
+
+[colors.normal]
+  black   = "#000000"
+  red     = "#009933"
+  green   = "#00FF66"
+  yellow  = "#66FF66"
+  blue    = "#00CC99"
+  magenta = "#00FFCC"
+  cyan    = "#33FF99"
+  white   = "#CCFFCC"
+
+[colors.bright]
+  black   = "#003300"
+  red     = "#00CC66"
+  green   = "#33FF99"
+  yellow  = "#99FF99"
+  blue    = "#00FFCC"
+  magenta = "#00FFFF"
+  cyan    = "#66FF99"
+  white   = "#FFFFFF"
+

@@ -1,0 +1,4 @@
+[font]
+normal = { family = "Cascadia Code NF", style = "Light" }
+bold = { family = "Cascadia Code NF", style = "Light Italic" }
+italic = { family = "Cascadia Code NF", style = "Bold" }

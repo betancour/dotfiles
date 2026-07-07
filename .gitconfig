@@ -1,11 +1,11 @@
 [user]
     name = Your Name
-    email = you@example.com 
+    email = you@example.com
     username = your-github-username
 [core]
     editor = vim
     whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
-    excludefiles = ~/.gitignore
+    excludesfile = ~/.gitignore
 [color]
     ui = auto
 [diff]

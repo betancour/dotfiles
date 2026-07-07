@@ -1,0 +1,3 @@
+# Legacy entry point — sources shared functions module
+source "${${(%):-%x}:A:h}/lib/dotfiles.sh"
+dotfiles_source_once "${DOTFILES_LIB_DIR}/functions.sh"

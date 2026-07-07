@@ -1,0 +1,8 @@
+# .bash_env — environment for all bash sessions
+source "${BASH_SOURCE[0]%/*}/../lib/dotfiles.sh"
+dotfiles_source_once "${DOTFILES_LIB_DIR}/environment.sh"
+
+export HISTFILE="${XDG_STATE_HOME}/bash/history"
+[[ -d "${XDG_STATE_HOME}/bash" ]] || mkdir -p "${XDG_STATE_HOME}/bash"
+
+[[ -r "$HOME/.bash_env.local" ]] && source "$HOME/.bash_env.local"

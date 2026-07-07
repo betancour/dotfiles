@@ -1,149 +1,195 @@
 # Dotfiles 🖥️✨
 
-Welcome to my comprehensive dotfiles repository! This collection of configurations is designed to enhance your command-line experience on both **Linux** and **macOS** with professional-grade **Bash** and **ZSH** configurations.
+Welcome to my dotfiles repository! This collection of configurations is designed to enhance your command-line experience on both **Linux** and **macOS**. Let's make your terminal as awesome as you are!
+
+## Branch Strategy
+
+| Branch | Primary shell | Install command |
+|--------|---------------|-----------------|
+| `main` | Zsh | `make install-zsh` or `./scripts/install.sh zsh` |
+| `bash` | Bash | `make install-bash` or `./scripts/install.sh bash` |
+
+Both branches share the same modular architecture under `config/shell/` and provide feature-equivalent aliases, functions, prompts, and login behavior. Shell-specific differences are isolated to `config/shell/zsh/` and `config/shell/bash/`; shared logic lives in `config/shell/lib/`.
 
 ## 📋 Table of Contents
 
-- [Shell Configurations](#shell-configurations)
-  - [Bash Configuration](#bash-configuration-recommended)
-  - [ZSH Configuration](#zsh-configuration)
+- [Shell Configuration (ZSH)](#shell-configuration-zsh)
+- [ZSH Configuration Files](#zsh-configuration-files)
+- [Neovim Setup](#neovim-setup)
+- [Alacritty Terminal](#alacritty-terminal)
+- [Git Configuration](#git-configuration)
 - [Installation](#installation)
-- [Configuration Files](#configuration-files)
 - [Dependencies](#dependencies)
 - [Customization](#customization)
 - [Performance Features](#performance-features)
-- [Documentation](#documentation)
 
-## 🐚 Shell Configurations
+## 🐚 Shell Configuration (ZSH)
 
-This repository provides two complete, professional shell configurations:
+This setup includes a comprehensive, professional-grade ZSH configuration with:
 
-### Bash Configuration (Recommended)
-A comprehensive, modern Bash setup with enterprise-grade features:
-
-- **Complete initialization chain**: `.bash_env`, `.bash_profile`, `.bashrc`, `.bash_logout`
-- **Smart prompt with Git integration**: Real-time branch status and command timing
+- **Complete initialization chain**: Proper `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, `.zlogout` setup
+- **Custom prompt with Git integration**: Real-time Git status with clean/dirty indicators
 - **Extensive aliases with fallbacks**: Modern CLI tools with graceful degradation
-- **50+ custom functions**: Enhanced productivity utilities (`help` command to see all)
+- **50+ custom functions**: Enhanced productivity with built-in utilities
 - **Performance optimizations**: Fast startup, lazy loading, efficient completion
 - **Cross-platform support**: Works seamlessly on macOS and Linux
 - **XDG Base Directory compliance**: Clean, organized configuration
 - **Security features**: Proper agent management and cleanup
 
+### ZSH Configuration Files
+
+This dotfiles repository includes a complete set of ZSH initialization files following best practices:
+
+#### Core Files
+- **`.zshenv`** - Environment variables and PATH (always loaded)
+- **`.zprofile`** - Login shell initialization and tool setup
+- **`.zshrc`** - Interactive shell configuration and user experience
+- **`.zlogin`** - Post-interactive setup and welcome messages
+- **`.zlogout`** - Session cleanup and farewell
+- **`.zaliases`** - Smart aliases with fallbacks for missing tools
+- **`.zfunctions`** - 50+ custom utility functions
+
 #### Key Features
-- **Smart Tool Detection**: All aliases work even without modern CLI tools installed
-- **Session Management**: Comprehensive login/logout with system information and cleanup
-- **Development Integration**: Git, Docker, Kubernetes, Node.js, Python, Ruby, Rust, Go support
-- **Performance Monitoring**: Optional startup profiling and command timing
+- **Smart Tool Detection**: Aliases work even without modern CLI tools installed
+- **Lazy Loading**: Heavy tools like NVM load on-demand for faster startup
+- **Session Management**: Comprehensive login/logout with system information
+- **Development Integration**: Git, Docker, Node.js, Python, Ruby, Rust, Go support
+- **Performance Monitoring**: Optional startup profiling and optimization
 - **Local Customization**: Template for machine-specific settings
 
-### ZSH Configuration
-A feature-rich ZSH setup with advanced shell capabilities:
+## 🎨 Neovim Setup
 
-- **Complete ZSH initialization files**: `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, `.zlogout`
-- **Oh My Zsh integration** with fallback support
-- **Advanced prompt** with VCS integration
-- **Plugin support**: autosuggestions, syntax highlighting
-- **Enhanced completion system**
-- **50+ utility functions**
+Modern Neovim configuration with:
+- Plugin management with Packer
+- LSP support with Mason
+- Treesitter for syntax highlighting
+- Telescope for fuzzy finding
+- Rose Pine color scheme
+
+## 🖥️ Alacritty Terminal
+
+Customized Alacritty configuration with:
+- Modular configuration files
+- Custom themes and fonts
+- Optimized for development workflow
+
+## 🔧 Git Configuration
+
+Comprehensive Git setup with:
+- Custom aliases and colors
+- Git LFS support
+- Optimized diff and merge tools
 
 ## 📦 Installation
 
-### Quick Start (Bash - Recommended)
-```bash
-# Clone the repository
-git clone https://github.com/betancour/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-
-# Install Bash configuration
-./install_bash.sh
-```
-
-### Quick Start (ZSH)
-```bash
-# Clone the repository
-git clone https://github.com/betancour/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-
-# Install ZSH configuration (fix ZSH issues first if needed)
-./install.sh
-```
-
 ### Prerequisites
 
-Install modern CLI tools for the best experience:
+Install required tools for the best experience:
 
 **macOS (using Homebrew):**
 ```bash
-brew install eza bat ripgrep fzf fd zoxide neovim git-lfs bash-completion
+brew install eza bat ripgrep fzf fd zoxide neovim git-lfs
 ```
 
 **Linux (Ubuntu/Debian):**
 ```bash
 sudo apt update
-sudo apt install bat ripgrep fzf fd-find zoxide neovim git-lfs bash-completion
+sudo apt install bat ripgrep fzf fd-find zoxide neovim git-lfs
 # Note: On Ubuntu, 'bat' might be installed as 'batcat'
 ```
 
-## 📁 Configuration Files
+### ZSH Plugins Setup
 
-### Bash Files
-- **`.bash_env`** - Environment variables and PATH (sourced by all)
-- **`.bash_profile`** - Login shell initialization and tool setup
-- **`.bashrc`** - Interactive shell configuration and user experience
-- **`.bash_logout`** - Session cleanup and farewell
-- **`.bash_aliases`** - Smart aliases with fallbacks for missing tools
-- **`.bash_functions`** - 50+ custom utility functions
+1. Install Oh My Zsh (optional but recommended):
+```bash
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
 
-### ZSH Files
-- **`.zshenv`** - Environment variables and PATH (always loaded)
-- **`.zprofile`** - Login shell initialization
-- **`.zshrc`** - Interactive shell configuration
-- **`.zlogin`** - Post-interactive setup and welcome messages
-- **`.zlogout`** - Session cleanup and farewell
-- **`.zaliases`** - Smart aliases with fallbacks
-- **`.zfunctions`** - 50+ custom utility functions
+2. Install ZSH plugins:
+```bash
+# zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
-### Shared Files
-- **`.gitconfig`** - Git configuration with aliases and colors
-- **`.gitignore`** - Global gitignore patterns
-- **`.vimrc`** - Vim configuration
+# zsh-syntax-highlighting  
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+```
+
+3. The plugins are already configured in `.zshrc`:
+```bash
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+```
+
+### Dotfiles Installation
+
+1. Clone this repository:
+```bash
+git clone https://github.com/betancour/dotfiles.git ~/Development/dotfiles
+cd ~/Development/dotfiles
+```
+
+2. Install shell configuration:
+```bash
+# Zsh (main branch)
+make install-zsh
+
+# Bash (bash branch)
+git checkout bash && make install-bash
+
+# Or install both from either branch
+./scripts/install.sh both
+```
+
+3. Reload your shell:
+```bash
+exec $SHELL -l
+```
 
 ## 🛠️ Dependencies
 
 ### Core Tools
-- **bash** or **zsh**: The shell
+- **zsh**: The Z shell
 - **git**: Version control
-- **curl**: For web requests and installations
+- **neovim**: Modern Vim-based editor
 
-### Enhanced CLI Tools (Optional but Recommended)
+### Enhanced CLI Tools
 - **eza**: Modern replacement for `ls`
 - **bat**: Cat with syntax highlighting
-- **ripgrep (rg)**: Fast text search
+- **ripgrep**: Fast text search
 - **fzf**: Fuzzy finder
 - **fd**: Fast alternative to `find`
 - **zoxide**: Smart directory jumping
-- **neovim**: Modern Vim-based editor
 
-### Development Tools (Optional)
+### Optional Tools
 - **lazygit**: Terminal UI for Git
 - **lazydocker**: Terminal UI for Docker
-- **docker**: Container management
-- **kubectl**: Kubernetes management
+- **zellij**: Terminal multiplexer
+
+## 🎯 Usage Tips
+
+### Directory Navigation
+- Use `z <dirname>` to jump to frequently used directories
+- Use `..`, `...`, `....` for quick parent directory navigation
+- Use `lt` for tree view with Git status
+
+### File Operations
+- Use `ls`, `ll`, `la` for enhanced file listing
+- Use `cat` for syntax-highlighted file viewing
+- Use `ff` for fuzzy file finding with preview
+
+### Git Workflow
+- Use `g` as shorthand for `git`
+- Use `gcm "message"` for quick commits
+- Use `lzg` for LazyGit interface
+
+### Editor
+- Use `n` to open Neovim in current directory or with files
+- Use `vi` (aliased to `nvim`) for quick edits
 
 ## 🎨 Customization
 
 ### Machine-Specific Settings
 Create local customizations without modifying the main dotfiles:
 
-**For Bash:**
-```bash
-# Copy the template and customize
-cp .bashrc.local.template ~/.bashrc.local
-# Edit for your specific needs
-```
-
-**For ZSH:**
 ```bash
 # Copy the template and customize
 cp .zshrc.local.template ~/.zshrc.local
@@ -159,12 +205,12 @@ cp .zshrc.local.template ~/.zshrc.local
 
 ### Custom Functions
 Type `help` in your shell to see all available custom functions:
-- **Directory operations**: `mkcd`, `up`, `extract`
-- **File utilities**: `backup`, `fsize`, `findfile`
-- **System information**: `sysinfo`, `myip`, `localip`
-- **Development tools**: `gitcp`, `dps`, `mkproject`
-- **Text processing**: `count`, `replace`
-- **Utilities**: `weather`, `genpass`, `urlencode/decode`
+- Directory operations (`mkcd`, `up`, `extract`)
+- File utilities (`backup`, `fsize`)
+- System information (`sysinfo`, `myip`)
+- Development tools (`gitcp`, `dps`)
+- Text processing (`count`, `replace`)
+- Utilities (`weather`, `genpass`)
 
 ## 🚀 Performance Features
 
@@ -176,15 +222,8 @@ Type `help` in your shell to see all available custom functions:
 
 ### Monitoring
 Enable startup profiling:
-
-**Bash:**
 ```bash
-BASH_PROFILE_STARTUP=1 bash -l
-```
-
-**ZSH:**
-```bash
-ZSH_PROFILE_STARTUP=1 zsh -l
+ZSH_PROFILE_STARTUP=1 zsh
 ```
 
 ### Session Management
@@ -195,54 +234,58 @@ ZSH_PROFILE_STARTUP=1 zsh -l
 
 ## 📚 Documentation
 
-- **[BASH_CONFIG.md](BASH_CONFIG.md)** - Comprehensive Bash configuration guide
 - **[ZSH_CONFIG.md](ZSH_CONFIG.md)** - Comprehensive ZSH configuration guide
-- **Local templates** - Examples for machine-specific customizations
+- **[.zshrc.local.template](.zshrc.local.template)** - Local customization examples
 - Individual file headers contain detailed documentation
-
-## 🔧 Usage Tips
-
-### Directory Navigation
-- Use `z <dirname>` to jump to frequently used directories (if zoxide installed)
-- Use `..`, `...`, `....` for quick parent directory navigation
-- Use `lt` for tree view with Git status
-
-### File Operations
-- Use `ls`, `ll`, `la` for enhanced file listing
-- Use `cat` for syntax-highlighted file viewing (if bat installed)
-- Use `fzf_preview` for fuzzy file finding with preview
-
-### Git Workflow
-- Use `g` as shorthand for `git`
-- Use `gcm "message"` for quick commits
-- Use `lzg` for LazyGit interface (if installed)
-
-### Development
-- Use `mkproject <name>` to create new projects with git initialization
-- Use `dps` to see Docker container status
-- Use `k` for kubectl shortcuts
 
 ## 🔧 Troubleshooting
 
 ### Common Issues
-- **Slow startup**: Use profiling to identify bottlenecks
+- **Slow startup**: Use `ZSH_PROFILE_STARTUP=1` to identify bottlenecks
 - **Missing tools**: All aliases have fallbacks to standard UNIX tools
-- **Path issues**: Check `.bash_env` or `.zshenv` for PATH configuration
+- **Path issues**: Check `.zshenv` for PATH configuration
 
 ### Reset Configuration
 ```bash
 # Backup and reset if needed
-mv ~/.bashrc ~/.bashrc.backup
-mv ~/.bash_profile ~/.bash_profile.backup
-# Or for ZSH
 mv ~/.zshrc ~/.zshrc.backup
-./install_bash.sh  # or ./install.sh for ZSH
+./install.sh
 ```
 
-### Shell-Specific Issues
-- **Bash**: Check syntax with `bash -n <file>`
-- **ZSH**: Check syntax with `zsh -n <file>`
-- **Function conflicts**: See function help with `help` command
+## 📜 Scripts
+
+The `scripts/` directory contains utility scripts for system management:
+
+### Zellij Session Management
+- **`cleanup-zellij.sh`** - Interactive script for managing Zellij sessions
+
+#### Installation
+Make scripts executable and accessible:
+```bash
+# Make script executable
+chmod +x ~/dotfiles/scripts/cleanup-zellij.sh
+
+# Optional: Add scripts directory to PATH in .zshrc.local
+echo 'export PATH="$HOME/dotfiles/scripts:$PATH"' >> ~/.zshrc.local
+```
+
+#### Usage
+```bash
+# Clean up exited sessions (recommended alias: zclean)
+~/dotfiles/scripts/cleanup-zellij.sh --clean
+
+# List all sessions
+~/dotfiles/scripts/cleanup-zellij.sh --list
+
+# Interactive cleanup mode
+~/dotfiles/scripts/cleanup-zellij.sh --interactive
+
+# Clean sessions older than N days
+~/dotfiles/scripts/cleanup-zellij.sh --old 7 --clean
+
+# See all options
+~/dotfiles/scripts/cleanup-zellij.sh --help
+```
 
 ## 🤝 Contributing
 
@@ -251,24 +294,3 @@ Feel free to fork this repository and customize it for your needs. If you find i
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
-
-## 🌟 Features Comparison
-
-| Feature | Bash Config | ZSH Config |
-|---------|-------------|------------|
-| **Startup Files** | 4 main files | 5 main files |
-| **Plugin System** | Manual/bash-completion | Oh My Zsh integration |
-| **Prompt** | Git integration + timing | Advanced VCS integration |
-| **Completion** | bash-completion system | Advanced built-in system |
-| **Performance** | Fast, optimized | Fast with more features |
-| **Compatibility** | Universal | Modern systems |
-| **Learning Curve** | Gentle | Moderate |
-
-## 🎯 Recommendations
-
-- **New users**: Start with **Bash configuration** - it's more universally compatible
-- **Power users**: Try **ZSH configuration** for advanced features
-- **Servers**: Use **Bash configuration** for better compatibility
-- **Development**: Either works great, choose based on preference
-
-Both configurations provide enterprise-grade functionality with excellent performance and cross-platform compatibility!

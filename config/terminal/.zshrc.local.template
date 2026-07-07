@@ -1,8 +1,8 @@
-# .bashrc.local.template
-# ======================
-# Template file for local Bash customizations
-# Copy this file to .bashrc.local and customize as needed
-# This file is sourced at the end of .bashrc and allows for
+# .zshrc.local.template
+# =====================
+# Template file for local ZSH customizations
+# Copy this file to .zshrc.local and customize as needed
+# This file is sourced at the end of .zshrc and allows for
 # machine-specific or personal customizations without modifying
 # the main dotfiles.
 
@@ -33,7 +33,8 @@
 # Local PATH Additions
 # ====================
 # Add local directories to PATH
-# export PATH="$HOME/local/bin:$PATH"
+# path=("$HOME/local/bin" $path)
+# export PATH
 
 # API Keys and Secrets
 # ====================
@@ -61,27 +62,26 @@
 # Local Prompt Customization
 # ===========================
 # Override prompt colors or format if needed
-# You can modify the color variables used in .bashrc
-# Example:
-# if [[ "$color_prompt" == "yes" ]]; then
-#     PS1='\[\033[1;31m\]\u@\h\[\033[0m\] \[\033[1;34m\][\w]\[\033[0m\]$(__git_prompt) \[\033[1;33m\][\D{%H:%M:%S}]\[\033[0m\]\n\[\033[1;36m\]❯\[\033[0m\] '
-# fi
+# user_color="%F{red}"    # Change user color to red
+# path_color="%F{yellow}" # Change path color to yellow
+# PROMPT='${user_color}%n${reset} ${path_color}[%2~]${reset}$(vcs_prompt) ❯ '
 
 # Completion Customizations
 # ==========================
 # Add custom completion rules
-# complete -F _git gitcp gitbr gitlog
+# zstyle ':completion:*:*:mycommand:*' file-patterns '*.txt:text-files'
 
 # Key Bindings
 # ============
 # Custom key bindings
-# bind '"\C-g": "\C-a\C-kgit status\C-m"'  # Ctrl+G for git status
+# bindkey '^[[1;5C' forward-word    # Ctrl+Right Arrow
+# bindkey '^[[1;5D' backward-word   # Ctrl+Left Arrow
 
 # Plugin Configuration
 # ====================
-# Configure shell behavior with local settings
-# HISTSIZE=100000
-# HISTFILESIZE=100000
+# Configure plugins with local settings
+# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=cyan"
+# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern)
 
 # Local Tool Initialization
 # ==========================
@@ -97,9 +97,15 @@
 # Machine-specific Optimizations
 # ===============================
 # Performance tweaks for specific machines
-# if [[ $(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1) -gt 8 ]]; then
-#     export MAKEFLAGS="-j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null)"
+# if [[ $(sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null) -gt 8 ]]; then
+#     export MAKEFLAGS="-j$(nproc)"
 # fi
+
+# Local History Settings
+# ======================
+# Override history settings if needed
+# HISTSIZE=100000
+# SAVEHIST=100000
 
 # Notes for Customization
 # =======================
@@ -108,7 +114,7 @@
 # 2. Use this file for machine-specific paths and configurations
 # 3. Add work-specific aliases and functions here
 # 4. Override any dotfile settings that don't work on this machine
-# 5. Test changes by sourcing the file: source ~/.bashrc.local
+# 5. Test changes by sourcing the file: source ~/.zshrc.local
 
 # Example: Work Project Navigation
 # ================================
@@ -127,7 +133,7 @@
 #         echo "Switched to project: $project"
 #         # Auto-activate virtual environment if it exists
 #         [[ -f "venv/bin/activate" ]] && source venv/bin/activate
-#         [[ -f ".nvmrc" ]] && command -v nvm >/dev/null 2>&1 && nvm use
+#         [[ -f ".nvmrc" ]] && nvm use
 #     else
 #         echo "Project '$project' not found"
 #         ls "$project_dir"
@@ -137,21 +143,9 @@
 # # Add completion for projects function
 # _projects_completion() {
 #     local project_dir="$HOME/projects"
-#     if [[ -d "$project_dir" ]]; then
-#         COMPREPLY=($(compgen -W "$(ls "$project_dir")" -- "${COMP_WORDS[COMP_CWORD]}"))
-#     fi
+#     [[ -d "$project_dir" ]] && compadd $(ls "$project_dir")
 # }
-# complete -F _projects_completion projects
+# compdef _projects_completion projects
 
-# Example: Quick SSH connections
-# ==============================
-# ssh_dev() {
-#     ssh -i ~/.ssh/dev_key user@dev.company.com
-# }
-#
-# ssh_prod() {
-#     ssh -i ~/.ssh/prod_key user@prod.company.com
-# }
-
-# Remember to source this file in your main .bashrc:
-# [[ -f "$HOME/.bashrc.local" ]] && source "$HOME/.bashrc.local"
+# Remember to source this file in your main .zshrc:
+# [[ -f "${ZDOTDIR:-$HOME}/.zshrc.local" ]] && source "${ZDOTDIR:-$HOME}/.zshrc.local"

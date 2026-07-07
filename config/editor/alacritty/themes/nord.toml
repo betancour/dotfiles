@@ -1,0 +1,37 @@
+# Nord Theme for Alacritty
+# Inspired by the Arctic north, this theme provides a clean, eye-friendly palette.
+# Source: https://github.com/nordtheme/alacritty
+# Author: Nord Theme Community
+# Version: 1.0 (Adapted for modular use)
+
+[colors.primary]
+# Background and foreground colors
+background = "0x2e3440"  # Polar Night: Dark base color
+foreground = "0xd8dee9"  # Frost: Soft white for text
+
+# Cursor colors (visible when custom_cursor_colors is true)
+[colors.cursor]
+text = "0x2e3440"       # Polar Night: Matches background for contrast
+cursor = "0xd8dee9"      # Frost: Matches foreground for visibility
+
+# Normal color palette
+[colors.normal]
+black   = "0x3b4252"    # Snow Storm: Dark gray for black
+red     = "0xbf616a"    # Aurora: Red for errors
+green   = "0xa3be8c"    # Aurora: Green for success
+yellow  = "0xebcb8b"    # Aurora: Yellow for warnings
+blue    = "0x81a1c1"    # Frost: Blue for info
+magenta = "0xb48ead"    # Aurora: Magenta for special
+cyan    = "0x88c0d0"    # Aurora: Cyan for highlights
+white   = "0xe5e9f0"    # Frost: Light gray for white
+
+# Bright color palette (bold or highlighted text)
+[colors.bright]
+black   = "0x4c566a"    # Snow Storm: Slightly lighter gray
+red     = "0xbf616a"    # Aurora: Same red as normal (bold variant)
+green   = "0xa3be8c"    # Aurora: Same green as normal (bold variant)
+yellow  = "0xebcb8b"    # Aurora: Same yellow as normal (bold variant)
+blue    = "0x81a1c1"    # Frost: Same blue as normal (bold variant)
+magenta = "0xb48ead"    # Aurora: Same magenta as normal (bold variant)
+cyan    = "0x8fbcbb"    # Aurora: Lighter cyan for bright
+white   = "0xecf0c1"    # Frost: Brighter white for emphasis

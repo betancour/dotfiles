@@ -1,0 +1,7 @@
+general.import = [
+  "themes/tokio-night.toml",
+  "font.toml",
+  "font-size.toml",
+  "shared.toml",
+  "pane.toml"
+]
