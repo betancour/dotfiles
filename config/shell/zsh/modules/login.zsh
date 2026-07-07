@@ -8,11 +8,11 @@
 
 dotfiles_source_once "${DOTFILES_LIB_DIR}/login-common.sh"
 
-if [[ -t 1 && "$SHLVL" -eq 1 ]]; then
+if [[ -t 1 && "$SHLVL" -eq 1 ]] && dotfiles_show_login_info; then
     dotfiles_show_system_info
 fi
 
-if [[ -t 1 && -o interactive ]]; then
+if [[ -t 1 && -o interactive ]] && dotfiles_show_dev_status_enabled; then
     dotfiles_show_dev_status
 fi
 

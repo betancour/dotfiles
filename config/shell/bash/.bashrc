@@ -7,6 +7,8 @@ case $- in *i*) ;; *) return ;; esac
 dotfiles_source_once "${DOTFILES_LIB_DIR}/environment.sh"
 
 source "${DOTFILES_SHELL_DIR}/bash/modules/options.bash"
+source "${DOTFILES_LIB_DIR}/history.sh"
+dotfiles_secure_history_file "$HISTFILE"
 source "${DOTFILES_SHELL_DIR}/bash/modules/prompt.bash"
 source "${DOTFILES_SHELL_DIR}/bash/modules/completion.bash"
 source "${DOTFILES_SHELL_DIR}/bash/modules/keybindings.bash"

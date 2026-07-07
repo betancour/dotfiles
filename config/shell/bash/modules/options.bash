@@ -8,7 +8,10 @@ shopt -s checkwinsize cmdhist lithist checkjobs 2>/dev/null
 shopt -s autocd 2>/dev/null
 shopt -s globstar 2>/dev/null
 
-export HISTCONTROL="ignoreboth:erasedups"
-export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help:history:clear"
+source "${DOTFILES_LIB_DIR}/history.sh"
+
+export HISTCONTROL="ignoreboth:erasedups:ignorespace"
+export HISTIGNORE
+HISTIGNORE="$(dotfiles_history_ignore_patterns)"
 export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S  "
 export PROMPT_DIRTRIM=3

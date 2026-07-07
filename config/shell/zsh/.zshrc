@@ -9,6 +9,7 @@ PATH="/usr/bin:/usr/sbin:$PATH"
 export PATH
 
 source "${DOTFILES_SHELL_DIR}/zsh/modules/options.zsh"
+source "${DOTFILES_SHELL_DIR}/zsh/modules/history.zsh"
 source "${DOTFILES_SHELL_DIR}/zsh/modules/completion.zsh"
 source "${DOTFILES_SHELL_DIR}/zsh/modules/plugins.zsh"
 source "${DOTFILES_SHELL_DIR}/zsh/modules/prompt.zsh"
