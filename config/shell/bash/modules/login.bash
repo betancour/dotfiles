@@ -6,7 +6,7 @@ case "$-" in *l*) ;; *) return ;; esac
     echo "$(date '+%Y-%m-%d %H:%M:%S'): .bash_login started" >> "${XDG_STATE_HOME:-$HOME/.local/state}/bash/startup.log"
 }
 
-source "${DOTFILES_LIB_DIR}/login-common.sh"
+dotfiles_source_once "${DOTFILES_LIB_DIR}/login-common.sh"
 
 if [[ -t 1 && "$SHLVL" -eq 1 ]]; then
     dotfiles_show_system_info

@@ -1,7 +1,10 @@
 # environment.sh — environment variables for all shell sessions
 
-[[ -n "${DOTFILES_ENV_LOADED:-}" ]] && return
-export DOTFILES_ENV_LOADED=1
+if [[ -n "${DOTFILES_ENV_LOADED:-}" ]]; then
+    [[ -n "${XDG_CONFIG_HOME:-}" ]] && return 0
+    unset DOTFILES_ENV_LOADED
+fi
+DOTFILES_ENV_LOADED=1
 
 dotfiles_source_once "${DOTFILES_LIB_DIR}/platform.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/xdg.sh"

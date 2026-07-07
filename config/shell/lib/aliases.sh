@@ -1,7 +1,12 @@
 # aliases.sh — shared aliases with smart fallbacks (POSIX-compatible)
 
-[[ -n "${DOTFILES_ALIASES_LOADED:-}" ]] && return
-export DOTFILES_ALIASES_LOADED=1
+if [[ -n "${DOTFILES_ALIASES_LOADED:-}" ]]; then
+    if alias g >/dev/null 2>&1; then
+        return 0
+    fi
+    unset DOTFILES_ALIASES_LOADED
+fi
+DOTFILES_ALIASES_LOADED=1
 
 source "${DOTFILES_LIB_DIR}/platform.sh"
 

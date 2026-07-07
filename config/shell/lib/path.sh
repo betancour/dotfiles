@@ -1,7 +1,7 @@
 # path.sh — centralized PATH management (single pass, no duplicate entries)
 
-[[ -n "${DOTFILES_PATH_LOADED:-}" ]] && return
-export DOTFILES_PATH_LOADED=1
+[[ -n "${DOTFILES_PATH_LOADED:-}" ]] && return 0
+DOTFILES_PATH_LOADED=1
 
 # shellcheck source=platform.sh
 source "${DOTFILES_LIB_DIR}/platform.sh"
