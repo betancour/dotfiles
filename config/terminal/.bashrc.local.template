@@ -1,0 +1,4 @@
+# .bashrc.local — machine-specific Bash overrides
+# This file is sourced at the end of .bashrc and is not tracked by git.
+
+# export MY_API_KEY=""
