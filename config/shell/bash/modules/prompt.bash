@@ -1,5 +1,6 @@
 # prompt.bash — Bash prompt with Git integration (matches Zsh behavior)
 
+# --- Terminal Color Setup ---
 color_prompt=
 case "$TERM" in
     xterm-color|*-256color|*-color) color_prompt=yes ;;
@@ -16,6 +17,7 @@ if [[ "$color_prompt" == yes ]]; then
     fi
 fi
 
+# --- Git Prompt Helper ---
 __git_prompt() {
     local git_branch git_status git_dirty git_staged git_untracked
     git rev-parse --git-dir >/dev/null 2>&1 || return
@@ -39,14 +41,27 @@ __git_prompt() {
     fi
 }
 
+# --- Prompt Configuration ---
 if [[ "$color_prompt" == yes ]]; then
-    PS1='\[\033[1;35m\]\u\[\033[0m\]@\[\033[1;36m\]\h\[\033[0m\] \[\033[1;34m\][\w]\[\033[0m\]$(__git_prompt) \[\033[1;34m\][\D{%H:%M:%S}]\[\033[0m\]\n%(?.\\[\033[1;32m\\].\\[\033[1;31m\\])❯\[\033[0m\] '
-    PROMPT_COMMAND='__exit_status=$?; if [[ $__exit_status != 0 ]]; then printf "\033[1;31m[%s]\033[0m" "$__exit_status"; fi; printf "\n"'
+    # Function to dynamically color the arrow based on previous exit status
+    __get_prompt_arrow() {
+        if [[ $? -eq 0 ]]; then
+            printf "\033[1;32m❯\033[0m" # Green
+        else
+            printf "\033[1;31m❯\033[0m" # Red
+        fi
+    }
+
+    PS1='\[\033[1;35m\]\u\[\033[0m\]@\[\033[1;36m\]\h\[\033[0m\] \[\033[1;34m\][\w]\[\033[0m\]$(__git_prompt) \[\033[1;34m\][\D{%H:%M:%S}]\[\033[0m\]\n$(__get_prompt_arrow) '
+
+    # PROMPT_COMMAND shows exit status [code] if non-zero
+    PROMPT_COMMAND='__exit_status=$?; if [[ $__exit_status != 0 ]]; then printf "\033[1;31m[%s]\033[0m" "$__exit_status"; fi; printf "\n"; '"$PROMPT_COMMAND"
 else
     PS1='\u@\h [\w]$(__git_prompt) [\D{%H:%M:%S}]\n❯ '
-    PROMPT_COMMAND='__exit_status=$?; if [[ $__exit_status != 0 ]]; then printf "[%s]" "$__exit_status"; fi; printf "\n"'
+    PROMPT_COMMAND='__exit_status=$?; if [[ $__exit_status != 0 ]]; then printf "[%s]" "$__exit_status"; fi; printf "\n"; '"$PROMPT_COMMAND"
 fi
 
+# --- Terminal Title ---
 case "$TERM" in
     xterm*|rxvt*|screen*|tmux*) PS1="\[\e]0;\u@\h: \w\a\]$PS1" ;;
 esac
