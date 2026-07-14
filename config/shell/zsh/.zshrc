@@ -1,12 +1,12 @@
-# .zshrc — interactive shell configuration
-source "${${(%):-%x}:A:h}/../lib/dotfiles.sh"
+# .zshrc — interactive Zsh configuration
+source "${${(%):-%x}:A:h}/../lib/bootstrap.sh"
 
-[[ -n "${ZSH_PROFILE_STARTUP:-}" ]] && zmodload zsh/zprof
+# Optional startup profiling: ZSH_PROFILE_STARTUP=1 zsh -i -c 'zprof; exit'
+[[ -n "${ZSH_PROFILE_STARTUP:-}" ]] && zmodload zsh/zprof 2>/dev/null
+
 [[ $- != *i* ]] && return
 
-# Ensure system paths available for interactive sessions
-PATH="/usr/bin:/usr/sbin:$PATH"
-export PATH
+dotfiles_source_once "${DOTFILES_LIB_DIR}/environment.sh"
 
 source "${DOTFILES_SHELL_DIR}/zsh/modules/options.zsh"
 source "${DOTFILES_SHELL_DIR}/zsh/modules/history.zsh"
@@ -22,10 +22,6 @@ dotfiles_source_once "${DOTFILES_LIB_DIR}/functions.sh"
 [[ -r "${ZDOTDIR:-$HOME}/.zshrc.local" ]] && source "${ZDOTDIR:-$HOME}/.zshrc.local"
 [[ -r "/etc/zshrc_${TERM_PROGRAM:-}" ]] && source "/etc/zshrc_${TERM_PROGRAM}"
 
-[[ -n "${ZSH_PROFILE_STARTUP:-}" ]] && zprof
-
 stty -ixon 2>/dev/null || true
 
-if [[ ! -o login && -t 1 ]]; then
-    echo "Welcome back! Type 'help' for available commands."
-fi
+[[ -n "${ZSH_PROFILE_STARTUP:-}" ]] && zprof 2>/dev/null

@@ -1,45 +1,50 @@
-# functions.sh — shared shell functions (POSIX/bash-compatible)
+# functions.sh — shared shell functions (Bash/Zsh common dialect)
+# Keep this focused: utilities used often, not a kitchen-sink library.
 
-if [[ -n "${DOTFILES_FUNCTIONS_LOADED:-}" ]]; then
-    if typeset -f help >/dev/null 2>&1 || declare -f help >/dev/null 2>&1; then
-        return 0
-    fi
-    unset DOTFILES_FUNCTIONS_LOADED
+if [ -n "${DOTFILES_FUNCTIONS_LOADED:-}" ]; then
+    return 0
 fi
 DOTFILES_FUNCTIONS_LOADED=1
 
 # Editor shortcut
-if command -v nvim >/dev/null 2>&1; then
-    n() { if [[ $# -eq 0 ]]; then nvim .; else nvim "$@"; fi; }
-else
-    n() { if [[ $# -eq 0 ]]; then vim .; else vim "$@"; fi; }
-fi
-
-mkcd() {
-    [[ $# -eq 0 ]] && { echo "Usage: mkcd <directory_name>"; return 1; }
-    mkdir -p "$1" && cd "$1"
-}
-
-up() {
-    local levels=${1:-1} path="" i
-    for ((i = 1; i <= levels; i++)); do path="../$path"; done
-    cd "$path" || return 1
-}
-
-cdf() {
-    local dir
-    if command -v fzf >/dev/null 2>&1; then
-        dir=$(find . -type d 2>/dev/null | fzf --preview 'ls -la {}' --height 40%)
-        [[ -n "$dir" ]] && cd "$dir"
+n() {
+    if [ "$#" -eq 0 ]; then
+        "${EDITOR:-vi}" .
     else
-        echo "fzf not found. Install fzf for interactive directory selection."
-        return 1
+        "${EDITOR:-vi}" "$@"
     fi
 }
 
+mkcd() {
+    [ "$#" -eq 0 ] && { echo "Usage: mkcd <directory>"; return 1; }
+    mkdir -p "$1" && cd "$1" || return 1
+}
+
+up() {
+    _levels=${1:-1}
+    _path=
+    _i=0
+    while [ "$_i" -lt "$_levels" ]; do
+        _path="../$_path"
+        _i=$((_i + 1))
+    done
+    cd "$_path" || { unset _levels _path _i; return 1; }
+    unset _levels _path _i
+}
+
+cdf() {
+    if ! command -v fzf >/dev/null 2>&1; then
+        echo "fzf not found" >&2
+        return 1
+    fi
+    _dir=$(find . -type d 2>/dev/null | fzf --height 40%)
+    [ -n "$_dir" ] && cd "$_dir"
+    unset _dir
+}
+
 extract() {
-    [[ $# -eq 0 ]] && { echo "Usage: extract <archive_file>"; return 1; }
-    [[ ! -f "$1" ]] && { echo "Error: '$1' is not a valid file"; return 1; }
+    [ "$#" -eq 0 ] && { echo "Usage: extract <archive>"; return 1; }
+    [ -f "$1" ] || { echo "Error: '$1' is not a file" >&2; return 1; }
     case "$1" in
         *.tar.bz2|*.tbz2) tar xjf "$1" ;;
         *.tar.gz|*.tgz)   tar xzf "$1" ;;
@@ -49,267 +54,127 @@ extract() {
         *.gz)             gunzip "$1" ;;
         *.tar)            tar xf "$1" ;;
         *.zip)            unzip "$1" ;;
-        *.Z)              uncompress "$1" ;;
         *.7z)             7z x "$1" ;;
         *.xz)             unxz "$1" ;;
-        *)                echo "Error: '$1' cannot be extracted via extract()" ;;
+        *) echo "Error: cannot extract '$1'" >&2; return 1 ;;
     esac
 }
 
 findfile() {
-    [[ $# -eq 0 ]] && { echo "Usage: findfile <filename>"; return 1; }
+    [ "$#" -eq 0 ] && { echo "Usage: findfile <name>"; return 1; }
     find . -type f -iname "*$1*" 2>/dev/null
 }
 
 finddir() {
-    [[ $# -eq 0 ]] && { echo "Usage: finddir <dirname>"; return 1; }
+    [ "$#" -eq 0 ] && { echo "Usage: finddir <name>"; return 1; }
     find . -type d -iname "*$1*" 2>/dev/null
 }
 
 fsize() {
-    [[ $# -eq 0 ]] && { echo "Usage: fsize <file>"; return 1; }
-    [[ ! -f "$1" ]] && { echo "Error: '$1' is not a valid file"; return 1; }
-    if command -v du >/dev/null 2>&1; then
-        du -h "$1" | cut -f1
-    else
-        ls -lh "$1" | awk '{print $5}'
-    fi
+    [ "$#" -eq 0 ] && { echo "Usage: fsize <file>"; return 1; }
+    [ -f "$1" ] || { echo "Error: '$1' is not a file" >&2; return 1; }
+    du -h "$1" 2>/dev/null | cut -f1
 }
 
 backup() {
-    [[ $# -eq 0 ]] && { echo "Usage: backup <file>"; return 1; }
-    [[ ! -f "$1" ]] && { echo "Error: '$1' is not a valid file"; return 1; }
-    local backup_name="${1}.bak.$(date +%Y%m%d_%H%M%S)"
-    cp "$1" "$backup_name"
-    echo "Backup created: $backup_name"
+    [ "$#" -eq 0 ] && { echo "Usage: backup <file>"; return 1; }
+    [ -f "$1" ] || { echo "Error: '$1' is not a file" >&2; return 1; }
+    _bak="${1}.bak.$(date +%Y%m%d_%H%M%S)"
+    cp "$1" "$_bak" && echo "Backup created: $_bak"
+    unset _bak
 }
 
 sysinfo() {
-    echo "System Information:"
-    echo "=================="
     echo "Hostname: $(hostname)"
-    echo "OS: $(uname -s)"
-    echo "Kernel: $(uname -r)"
-    echo "Architecture: $(uname -m)"
-    echo "Uptime: $(uptime | awk -F'up ' '{print $2}' | awk -F', load' '{print $1}')"
-    if [[ "${OSTYPE:-}" == darwin* ]]; then
-        echo "macOS Version: $(sw_vers -productVersion)"
-    elif [[ -f /etc/os-release ]]; then
-        echo "Distribution: $(grep PRETTY_NAME /etc/os-release | cut -d'"' -f2)"
-    fi
-}
-
-dusk() {
-    command -v du >/dev/null 2>&1 && du -sh * 2>/dev/null | sort -hr || { echo "du command not found"; return 1; }
-}
-
-pstree() {
-    if command -v pstree >/dev/null 2>&1; then
-        command pstree "$@"
-    elif [[ "${OSTYPE:-}" == darwin* ]]; then
-        ps -e -o pid,ppid,command | awk 'NR>1 {print $1, $2, substr($0, index($0,$3))}'
-    else
-        ps auxf
+    echo "OS: $(uname -s) $(uname -r)"
+    echo "Arch: $(uname -m)"
+    echo "Uptime: $(uptime | sed 's/.*up //; s/,.*//')"
+    if is_macos 2>/dev/null || [ "$(uname -s)" = Darwin ]; then
+        command -v sw_vers >/dev/null 2>&1 && echo "macOS: $(sw_vers -productVersion)"
+    elif [ -f /etc/os-release ]; then
+        echo "Distro: $(awk -F= '/^PRETTY_NAME=/ {gsub(/"/,""); print $2}' /etc/os-release)"
     fi
 }
 
 myip() {
-    local ip service
-    for service in https://ifconfig.me https://icanhazip.com https://ipecho.net/plain https://ifconfig.co; do
-        ip=$(curl -fsS --proto '=https' --tlsv1.2 --max-time 5 "$service" 2>/dev/null)
-        [[ -n "$ip" ]] && { echo "External IP: $ip"; return 0; }
+    for _svc in https://ifconfig.me https://icanhazip.com https://ipecho.net/plain; do
+        _ip=$(curl -fsS --proto '=https' --tlsv1.2 --max-time 5 "$_svc" 2>/dev/null) || true
+        if [ -n "$_ip" ]; then
+            echo "External IP: $_ip"
+            unset _svc _ip
+            return 0
+        fi
     done
-    echo "Unable to determine external IP"
+    echo "Unable to determine external IP" >&2
+    unset _svc _ip
     return 1
 }
 
 localip() {
     echo "Local IP addresses:"
-    if [[ "${OSTYPE:-}" == darwin* ]]; then
-        ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print "  " $2}'
+    if command -v ip >/dev/null 2>&1; then
+        ip -4 addr show 2>/dev/null | awk '/inet / && $2 !~ /^127\./ {print "  " $2}' | cut -d/ -f1
     else
-        ip addr show 2>/dev/null | grep "inet " | grep -v 127.0.0.1 | awk '{print "  " $2}' | cut -d'/' -f1
+        ifconfig 2>/dev/null | awk '/inet / && $2 != "127.0.0.1" {print "  " $2}'
     fi
 }
 
-pingtest() {
-    local host=${1:-google.com} count=${2:-4}
-    echo "Pinging $host ($count times)..."
-    ping -c "$count" "$host"
-}
-
-gitclean() {
-    echo "Cleaning git repository..."
-    git clean -fd && git reset --hard HEAD && git pull
-    echo "Repository cleaned and updated"
-}
-
 gitcp() {
-    [[ $# -eq 0 ]] && { echo "Usage: gitcp <commit_message>"; return 1; }
+    [ "$#" -eq 0 ] && { echo "Usage: gitcp <message>"; return 1; }
     git add -A && git commit -m "$*" && git push
 }
 
 gitbr() {
-    [[ $# -eq 0 ]] && { echo "Usage: gitbr <branch_name>"; return 1; }
+    [ "$#" -eq 0 ] && { echo "Usage: gitbr <branch>"; return 1; }
     git checkout -b "$1"
 }
 
 gitlog() {
-    local count=${1:-10}
-    git log --oneline --graph --decorate -n "$count"
+    git log --oneline --graph --decorate -n "${1:-10}"
 }
 
 dpshow() {
-    command -v docker >/dev/null 2>&1 \
-        && docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}" \
-        || { echo "Docker not found"; return 1; }
+    command -v docker >/dev/null 2>&1 || { echo "Docker not found" >&2; return 1; }
+    docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
 }
 
 dclean() {
-    if command -v docker >/dev/null 2>&1; then
-        echo "Cleaning up Docker..."
-        docker system prune -f && docker image prune -f
-        echo "Docker cleanup completed"
-    else
-        echo "Docker not found"
-        return 1
-    fi
-}
-
-count() {
-    [[ $# -eq 0 ]] && { echo "Usage: count <file1> [file2] ..."; return 1; }
-    local file
-    for file in "$@"; do
-        if [[ -f "$file" ]]; then
-            echo "File: $file"
-            wc -l -w -c "$file"
-            echo
-        else
-            echo "Error: '$file' is not a valid file"
-        fi
-    done
-}
-
-_sed_escape() {
-    printf '%s' "$1" | sed 's/[][\/$.^*+?()|{}\\&]/\\&/g'
-}
-
-replace() {
-    [[ $# -lt 3 ]] && { echo "Usage: replace <search> <replace> <file...>"; return 1; }
-    local search="$1" repl="$2" escaped_search escaped_repl
-    shift 2
-    escaped_search="$(_sed_escape "$search")"
-    escaped_repl="$(_sed_escape "$repl")"
-    local file
-    for file in "$@"; do
-        [[ ! -f "$file" ]] && { echo "Error: '$file' is not a valid file"; continue; }
-        if [[ "${OSTYPE:-}" == darwin* ]]; then
-            sed -i '' "s/${escaped_search}/${escaped_repl}/g" "$file"
-        else
-            sed -i.bak "s/${escaped_search}/${escaped_repl}/g" "$file"
-        fi
-        echo "Replaced in: $file"
-    done
-}
-
-weather() {
-    local location=${1:-""}
-    command -v curl >/dev/null 2>&1 \
-        && curl -fsS --proto '=https' --tlsv1.2 --max-time 10 \
-            "https://wttr.in/${location}?format=%C+%t+%h+%w" && echo \
-        || { echo "curl not found"; return 1; }
-}
-
-password() {
-    genpass "${1:-32}"
+    command -v docker >/dev/null 2>&1 || { echo "Docker not found" >&2; return 1; }
+    docker system prune -f && docker image prune -f
 }
 
 genpass() {
-    local length=${1:-16}
+    _len=${1:-16}
     if command -v openssl >/dev/null 2>&1; then
-        openssl rand -base64 $((length * 3 / 4)) | cut -c1-"$length"
-    elif [[ -f /dev/urandom ]]; then
-        LC_ALL=C tr -dc 'A-Za-z0-9!@#$%^&*' < /dev/urandom | head -c "$length"
+        openssl rand -base64 $((_len * 3 / 4 + 4)) | tr -d '\n' | cut -c1-"$_len"
+        echo
+    elif [ -r /dev/urandom ]; then
+        LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c "$_len"
         echo
     else
-        echo "Unable to generate password"
+        echo "Unable to generate password" >&2
+        unset _len
         return 1
     fi
+    unset _len
 }
 
-urlencode() {
-    [[ $# -eq 0 ]] && { echo "Usage: urlencode <string>"; return 1; }
-    local string="$*" encoded="" char i hex
-    for ((i = 0; i < ${#string}; i++)); do
-        char="${string:$i:1}"
-        case "$char" in
-            [a-zA-Z0-9.~_-]) encoded+="$char" ;;
-            *) printf -v hex '%02X' "'$char"; encoded+="%$hex" ;;
-        esac
-    done
-    echo "$encoded"
-}
-
-urldecode() {
-    [[ $# -eq 0 ]] && { echo "Usage: urldecode <string>"; return 1; }
-    printf '%b' "${*//%/\\x}"
-}
-
-topcpu() {
-    local count=${1:-10}
-    if [[ "${OSTYPE:-}" == darwin* ]]; then
-        top -l 1 -o cpu | head -n $((count + 12))
-    else
-        ps aux --sort=-%cpu | head -n $((count + 1))
-    fi
-}
-
-topmem() {
-    local count=${1:-10}
-    if [[ "${OSTYPE:-}" == darwin* ]]; then
-        top -l 1 -o rsize | head -n $((count + 12))
-    else
-        ps aux --sort=-%mem | head -n $((count + 1))
-    fi
-}
-
-timeit() {
-    [[ $# -eq 0 ]] && { echo "Usage: timeit <command>"; return 1; }
-    local start_time end_time duration exit_code
-    start_time=$(date +%s.%N)
-    "$@"
-    exit_code=$?
-    end_time=$(date +%s.%N)
-    if command -v bc >/dev/null 2>&1; then
-        duration=$(echo "$end_time - $start_time" | bc 2>/dev/null)
-    else
-        duration=$((${end_time%.*} - ${start_time%.*}))
-    fi
-    echo "Command executed in: ${duration}s (exit code: $exit_code)"
-    return $exit_code
-}
-
-reload_functions() {
-    unset DOTFILES_FUNCTIONS_LOADED
-    source "${DOTFILES_LIB_DIR}/functions.sh"
-    echo "Custom functions reloaded"
+weather() {
+    command -v curl >/dev/null 2>&1 || { echo "curl not found" >&2; return 1; }
+    curl -fsS --proto '=https' --tlsv1.2 --max-time 10 \
+        "https://wttr.in/${1:-}?format=%C+%t+%h+%w" && echo
 }
 
 help() {
     cat <<'EOF'
-Custom Shell Functions:
-=======================
+Custom shell functions:
+  Directory  mkcd  up  cdf  extract
+  Files      findfile  finddir  fsize  backup
+  System     sysinfo  myip  localip
+  Git        gitcp  gitbr  gitlog
+  Docker     dpshow  dclean
+  Utilities  genpass  weather
 
-Directory:  mkcd, up, cdf, extract
-Files:      findfile, finddir, fsize, backup
-System:     sysinfo, dusk, pstree
-Network:    myip, localip, pingtest
-Git:        gitclean, gitcp, gitbr, gitlog
-Docker:     dpshow, dclean
-Text:       count, replace
-Utilities:  weather, password, genpass, urlencode, urldecode
-Performance: topcpu, topmem, timeit
-
-Use 'help' to show this message again.
+Type 'help' to show this again.
 EOF
 }

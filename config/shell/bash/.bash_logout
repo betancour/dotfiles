@@ -1,3 +1,8 @@
 # .bash_logout — login shell exit
-source "${BASH_SOURCE[0]%/*}/../lib/dotfiles.sh"
-source "${DOTFILES_SHELL_DIR}/bash/modules/logout.bash"
+. "${BASH_SOURCE[0]%/*}/../lib/bootstrap.sh"
+
+case $- in *l*) ;; *) return ;; esac
+
+. "${DOTFILES_LIB_DIR}/logout.sh"
+
+[ -r "$HOME/.bash_logout.local" ] && . "$HOME/.bash_logout.local"

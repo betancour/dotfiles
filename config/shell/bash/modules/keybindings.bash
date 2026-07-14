@@ -1,4 +1,4 @@
-# keybindings.bash — Bash readline key bindings
+# keybindings.bash — Readline key bindings
 
 bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'

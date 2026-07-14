@@ -1,11 +1,13 @@
 # .bash_profile — login shell entry point
-source "${BASH_SOURCE[0]%/*}/../lib/dotfiles.sh"
+. "${BASH_SOURCE[0]%/*}/../lib/bootstrap.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/environment.sh"
-source "${DOTFILES_SHELL_DIR}/bash/modules/profile.bash"
+dotfiles_source_once "${DOTFILES_LIB_DIR}/profile.sh"
 
-# Interactive login shells: load interactive config then login hooks
-if [[ -n "${PS1:-}" && -f "$HOME/.bashrc" ]]; then
-    source "$HOME/.bashrc"
+# Shell-specific local overrides
+[ -r "$HOME/.bash_profile.local" ] && . "$HOME/.bash_profile.local"
+
+# Interactive login: load interactive config, then login hooks
+if [ -n "${PS1:-}" ] && [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
 fi
-
-[[ -f "$HOME/.bash_login" ]] && source "$HOME/.bash_login"
+[ -f "$HOME/.bash_login" ] && . "$HOME/.bash_login"

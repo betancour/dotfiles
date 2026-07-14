@@ -1,17 +1,18 @@
-# options.bash — Bash shell options
+# options.bash — Bash shell options and history policy
 
-shopt -s histappend histverify histreedit 2>/dev/null
-shopt -s cdspell dirspell cdable_vars 2>/dev/null
-shopt -s progcomp extglob nullglob dotglob 2>/dev/null
-shopt -s checkwinsize cmdhist lithist checkjobs 2>/dev/null
-# Bash 4.0+ options (gracefully skipped on macOS system bash 3.2)
-shopt -s autocd 2>/dev/null
-shopt -s globstar 2>/dev/null
+shopt -s histappend histverify histreedit 2>/dev/null || true
+shopt -s cdspell dirspell cdable_vars 2>/dev/null || true
+shopt -s progcomp extglob nullglob 2>/dev/null || true
+shopt -s checkwinsize cmdhist lithist 2>/dev/null || true
+# Bash 4+ (no-op on macOS system bash 3.2)
+shopt -s autocd 2>/dev/null || true
+shopt -s globstar 2>/dev/null || true
+shopt -s checkjobs 2>/dev/null || true
 
-source "${DOTFILES_LIB_DIR}/history.sh"
+. "${DOTFILES_LIB_DIR}/history.sh"
 
 export HISTCONTROL="ignoreboth:erasedups:ignorespace"
-export HISTIGNORE
 HISTIGNORE="$(dotfiles_history_ignore_patterns)"
+export HISTIGNORE
 export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S  "
 export PROMPT_DIRTRIM=3

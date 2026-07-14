@@ -1,3 +1,8 @@
 # .zlogout — login shell exit
-source "${${(%):-%x}:A:h}/../lib/dotfiles.sh"
-source "${DOTFILES_SHELL_DIR}/zsh/modules/logout.zsh"
+source "${${(%):-%x}:A:h}/../lib/bootstrap.sh"
+
+[[ -o login ]] || return
+
+source "${DOTFILES_LIB_DIR}/logout.sh"
+
+[[ -r "${ZDOTDIR:-$HOME}/.zlogout.local" ]] && source "${ZDOTDIR:-$HOME}/.zlogout.local"

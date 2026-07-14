@@ -1,9 +1,9 @@
-# .bash_env — environment for all bash sessions
-source "${BASH_SOURCE[0]%/*}/../lib/dotfiles.sh"
+# .bash_env — environment for all Bash sessions (keep lean)
+. "${BASH_SOURCE[0]%/*}/../lib/bootstrap.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/environment.sh"
 
 export HISTFILE="${XDG_STATE_HOME}/bash/history"
-[[ -d "${XDG_STATE_HOME}/bash" ]] || mkdir -p "${XDG_STATE_HOME}/bash"
+[ -d "${XDG_STATE_HOME}/bash" ] || mkdir -p "${XDG_STATE_HOME}/bash"
 chmod 700 "${XDG_STATE_HOME}/bash" 2>/dev/null || true
 
-[[ -r "$HOME/.bash_env.local" ]] && source "$HOME/.bash_env.local"
+[ -r "$HOME/.bash_env.local" ] && . "$HOME/.bash_env.local"

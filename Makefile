@@ -1,38 +1,41 @@
-.PHONY: help install install-zsh install-bash clean validate validate-zsh validate-bash lint
+# Makefile — common operations for the dotfiles repository
 
-SHELL := /bin/bash
-.SHELLFLAGS := -o pipefail -c
-MAKEFLAGS += --warn-undefined-variables
+DOTFILES_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+SCRIPTS_DIR  := $(DOTFILES_DIR)/scripts
+SHELL_CONFIG := $(DOTFILES_DIR)/config/shell
+LIB_DIR      := $(SHELL_CONFIG)/lib
 
-DOTFILES_HOME ?= $(shell pwd)
-SHELL_CONFIG  := $(DOTFILES_HOME)/config/shell
-SCRIPTS_DIR   := $(DOTFILES_HOME)/scripts
+.PHONY: help install install-zsh install-bash install-both \
+	validate validate-zsh validate-bash lint clean
 
 help:
-	@echo "Dotfiles Management"
-	@echo "  make install       - Install shell config (auto-detect)"
-	@echo "  make install-zsh   - Install Zsh configuration"
-	@echo "  make install-bash  - Install Bash configuration"
-	@echo "  make validate      - Syntax-check all shell configs"
-	@echo "  make validate-zsh  - Syntax-check Zsh configs"
-	@echo "  make validate-bash - Syntax-check Bash configs"
-	@echo "  make clean         - Remove broken symlinks in HOME"
-	@echo "  make lint          - Run shellcheck on shell modules"
+	@echo "Dotfiles targets:"
+	@echo "  install        Install config for current shell (auto-detect)"
+	@echo "  install-zsh    Install Zsh configuration"
+	@echo "  install-bash   Install Bash configuration"
+	@echo "  install-both   Install both shells"
+	@echo "  validate       Syntax-check shared lib + both shells"
+	@echo "  lint           Run shellcheck on shared lib (if installed)"
+	@echo "  clean          Remove broken symlinks in \$$HOME"
 
 install:
-	@bash "$(SCRIPTS_DIR)/install.sh" auto
+	@sh "$(SCRIPTS_DIR)/install.sh" auto
 
 install-zsh:
-	@bash "$(SCRIPTS_DIR)/install.sh" zsh
+	@sh "$(SCRIPTS_DIR)/install.sh" zsh
 
 install-bash:
-	@bash "$(SCRIPTS_DIR)/install.sh" bash
+	@sh "$(SCRIPTS_DIR)/install.sh" bash
 
-clean:
-	@find "$(HOME)" -maxdepth 1 -xtype l -delete 2>/dev/null || true
-	@echo "Removed broken symlinks in HOME"
+install-both:
+	@sh "$(SCRIPTS_DIR)/install.sh" both
 
 validate: validate-zsh validate-bash
+	@echo "Validating shared library..."
+	@for f in "$(LIB_DIR)"/*.sh; do \
+		bash -n "$$f" || exit 1; \
+	done
+	@echo "All syntax checks passed."
 
 validate-zsh:
 	@echo "Validating Zsh configuration..."
@@ -41,8 +44,7 @@ validate-zsh:
 	@zsh -n "$(SHELL_CONFIG)/zsh/.zshrc"
 	@zsh -n "$(SHELL_CONFIG)/zsh/.zlogin"
 	@zsh -n "$(SHELL_CONFIG)/zsh/.zlogout"
-	@zsh -n "$(SHELL_CONFIG)/.zaliases"
-	@zsh -n "$(SHELL_CONFIG)/.zfunctions"
+	@for f in "$(SHELL_CONFIG)/zsh/modules"/*.zsh; do zsh -n "$$f" || exit 1; done
 	@echo "Zsh syntax OK"
 
 validate-bash:
@@ -52,11 +54,17 @@ validate-bash:
 	@bash -n "$(SHELL_CONFIG)/bash/.bashrc"
 	@bash -n "$(SHELL_CONFIG)/bash/.bash_login"
 	@bash -n "$(SHELL_CONFIG)/bash/.bash_logout"
+	@for f in "$(SHELL_CONFIG)/bash/modules"/*.bash; do bash -n "$$f" || exit 1; done
 	@echo "Bash syntax OK"
 
 lint:
 	@if command -v shellcheck >/dev/null 2>&1; then \
-		shellcheck -x "$(SHELL_CONFIG)/lib/"*.sh "$(SHELL_CONFIG)/bash/modules/"*.bash; \
+		shellcheck -s sh "$(SCRIPTS_DIR)/install.sh" "$(DOTFILES_DIR)/install.sh"; \
+		shellcheck -x "$(LIB_DIR)"/*.sh || true; \
 	else \
 		echo "shellcheck not installed — skipping"; \
 	fi
+
+clean:
+	@find "$(HOME)" -maxdepth 1 -type l ! -exec test -e {} \; -print -delete 2>/dev/null || true
+	@echo "Removed broken symlinks in HOME"

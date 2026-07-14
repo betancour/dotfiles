@@ -1,3 +1,9 @@
 # .bash_login — post-interactive login setup
-source "${BASH_SOURCE[0]%/*}/../lib/dotfiles.sh"
-source "${DOTFILES_SHELL_DIR}/bash/modules/login.bash"
+. "${BASH_SOURCE[0]%/*}/../lib/bootstrap.sh"
+
+case $- in *l*) ;; *) return ;; esac
+
+dotfiles_source_once "${DOTFILES_LIB_DIR}/login.sh"
+dotfiles_login
+
+[ -r "$HOME/.bash_login.local" ] && . "$HOME/.bash_login.local"
