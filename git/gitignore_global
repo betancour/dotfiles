@@ -1,0 +1,33 @@
+# Global gitignore (user-level) — managed by dotfiles
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+Desktop.ini
+
+# Editors
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Local env / secrets
+.env
+.env.local
+*.local
+.secrets
+
+# Language tooling caches
+__pycache__/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+node_modules/
+.terraform/

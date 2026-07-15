@@ -2,15 +2,16 @@
 # Optional: source this file for path helpers when working inside the repo.
 
 # Layout (see docs/ARCHITECTURE.md):
-#   config/shell/lib/   shared Bash+Zsh modules
-#   config/shell/bash/  Bash compatibility layer
-#   config/shell/zsh/   Zsh compatibility layer
-#   config/terminal/    local templates, vimrc, terminal themes
-#   config/editor/      nvim, alacritty, tmux, zellij, …
-#   scripts/install.sh  POSIX installer
+#   install.sh / uninstall.sh   POSIX installer entry points
+#   lib/                        installer modules (detect, package, symlink, …)
+#   bootstrap/                  ~/.dotfiles canonicalization
+#   config/shell/lib/           shared Bash+Zsh runtime modules
+#   config/shell/bash|zsh|sh/   shell compatibility layers
+#   git/  vim/                  version-controlled tool configs
 #   docs/ARCHITECTURE.md
 
-export DOTFILES_HOME="${DOTFILES_HOME:-$(CDPATH= cd -- "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || pwd)}"
+export DOTFILES_HOME="${DOTFILES_HOME:-$(CDPATH='' cd -- "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || pwd)}"
 export CONFIG_DIR="${DOTFILES_HOME}/config"
 export DOCS_DIR="${DOTFILES_HOME}/docs"
 export SCRIPTS_DIR="${DOTFILES_HOME}/scripts"
+export LIB_DIR="${DOTFILES_HOME}/lib"

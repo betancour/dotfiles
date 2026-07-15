@@ -1,60 +1,104 @@
 # Architecture
 
-Professional-grade, dual-shell dotfiles with a single shared codebase.
+Professional-grade multi-shell dotfiles with a modular POSIX installer.
 
 ## Design principles
 
 1. **Do one thing well** — each library module has one job.
-2. **Share by default** — Bash and Zsh load the same `lib/` modules.
+2. **Share by default** — Bash and Zsh load the same `config/shell/lib/` modules.
 3. **Isolate the unavoidable** — shell-specific code lives only in thin modules.
 4. **POSIX where practical** — installer is pure `/bin/sh`; shared interactive code uses the Bash/Zsh common dialect.
 5. **Configuration over conditionals** — feature flags in `privacy.sh` and `*.local` files.
 6. **Fast startup** — no login banners, docker probes, or heavy tool init by default.
-7. **Idempotent install** — correct symlinks are left alone; conflicts are backed up.
+7. **Idempotent install** — correct symlinks are left alone; conflicts require confirmation or `--force`.
+8. **Safe by default** — backups, journals, rollback, dry-run, never clobber without consent.
+9. **Fail usefully** — preflight checks, colored logs, dependency verification.
 
 ## Supported platforms
 
-| Platform | Shells   | Status        |
-|----------|----------|---------------|
-| macOS    | Bash, Zsh| Primary       |
-| Linux    | Bash, Zsh| Primary       |
+| Platform | Shells            | Package managers              | Status  |
+|----------|-------------------|-------------------------------|---------|
+| macOS    | Bash, Zsh, sh     | brew                          | Primary |
+| Linux    | Bash, Zsh, sh     | apt, dnf, yum, pacman, zypper, apk | Primary |
 
-No separate branches. One tree serves both shells and both OSes.
+No separate branches. One tree serves all supported shells and OSes.
 
 ## Directory layout
 
 ```
 dotfiles/
-├── install.sh                 # thin wrapper → scripts/install.sh
-├── scripts/install.sh         # POSIX installer (decides shell/OS deploy)
-├── Makefile
+├── install.sh                 # orchestrator (CLI, traps, pipeline)
+├── uninstall.sh               # reverse of install (symlinks + managed blocks)
+├── bootstrap/
+│   └── ensure-dotfiles-home.sh
+├── lib/                       # installer-only modules (not sourced at shell startup)
+│   ├── common.sh              # constants, paths, confirm, realpath
+│   ├── logging.sh             # colors, levels, file log
+│   ├── detect.sh              # OS / arch / pkg / shell / privileges
+│   ├── package.sh             # manager abstraction
+│   ├── deps.sh                # package sets, verify, post-link helpers
+│   ├── symlink.sh             # link + backup + force policy
+│   ├── managed.sh             # append-mode BEGIN/END blocks
+│   ├── shell_install.sh       # shell / git / vim / starship
+│   └── rollback.sh            # journal reverse
 ├── config/
 │   ├── shell/
-│   │   ├── lib/               # SHARED — sourced by both shells
-│   │   │   ├── bootstrap.sh   # path resolution, source-once, DOTFILES_SHELL
-│   │   │   ├── platform.sh    # is_macos / is_linux (cached)
-│   │   │   ├── xdg.sh
-│   │   │   ├── path.sh
-│   │   │   ├── environment.sh
-│   │   │   ├── privacy.sh     # feature flags
-│   │   │   ├── history.sh
-│   │   │   ├── aliases.sh
-│   │   │   ├── functions.sh
-│   │   │   ├── ssh-agent.sh
-│   │   │   ├── profile.sh     # login profile (brew, agents, lang tools)
-│   │   │   ├── login.sh       # post-interactive login + UI helpers
-│   │   │   ├── logout.sh      # session cleanup
-│   │   │   └── tools.sh       # shared tool env (fzf defaults, nvm stub, …)
-│   │   ├── bash/              # Bash compatibility layer only
-│   │   │   ├── .bash_env .bash_profile .bashrc .bash_login .bash_logout
-│   │   │   └── modules/       # options, completion, keybindings, prompt, tools
-│   │   └── zsh/               # Zsh compatibility layer only
-│   │       ├── .zshenv .zprofile .zshrc .zlogin .zlogout
-│   │       └── modules/       # options, history, completion, plugins, prompt, keybindings, tools
-│   ├── terminal/              # local templates, vimrc, iterm themes
-│   └── editor/                # nvim, alacritty, tmux, zellij, …
+│   │   ├── lib/               # SHARED runtime — sourced by Bash and Zsh
+│   │   ├── bash/              # Bash compatibility layer
+│   │   ├── zsh/               # Zsh compatibility layer
+│   │   └── sh/                # POSIX sh profile + tools
+│   ├── starship/
+│   ├── terminal/
+│   └── editor/
+├── git/
+├── vim/
+├── scripts/install.sh         # compatibility wrapper
 └── docs/
 ```
+
+## Installer pipeline
+
+```
+parse_args
+  → preflight
+  → detect (OS, arch, pkg, shell, privileges)
+  → version checks
+  → journal + manifest init
+  → ensure ~/.dotfiles
+  → install dependencies (unless --skip-deps)
+  → install shell config (symlink | --append)
+  → install git / vim / starship
+  → summary
+```
+
+On unexpected failure, `EXIT` trap invokes journal rollback.
+
+### Modes
+
+| Mode | Flag | Behavior |
+|------|------|----------|
+| Symlink (default) | — | Entry points in `$HOME` → repo files |
+| Append | `--append` | Keep user rc files; inject managed `source` block |
+| Dry-run | `--dry-run` / `-n` | Log actions only |
+| Force | `--force` / `-f` | Backup + replace without prompting |
+| Yes | `--yes` / `-y` | Auto-confirm prompts |
+| Deps only | `--only-deps` | Packages only |
+| Config only | `--skip-deps` | No package installs |
+
+### Package manager mapping
+
+Logical tool names (`zoxide`, `fd`, `bat`, …) map to distro packages (`fd-find`, `bat` / `batcat`, …). After install, Debian renames are normalized via `~/.local/bin` wrappers.
+
+### State files
+
+| Path | Purpose |
+|------|---------|
+| `~/.local/state/dotfiles/install.journal` | Ordered actions for rollback |
+| `~/.local/state/dotfiles/install.manifest` | Last successful install metadata |
+| `~/.local/state/dotfiles/symlinks.list` | Dest paths we created |
+| `~/.local/state/dotfiles/managed.list` | Files with managed blocks |
+| `~/.local/state/dotfiles/install.log` | Append-only log |
+| `~/.dotfiles_backups/<ts>/` | Backed-up user files |
 
 ## Boot sequence
 
@@ -79,32 +123,30 @@ dotfiles/
 
 Non-login interactive Bash loads only `.bashrc` (which still pulls environment).
 
+### POSIX sh (login)
+
+```
+.profile → path, editor, platform, modules/tools.sh → .profile.local
+```
+
+Provides aliases and lightweight hooks (zoxide/direnv/starship when available) without Bash/Zsh features.
+
 ## Compatibility layer
 
 Shell-specific modules exist **only** where POSIX/shared code cannot express the feature:
 
-| Concern        | Shared (`lib/`)     | Bash module              | Zsh module                |
-|----------------|---------------------|--------------------------|---------------------------|
-| Options        | —                   | `shopt`                  | `setopt`                  |
-| Completion     | —                   | bash-completion          | `compinit` / zstyle       |
-| Key bindings   | —                   | readline `bind`          | ZLE `bindkey`             |
-| Prompt         | —                   | `PS1` + git funcs        | `PROMPT` + `vcs_info`     |
-| Plugins        | —                   | —                        | OMZ / autosuggestions     |
-| Tool hooks     | fzf defaults, nvm   | `zoxide init bash`       | `zoxide init zsh`         |
-| Profile/login  | **all shared**      | thin entry points        | thin entry points         |
+| Concern        | Shared (`lib/`)     | Bash module              | Zsh module                | sh |
+|----------------|---------------------|--------------------------|---------------------------|----|
+| Options        | —                   | `shopt`                  | `setopt`                  | — |
+| Completion     | —                   | bash-completion          | `compinit` / zstyle       | — |
+| Key bindings   | —                   | readline `bind`          | ZLE `bindkey`             | — |
+| Prompt         | —                   | `PS1` + git funcs        | `PROMPT` + `vcs_info`     | basic PS1 |
+| Starship       | —                   | `starship init bash`     | `starship init zsh`       | best-effort |
+| Plugins        | —                   | —                        | OMZ / autosuggestions     | — |
+| Tool hooks     | fzf defaults, nvm   | zoxide/direnv/fzf bash   | zoxide/direnv/fzf zsh     | subset |
+| Profile/login  | **all shared**      | thin entry points        | thin entry points         | `.profile` |
 
-`DOTFILES_SHELL` is set in `bootstrap.sh` (`bash` | `zsh`) so shared code can branch only when necessary (e.g. `mise activate`).
-
-## Installer responsibilities
-
-`scripts/install.sh` is the **only** place that decides:
-
-1. Which shell to configure (`auto` | `zsh` | `bash` | `both`)
-2. Which entry-point files to symlink
-3. Whether syntax validation can run
-4. Whether local templates should be created
-
-It does **not** embed shell runtime logic. Runtime code never re-decides install layout.
+`DOTFILES_SHELL` is set in `bootstrap.sh` (`bash` | `zsh` | `sh`) so shared code can branch only when necessary.
 
 ## Feature flags
 
@@ -121,12 +163,12 @@ Set in environment or `*.local` files:
 
 Never edit tracked files for machine-specific settings. Use:
 
-- `~/.zshrc.local` / `~/.bashrc.local`
+- `~/.zshrc.local` / `~/.bashrc.local` / `~/.profile.local`
 - `~/.zprofile.local` / `~/.bash_profile.local`
 - `~/.zshenv.local` / `~/.bash_env.local`
 - `~/.gitconfig.local`
 
-Templates live under `config/terminal/`.
+Templates live under `config/terminal/` and `git/`.
 
 ## Performance notes
 
@@ -136,13 +178,26 @@ Templates live under `config/terminal/`.
 - Zsh reuses `.zcompdump` for 24h (`compinit -C`).
 - PATH is built in a single pass with duplicate checks.
 - Shared modules use source-once markers to avoid re-work.
+- Native git prompts are skipped when `starship` is on `PATH`.
 
 ## Extending
 
-**New shared alias/function:** edit `lib/aliases.sh` or `lib/functions.sh`.
+**New shared alias/function:** edit `config/shell/lib/aliases.sh` or `functions.sh`.
 
 **New shell-specific option:** edit `bash/modules/options.bash` or `zsh/modules/options.zsh`.
 
-**New OS support:** extend `platform.sh` and the few `is_macos`/`is_linux` call sites; prefer capability detection (`command -v`, file tests) over OS switches.
+**New dependency:** add logical name to `lib/deps.sh` and a mapping in `lib/package.sh` (`df_pkg_name`).
 
-**New shell (e.g. fish):** not targeted — would need a separate runtime model. Prefer adding another thin entry directory that still sources `lib/` where possible.
+**New OS support:** extend `lib/detect.sh` / `package.sh`; prefer capability detection over OS switches.
+
+**New shell (e.g. fish):** not targeted — would need a separate runtime model.
+
+## Installer quality bar
+
+- Strict mode (`set -eu`) on entry points
+- ShellCheck-clean POSIX modules under `lib/`
+- Colored, leveled logging with optional file log
+- Dry-run, verbose, force, yes, append
+- Privilege detection (skip system packages when impossible)
+- Dependency verification after install
+- Uninstall path that will not delete user `*.local` files

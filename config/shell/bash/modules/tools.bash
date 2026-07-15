@@ -24,6 +24,16 @@ if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash)"
 fi
 
+# direnv
+if command -v direnv >/dev/null 2>&1; then
+    eval "$(direnv hook bash)"
+fi
+
+# Starship prompt (optional; takes precedence over modules/prompt.bash when present)
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init bash)"
+fi
+
 # NVM: load .nvmrc on cd (simple, no chpwd hooks in Bash)
 if [ -n "${NVM_DIR:-}" ] && [ -d "$NVM_DIR" ]; then
     __dotfiles_check_nvmrc() {

@@ -1,4 +1,9 @@
 # prompt.zsh — Zsh prompt with vcs_info Git integration
+# Skipped when starship is installed (initialized later in tools.zsh).
+
+if command -v starship >/dev/null 2>&1; then
+    return 0
+fi
 
 autoload -Uz vcs_info
 setopt PROMPT_SUBST

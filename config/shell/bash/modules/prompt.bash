@@ -1,4 +1,9 @@
 # prompt.bash — Bash prompt with Git status
+# Skipped when starship is installed (initialized later in tools.bash).
+
+if command -v starship >/dev/null 2>&1; then
+    return 0 2>/dev/null || true
+fi
 
 _color_prompt=
 case "${TERM:-}" in
