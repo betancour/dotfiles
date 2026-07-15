@@ -3,9 +3,10 @@
 # Sourced by install.sh / uninstall.sh. Requires DOTFILES_ROOT to be set.
 
 # Version of the installer itself (semver).
-DOTFILES_INSTALLER_VERSION="2.0.0"
+DOTFILES_INSTALLER_VERSION="2.1.0"
 
-# Canonical install location preferred by this project.
+# Canonical repository location: a real physical directory at ~/.dotfiles.
+# Never a symlink. All $HOME config links point into this tree.
 DOTFILES_CANONICAL_HOME="${DOTFILES_CANONICAL_HOME:-$HOME/.dotfiles}"
 
 # State / backup locations (XDG-aware).

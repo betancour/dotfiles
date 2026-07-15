@@ -2,7 +2,7 @@
 
 Portable, production-grade shell configuration for **Linux** and **macOS**, shared by **Bash**, **Zsh**, and **POSIX sh**.
 
-One codebase. Idempotent installer. Safe backups. Package-manager abstraction. Modular libraries.
+One real Git repository at **`~/.dotfiles`** is the single source of truth. Every configuration file under `$HOME` is a symbolic link into that repository. This is the traditional Unix dotfiles layout.
 
 ## Quick start
 
@@ -22,7 +22,32 @@ make install
 exec "$SHELL" -l
 ```
 
-If the repository lives elsewhere (for example `~/Development/dotfiles`), the installer creates `~/.dotfiles` as a symlink to that location so tooling can assume a canonical path.
+The repository **must** live at `~/.dotfiles` as a real directory (not a symlink). If you run the installer from another path, it refuses or offers to move the repository to `~/.dotfiles` before proceeding.
+
+## Model
+
+| Location | Role |
+|----------|------|
+| `~/.dotfiles/` | Real Git repository (single source of truth) |
+| `~/.dotfiles/.git` | Git metadata |
+| `~/.zshrc`, `~/.gitconfig`, … | Symlinks → files inside `~/.dotfiles` |
+
+There is no second copy of the repository under `~/dotfiles`, `~/Development`, or elsewhere.
+
+Example home links after install:
+
+```text
+~/.gitconfig        → ~/.dotfiles/git/gitconfig
+~/.gitignore_global → ~/.dotfiles/git/gitignore_global
+~/.vimrc            → ~/.dotfiles/vim/vimrc
+~/.zshrc            → ~/.dotfiles/shell/zsh/.zshrc
+~/.zprofile         → ~/.dotfiles/shell/zsh/.zprofile
+~/.zlogin           → ~/.dotfiles/shell/zsh/.zlogin
+~/.zlogout          → ~/.dotfiles/shell/zsh/.zlogout
+~/.zshenv           → ~/.dotfiles/shell/zsh/.zshenv
+~/.zaliases         → ~/.dotfiles/shell/.zaliases
+~/.zfunctions       → ~/.dotfiles/shell/.zfunctions
+```
 
 ## What the installer does
 
@@ -30,7 +55,7 @@ If the repository lives elsewhere (for example `~/Development/dotfiles`), the in
 |------|----------|
 | Preflight | Validates `HOME`, layout, required utilities |
 | Detect | OS, architecture, package manager, privileges, default shell |
-| `~/.dotfiles` | Creates canonical home (symlink or copy) |
+| Repository root | Requires `~/.dotfiles` (physical dir); offers to move if run elsewhere |
 | Dependencies | Installs CLI tools via apt/dnf/yum/pacman/zypper/apk/brew |
 | Shell config | Symlinks entry points (or `--append` managed blocks) |
 | Git / Vim / Starship | Optional config links |
@@ -52,7 +77,7 @@ If the repository lives elsewhere (for example `~/Development/dotfiles`), the in
 ```sh
 ./install.sh --dry-run          # no mutations
 ./install.sh --force            # backup + replace conflicts
-./install.sh --yes              # non-interactive confirmations
+./install.sh --yes              # non-interactive; auto-move repo to ~/.dotfiles if needed
 ./install.sh --append           # keep existing rc files; inject source block
 ./install.sh --skip-deps        # config only
 ./install.sh --only-deps        # packages only
@@ -70,37 +95,43 @@ Existing files are **never overwritten** without `--force`, `--yes`, or an inter
 make uninstall
 ```
 
-Removes managed symlinks and managed blocks. Leaves the repository, `*.local` overrides, and installed packages intact.
+Removes managed symlinks and managed blocks. Leaves the repository at `~/.dotfiles`, `*.local` overrides, and installed packages intact.
 
 ## Repository layout
 
 ```
-dotfiles/
+~/.dotfiles/                   # real Git repository (canonical source of truth)
 ├── install.sh                 # main installer (POSIX sh)
 ├── uninstall.sh               # safe removal
-├── bootstrap/                 # ~/.dotfiles canonicalization
+├── bootstrap/                 # enforces ~/.dotfiles as the real repo root
 ├── lib/                       # installer modules
 │   ├── common.sh
 │   ├── logging.sh
-│   ├── detect.sh              # OS / arch / pkg / shell / privileges
-│   ├── package.sh             # package manager abstraction
-│   ├── deps.sh                # dependency sets + verification
-│   ├── symlink.sh             # idempotent links + backups
-│   ├── managed.sh             # append-mode blocks
-│   ├── shell_install.sh       # shell / git / vim installers
-│   └── rollback.sh            # journaled rollback
-├── config/
-│   ├── shell/
-│   │   ├── lib/               # SHARED runtime (bash + zsh)
-│   │   ├── bash/              # Bash entry points + modules
-│   │   ├── zsh/               # Zsh entry points + modules
-│   │   └── sh/                # POSIX sh profile + tools
+│   ├── detect.sh
+│   ├── package.sh
+│   ├── deps.sh
+│   ├── symlink.sh
+│   ├── managed.sh
+│   ├── shell_install.sh
+│   └── rollback.sh
+├── shell/                     # shell runtime (source of truth for rc files)
+│   ├── lib/                   # SHARED runtime (bash + zsh)
+│   ├── bash/
+│   ├── zsh/
+│   ├── sh/
+│   ├── .zaliases
+│   └── .zfunctions
+├── config/                    # app configs (XDG-style)
+│   ├── nvim/
+│   ├── alacritty/
+│   ├── zellij/
+│   ├── tmux/
 │   ├── starship/
 │   ├── terminal/
-│   └── editor/
+│   └── …
 ├── git/                       # gitconfig + global gitignore
 ├── vim/
-├── scripts/install.sh         # thin wrapper → ./install.sh
+├── scripts/install.sh
 ├── docs/ARCHITECTURE.md
 └── Makefile
 ```

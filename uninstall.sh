@@ -55,7 +55,7 @@ Removes:
 
 Does not remove:
   - Package-manager installed tools (unless you uninstall them yourself)
-  - ~/.dotfiles repository content
+  - The real repository at ~/.dotfiles
   - *.local customization files
 EOF
 }
@@ -82,6 +82,8 @@ $HOME/.zprofile
 $HOME/.zshrc
 $HOME/.zlogin
 $HOME/.zlogout
+$HOME/.zaliases
+$HOME/.zfunctions
 $HOME/.bash_env
 $HOME/.bash_profile
 $HOME/.bashrc
@@ -109,8 +111,10 @@ df_uninstall_symlinks() {
     for _df_link in $DF_KNOWN_LINKS; do
         [ -n "$_df_link" ] || continue
         df_unlink_if_ours "$_df_link" "$DOTFILES_ROOT"
-        # Also match via canonical home path.
+        # Canonical path and legacy locations from earlier layouts.
         df_unlink_if_ours "$_df_link" "$DOTFILES_CANONICAL_HOME"
+        df_unlink_if_ours "$_df_link" "$HOME/dotfiles"
+        df_unlink_if_ours "$_df_link" "$HOME/Development/dotfiles"
     done
     unset _df_link
 }

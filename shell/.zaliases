@@ -1,0 +1,19 @@
+# .zaliases — shared aliases (symlinked to ~/.zaliases)
+# Sourced by Bash and Zsh via the modular shell entry points.
+# Implementation lives in lib/aliases.sh (common dialect for both shells).
+
+if [ -z "${DOTFILES_LIB_DIR:-}" ]; then
+    # Allow direct sourcing from ~/.zaliases when bootstrap has not run yet.
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        _df_za_dir="${${(%):-%x}:A:h}"
+    elif [ -n "${BASH_VERSION:-}" ]; then
+        _df_za_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    else
+        _df_za_dir="${HOME}/dotfiles/shell"
+    fi
+    DOTFILES_LIB_DIR="${_df_za_dir}/lib"
+    unset _df_za_dir
+fi
+
+# shellcheck source=/dev/null
+. "${DOTFILES_LIB_DIR}/aliases.sh"

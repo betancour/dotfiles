@@ -227,8 +227,9 @@ df_unlink_if_ours() {
         return 0
     fi
     _df_cur=$(readlink "$_df_dest" 2>/dev/null || true)
+    # Match current root, canonical ~/.dotfiles, and legacy paths from older layouts.
     case "$_df_cur" in
-        "$_df_root"/*|"$DOTFILES_CANONICAL_HOME"/*)
+        "$_df_root"/*|"$DOTFILES_CANONICAL_HOME"/*|"$HOME/dotfiles"/*|"$HOME/Development/dotfiles"/*)
             if [ "$DOTFILES_DRY_RUN" = "1" ]; then
                 log_dry "Would remove symlink $_df_dest"
             else

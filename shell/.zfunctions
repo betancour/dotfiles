@@ -1,0 +1,19 @@
+# .zfunctions — shared functions (symlinked to ~/.zfunctions)
+# Sourced by Bash and Zsh via the modular shell entry points.
+# Implementation lives in lib/functions.sh (common dialect for both shells).
+
+if [ -z "${DOTFILES_LIB_DIR:-}" ]; then
+    # Allow direct sourcing from ~/.zfunctions when bootstrap has not run yet.
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        _df_zf_dir="${${(%):-%x}:A:h}"
+    elif [ -n "${BASH_VERSION:-}" ]; then
+        _df_zf_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    else
+        _df_zf_dir="${HOME}/dotfiles/shell"
+    fi
+    DOTFILES_LIB_DIR="${_df_zf_dir}/lib"
+    unset _df_zf_dir
+fi
+
+# shellcheck source=/dev/null
+. "${DOTFILES_LIB_DIR}/functions.sh"

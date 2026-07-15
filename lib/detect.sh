@@ -179,5 +179,5 @@ df_print_detection_summary() {
     log_info "Target shell:     $DF_SHELL_TYPE"
     log_info "Root:             $DF_IS_ROOT  sudo: $DF_HAS_SUDO"
     log_info "Dotfiles root:    ${DOTFILES_ROOT:-unset}"
-    log_info "Canonical home:   $DOTFILES_CANONICAL_HOME"
+    log_info "Canonical repo:   $DOTFILES_CANONICAL_HOME"
 }

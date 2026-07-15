@@ -3,7 +3,7 @@
 DOTFILES_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SCRIPTS_DIR  := $(DOTFILES_DIR)/scripts
 LIB_DIR      := $(DOTFILES_DIR)/lib
-SHELL_CONFIG := $(DOTFILES_DIR)/config/shell
+SHELL_CONFIG := $(DOTFILES_DIR)/shell
 SH_LIB       := $(SHELL_CONFIG)/lib
 
 .PHONY: help install install-zsh install-bash install-sh install-both install-all \

@@ -9,28 +9,22 @@ if [ -n "${DOTFILES_SH_PROFILE_LOADED:-}" ]; then
 fi
 DOTFILES_SH_PROFILE_LOADED=1
 
-# Resolve repository root from this file when symlinked, else ~/.dotfiles.
+# Resolve repository root. Canonical location is a real git repo at ~/.dotfiles.
 if [ -n "${DOTFILES_DIR:-}" ] && [ -d "$DOTFILES_DIR" ]; then
     :
 elif [ -n "${DOTFILES_ROOT:-}" ] && [ -d "$DOTFILES_ROOT" ]; then
     DOTFILES_DIR=$DOTFILES_ROOT
 else
-    # $0 is unreliable when sourced; prefer canonical home.
-    if [ -d "$HOME/.dotfiles/config/shell/sh" ]; then
-        DOTFILES_DIR="$HOME/.dotfiles"
-    elif [ -d "$HOME/Development/dotfiles/config/shell/sh" ]; then
-        DOTFILES_DIR="$HOME/Development/dotfiles"
-    else
-        DOTFILES_DIR="$HOME/.dotfiles"
-    fi
+    # $0 is unreliable when sourced; prefer the real repo at ~/.dotfiles.
+    DOTFILES_DIR="$HOME/.dotfiles"
 fi
 
 export DOTFILES_DIR
 DOTFILES_SHELL="sh"
 export DOTFILES_SHELL
 
-DOTFILES_SH_DIR="${DOTFILES_DIR}/config/shell/sh"
-DOTFILES_LIB_DIR="${DOTFILES_DIR}/config/shell/lib"
+DOTFILES_SH_DIR="${DOTFILES_DIR}/shell/sh"
+DOTFILES_LIB_DIR="${DOTFILES_DIR}/shell/lib"
 
 # XDG base dirs (minimal)
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"

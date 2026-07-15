@@ -1,18 +1,21 @@
 # bootstrap.sh — shared bootstrap for Bash and Zsh
 # Sourced by every shell entry point. Resolves paths once; keeps startup cheap.
 
-# Resolve this file's directory (lib/) and parents.
+# Resolve this file's directory (shell/lib/) and parents.
+# Layout: ~/.dotfiles/shell/{lib,zsh,bash,sh}/  — real repo at ~/.dotfiles
 if [ -n "${ZSH_VERSION:-}" ]; then
     # %x = path of the file currently being sourced
     DOTFILES_LIB_DIR="${${(%):-%x}:A:h}"
 elif [ -n "${BASH_VERSION:-}" ]; then
     DOTFILES_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 else
-    DOTFILES_LIB_DIR="${DOTFILES_LIB_DIR:-$HOME/dotfiles/config/shell/lib}"
+    DOTFILES_LIB_DIR="${DOTFILES_LIB_DIR:-$HOME/.dotfiles/shell/lib}"
 fi
 
 DOTFILES_SHELL_DIR="$(cd "${DOTFILES_LIB_DIR}/.." && pwd)"
-DOTFILES_DIR="$(cd "${DOTFILES_SHELL_DIR}/../.." && pwd)"
+# shell/ is a top-level directory of the repository
+DOTFILES_DIR="$(cd "${DOTFILES_SHELL_DIR}/.." && pwd)"
+
 
 if [ -n "${ZSH_VERSION:-}" ]; then
     DOTFILES_SHELL=zsh

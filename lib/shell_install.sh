@@ -1,7 +1,7 @@
 # shell_install.sh — install shell, git, vim configuration
 # shellcheck shell=sh
 
-SHELL_CONFIG_DIR="${DOTFILES_ROOT}/config/shell"
+SHELL_CONFIG_DIR="${DOTFILES_ROOT}/shell"
 
 # Syntax-check shell entry points before linking (non-fatal on missing binary).
 df_validate_zsh_config() {
@@ -85,6 +85,8 @@ df_install_zsh_symlinks() {
     df_link_file "${SHELL_CONFIG_DIR}/zsh/.zshrc"    "${HOME}/.zshrc"
     df_link_file "${SHELL_CONFIG_DIR}/zsh/.zlogin"   "${HOME}/.zlogin"
     df_link_file "${SHELL_CONFIG_DIR}/zsh/.zlogout"  "${HOME}/.zlogout"
+    df_link_file "${SHELL_CONFIG_DIR}/.zaliases"     "${HOME}/.zaliases"
+    df_link_file "${SHELL_CONFIG_DIR}/.zfunctions"   "${HOME}/.zfunctions"
 
     df_install_template \
         "${DOTFILES_ROOT}/config/terminal/.zshrc.local.template" \
@@ -102,6 +104,9 @@ df_install_bash_symlinks() {
     df_link_file "${SHELL_CONFIG_DIR}/bash/.bashrc"       "${HOME}/.bashrc"
     df_link_file "${SHELL_CONFIG_DIR}/bash/.bash_login"   "${HOME}/.bash_login"
     df_link_file "${SHELL_CONFIG_DIR}/bash/.bash_logout"  "${HOME}/.bash_logout"
+    # Shared alias/function entry points (same files used by Zsh)
+    df_link_file "${SHELL_CONFIG_DIR}/.zaliases"          "${HOME}/.zaliases"
+    df_link_file "${SHELL_CONFIG_DIR}/.zfunctions"        "${HOME}/.zfunctions"
 
     df_install_template \
         "${DOTFILES_ROOT}/config/terminal/.bashrc.local.template" \
@@ -208,7 +213,7 @@ df_install_sh_append() {
 # Dispatch shell install based on mode.
 df_install_shell() {
     _df_which=$1
-    SHELL_CONFIG_DIR="${DOTFILES_ROOT}/config/shell"
+    SHELL_CONFIG_DIR="${DOTFILES_ROOT}/shell"
 
     case "$_df_which" in
         zsh)

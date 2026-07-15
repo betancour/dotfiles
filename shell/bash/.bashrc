@@ -19,8 +19,9 @@ dotfiles_secure_history_file "$HISTFILE"
 . "${DOTFILES_SHELL_DIR}/bash/modules/keybindings.bash"
 . "${DOTFILES_SHELL_DIR}/bash/modules/tools.bash"
 
-dotfiles_source_once "${DOTFILES_LIB_DIR}/aliases.sh"
-dotfiles_source_once "${DOTFILES_LIB_DIR}/functions.sh"
+# Home-facing entry points (~/.zaliases, ~/.zfunctions) also live under shell/
+dotfiles_source_once "${DOTFILES_SHELL_DIR}/.zaliases"
+dotfiles_source_once "${DOTFILES_SHELL_DIR}/.zfunctions"
 
 [ -r "$HOME/.bashrc.local" ] && . "$HOME/.bashrc.local"
 [ -r /etc/bashrc ] && . /etc/bashrc

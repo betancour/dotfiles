@@ -18,7 +18,6 @@
 #   --no-optional       Skip optional packages (starship, shellcheck)
 #   --no-git            Skip gitconfig install
 #   --no-vim            Skip vimrc install
-#   --copy-home         Copy repo into ~/.dotfiles instead of symlinking
 #   --shell SHELL       Target shell (same as positional)
 #   --color WHEN        auto|always|never
 #   --version           Print installer version
@@ -97,10 +96,14 @@ ${C_BOLD}Options:${C_RST}
   --no-optional      Skip starship / shellcheck
   --no-git           Skip git configuration
   --no-vim           Skip vim configuration
-  --copy-home        Copy repo to ~/.dotfiles (default: symlink)
   --shell NAME       Same as positional shell target
   --color WHEN       auto | always | never
   --version          Print version and exit
+
+${C_BOLD}Model:${C_RST}
+  - Canonical source of truth: ~/.dotfiles (real Git directory, not a symlink)
+  - Installer must run from ~/.dotfiles (or will offer to move the repo there)
+  - \$HOME only receives symbolic links pointing into ~/.dotfiles
 
 ${C_BOLD}Safety:${C_RST}
   - Idempotent: correct symlinks are left alone
@@ -176,11 +179,6 @@ parse_args() {
                 SKIP_VIM=1
                 shift
                 ;;
-            --copy-home)
-                DOTFILES_COPY_HOME=1
-                export DOTFILES_COPY_HOME
-                shift
-                ;;
             --shell)
                 if [ -z "${2:-}" ]; then
                     die "--shell requires an argument"
@@ -241,8 +239,8 @@ df_preflight() {
         die "DOTFILES_ROOT is not a directory: $DOTFILES_ROOT"
     fi
 
-    if [ ! -d "${DOTFILES_ROOT}/config/shell" ]; then
-        die "Invalid repository layout: missing config/shell under $DOTFILES_ROOT"
+    if [ ! -d "${DOTFILES_ROOT}/shell" ]; then
+        die "Invalid repository layout: missing shell/ under $DOTFILES_ROOT"
     fi
 
     if [ ! -d "${DOTFILES_ROOT}/lib" ]; then
@@ -305,9 +303,9 @@ df_install_main() {
     df_journal_init
     df_manifest_init
 
-    # Ensure ~/.dotfiles
-    log_step "Ensuring ~/.dotfiles"
-    df_ensure_dotfiles_home || die "Failed to establish ~/.dotfiles"
+    # Enforce canonical repository at ~/.dotfiles (physical dir, not a symlink)
+    log_step "Resolving repository root"
+    df_ensure_dotfiles_home || die "Repository must live at ~/.dotfiles"
     export DOTFILES_ROOT
     df_manifest_add dotfiles_root "$DOTFILES_ROOT"
 

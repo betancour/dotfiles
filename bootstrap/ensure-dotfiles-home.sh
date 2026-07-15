@@ -1,15 +1,17 @@
-# ensure-dotfiles-home.sh — place repository at ~/.dotfiles
+# ensure-dotfiles-home.sh — enforce canonical repository at ~/.dotfiles
 # shellcheck shell=sh
 #
-# Strategy (idempotent):
-#   1. If DOTFILES_ROOT is already $HOME/.dotfiles → done.
-#   2. If ~/.dotfiles is missing → symlink DOTFILES_ROOT → ~/.dotfiles
-#      (or copy when DOTFILES_COPY_HOME=1).
-#   3. If ~/.dotfiles exists and is a different path:
-#        - matching content / symlink to us → OK
-#        - otherwise warn and keep using DOTFILES_ROOT unless --force
+# Canonical model (traditional Unix layout):
+#   - ~/.dotfiles is a physical directory (never a symlink).
+#   - ~/.dotfiles/.git holds Git metadata.
+#   - Every tracked configuration file lives under ~/.dotfiles.
+#   - Files under $HOME are only symbolic links pointing into ~/.dotfiles.
+#   - There is no second copy of the repository (not ~/dotfiles, not ~/Development/...).
 #
-# Expects: DOTFILES_ROOT, logging helpers, common helpers.
+# The installer must be executed from ~/.dotfiles. If it is run from another
+# path, this helper either refuses or offers to move the repository there.
+#
+# Expects: DOTFILES_ROOT, logging helpers, common helpers (df_realpath, df_confirm).
 
 df_ensure_dotfiles_home() {
     _df_canonical="${DOTFILES_CANONICAL_HOME:-$HOME/.dotfiles}"
@@ -21,85 +23,109 @@ df_ensure_dotfiles_home() {
         return 1
     fi
 
-    # Normalize for comparison.
     _df_root_abs=$(df_realpath "$_df_root")
-    _df_canon_abs=$(df_realpath "$_df_canonical" 2>/dev/null || printf '%s' "$_df_canonical")
-
-    if [ "$_df_root_abs" = "$_df_canon_abs" ]; then
-        log_verbose "Repository already at canonical path: $_df_canonical"
-        DOTFILES_ROOT=$_df_root_abs
-        unset _df_canonical _df_root _df_root_abs _df_canon_abs
-        return 0
+    if [ ! -d "$_df_root_abs" ]; then
+        log_error "DOTFILES_ROOT is not a directory: $_df_root_abs"
+        unset _df_canonical _df_root _df_root_abs
+        return 1
     fi
 
+    # ~/.dotfiles must never be a symlink — even if it currently points at us.
     if [ -L "$_df_canonical" ]; then
         _df_link=$(readlink "$_df_canonical" 2>/dev/null || true)
-        _df_link_abs=$(df_realpath "$_df_link" 2>/dev/null || printf '%s' "$_df_link")
-        if [ "$_df_link_abs" = "$_df_root_abs" ]; then
-            log_info "Canonical home symlink OK: $_df_canonical -> $_df_root_abs"
-            DOTFILES_ROOT=$_df_root_abs
-            unset _df_canonical _df_root _df_root_abs _df_canon_abs _df_link _df_link_abs
-            return 0
-        fi
-        log_warn "\$HOME/.dotfiles points elsewhere ($_df_link)"
+        log_error "\$HOME/.dotfiles is a symlink (-> ${_df_link}); it must be a real directory"
         if [ "$DOTFILES_FORCE" = "1" ]; then
             if [ "$DOTFILES_DRY_RUN" = "1" ]; then
-                log_dry "Would repoint $_df_canonical -> $_df_root_abs"
+                log_dry "Would remove invalid symlink $_df_canonical"
             else
                 rm -f "$_df_canonical"
-                ln -s "$_df_root_abs" "$_df_canonical"
-                df_journal_record "symlink|${_df_canonical}|${_df_root_abs}|"
-                log_success "Repointed $_df_canonical -> $_df_root_abs"
+                df_journal_record "unlink|${_df_canonical}|${_df_link}|"
+                log_success "Removed invalid symlink $_df_canonical"
             fi
         else
-            log_warn "Keeping existing ~/.dotfiles; using $_df_root_abs as DOTFILES_ROOT"
-            DOTFILES_ROOT=$_df_root_abs
-            unset _df_canonical _df_root _df_root_abs _df_canon_abs _df_link _df_link_abs
-            return 0
+            log_error "Remove it with: rm ~/.dotfiles  (or re-run with --force)"
+            unset _df_canonical _df_root _df_root_abs _df_link
+            return 1
         fi
-    elif [ -d "$_df_canonical" ]; then
-        log_warn "$_df_canonical already exists as a directory (not our symlink)"
-        log_warn "Using repository at $_df_root_abs"
-        DOTFILES_ROOT=$_df_root_abs
-        unset _df_canonical _df_root _df_root_abs _df_canon_abs
-        return 0
-    elif [ -e "$_df_canonical" ]; then
-        log_error "$_df_canonical exists and is not a directory/symlink"
-        unset _df_canonical _df_root _df_root_abs _df_canon_abs
-        return 1
-    else
-        # Create ~/.dotfiles → repo
-        if [ "${DOTFILES_COPY_HOME:-0}" = "1" ]; then
-            log_info "Copying repository to $_df_canonical"
-            if [ "$DOTFILES_DRY_RUN" = "1" ]; then
-                log_dry "Would cp -a $_df_root_abs $_df_canonical"
-            else
-                cp -a "$_df_root_abs" "$_df_canonical" || {
-                    log_error "Failed to copy to $_df_canonical"
-                    unset _df_canonical _df_root _df_root_abs _df_canon_abs
-                    return 1
-                }
-                df_journal_record "mkdir|$_df_canonical"
-                DOTFILES_ROOT=$(df_realpath "$_df_canonical")
-                log_success "Copied repository to $_df_canonical"
-            fi
-        else
-            log_info "Creating $_df_canonical -> $_df_root_abs"
-            if [ "$DOTFILES_DRY_RUN" = "1" ]; then
-                log_dry "Would ln -s $_df_root_abs $_df_canonical"
-            else
-                ln -s "$_df_root_abs" "$_df_canonical" || {
-                    log_error "Failed to create $_df_canonical"
-                    unset _df_canonical _df_root _df_root_abs _df_canon_abs
-                    return 1
-                }
-                df_journal_record "symlink|${_df_canonical}|${_df_root_abs}|"
-                log_success "$_df_canonical -> $_df_root_abs"
-            fi
-            DOTFILES_ROOT=$_df_root_abs
-        fi
+        unset _df_link
     fi
 
-    unset _df_canonical _df_root _df_root_abs _df_canon_abs _df_link _df_link_abs
+    # Already at the canonical physical path.
+    if [ "$_df_root_abs" = "$_df_canonical" ]; then
+        if [ -L "$_df_root_abs" ]; then
+            log_error "Repository path resolves as a symlink; refuse to treat it as canonical"
+            unset _df_canonical _df_root _df_root_abs
+            return 1
+        fi
+        if [ ! -e "${_df_root_abs}/.git" ]; then
+            log_warn "No .git metadata at $_df_root_abs (continuing; clone may be incomplete)"
+        fi
+        log_verbose "Repository already at canonical path: $_df_canonical"
+        DOTFILES_ROOT=$_df_root_abs
+        export DOTFILES_ROOT
+        unset _df_canonical _df_root _df_root_abs
+        return 0
+    fi
+
+    # Running from a non-canonical location (e.g. ~/dotfiles or a clone elsewhere).
+    log_warn "Installer is running from: $_df_root_abs"
+    log_warn "Canonical repository location: $_df_canonical (real directory, not a symlink)"
+
+    if [ -e "$_df_canonical" ]; then
+        _df_canon_abs=$(df_realpath "$_df_canonical" 2>/dev/null || printf '%s' "$_df_canonical")
+        if [ "$_df_canon_abs" = "$_df_root_abs" ]; then
+            # Same inode via an alternate path name — still require the path ~/.dotfiles.
+            log_error "Repository is reachable as $_df_root_abs but must live at $_df_canonical"
+        else
+            log_error "Refusing to proceed: $_df_canonical already exists and is not this repository"
+            log_error "Keep a single copy at ~/.dotfiles and remove the other path"
+        fi
+        unset _df_canonical _df_root _df_root_abs _df_canon_abs
+        return 1
+    fi
+
+    if [ "$DOTFILES_DRY_RUN" = "1" ]; then
+        log_dry "Would move repository: $_df_root_abs -> $_df_canonical"
+        log_info "Dry-run continues using the current tree; a real install will relocate first"
+        DOTFILES_ROOT=$_df_root_abs
+        export DOTFILES_ROOT
+        unset _df_canonical _df_root _df_root_abs
+        return 0
+    fi
+
+    if [ "$DOTFILES_YES" = "1" ] || [ "$DOTFILES_FORCE" = "1" ]; then
+        :
+    elif df_confirm "Move the repository to $_df_canonical and continue?"; then
+        :
+    else
+        log_error "Refusing to install from a non-canonical path"
+        log_error "Move it yourself:"
+        log_error "  mv \"$_df_root_abs\" \"$_df_canonical\""
+        log_error "  cd ~/.dotfiles && ./install.sh"
+        log_error "Or re-run with --yes to move automatically"
+        unset _df_canonical _df_root _df_root_abs
+        return 1
+    fi
+
+    log_step "Moving repository to $_df_canonical"
+    # Move the physical tree (preserves .git history and permissions).
+    if ! mv "$_df_root_abs" "$_df_canonical"; then
+        log_error "Failed to move repository to $_df_canonical"
+        unset _df_canonical _df_root _df_root_abs
+        return 1
+    fi
+
+    if [ -L "$_df_canonical" ] || [ ! -d "$_df_canonical" ]; then
+        log_error "Post-move check failed: $_df_canonical is not a real directory"
+        unset _df_canonical _df_root _df_root_abs
+        return 1
+    fi
+
+    DOTFILES_ROOT=$(df_realpath "$_df_canonical")
+    export DOTFILES_ROOT
+    df_journal_record "move|${_df_root_abs}|${DOTFILES_ROOT}"
+    log_success "Repository moved to $DOTFILES_ROOT (Git history preserved)"
+
+    unset _df_canonical _df_root _df_root_abs
     return 0
 }

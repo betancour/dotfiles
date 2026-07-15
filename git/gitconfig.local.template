@@ -1,6 +1,6 @@
 # ~/.gitconfig.local — personal Git identity (not tracked in dotfiles)
 # Copy to ~/.gitconfig.local and customize:
-#   cp ~/Development/dotfiles/.gitconfig.local.template ~/.gitconfig.local
+#   cp ~/.dotfiles/git/gitconfig.local.template ~/.gitconfig.local
 
 [user]
     name = Your Name

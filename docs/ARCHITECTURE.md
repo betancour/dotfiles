@@ -5,14 +5,31 @@ Professional-grade multi-shell dotfiles with a modular POSIX installer.
 ## Design principles
 
 1. **Do one thing well** — each library module has one job.
-2. **Share by default** — Bash and Zsh load the same `config/shell/lib/` modules.
-3. **Isolate the unavoidable** — shell-specific code lives only in thin modules.
-4. **POSIX where practical** — installer is pure `/bin/sh`; shared interactive code uses the Bash/Zsh common dialect.
-5. **Configuration over conditionals** — feature flags in `privacy.sh` and `*.local` files.
-6. **Fast startup** — no login banners, docker probes, or heavy tool init by default.
-7. **Idempotent install** — correct symlinks are left alone; conflicts require confirmation or `--force`.
-8. **Safe by default** — backups, journals, rollback, dry-run, never clobber without consent.
-9. **Fail usefully** — preflight checks, colored logs, dependency verification.
+2. **Share by default** — Bash and Zsh load the same `shell/lib/` modules.
+3. **One real repository** — `~/.dotfiles` is a physical Git directory (never a symlink); `$HOME` only holds symlinks into it.
+4. **Isolate the unavoidable** — shell-specific code lives only in thin modules.
+5. **POSIX where practical** — installer is pure `/bin/sh`; shared interactive code uses the Bash/Zsh common dialect.
+6. **Configuration over conditionals** — feature flags in `privacy.sh` and `*.local` files.
+7. **Fast startup** — no login banners, docker probes, or heavy tool init by default.
+8. **Idempotent install** — correct symlinks are left alone; conflicts require confirmation or `--force`.
+9. **Safe by default** — backups, journals, rollback, dry-run, never clobber without consent.
+10. **Fail usefully** — preflight checks, colored logs, dependency verification.
+
+## Canonical layout
+
+```
+~/.dotfiles/                 # physical directory — the only Git repository
+~/.dotfiles/.git/            # Git metadata
+~/.zshrc  →  ~/.dotfiles/shell/zsh/.zshrc
+~/.gitconfig  →  ~/.dotfiles/git/gitconfig
+…
+```
+
+Rules:
+
+- `~/.dotfiles` is **not** a symbolic link.
+- There is **no** second copy under `~/dotfiles`, `~/Development/dotfiles`, or similar.
+- The installer verifies it is running from `~/.dotfiles`. If run elsewhere, it refuses or offers to `mv` the tree to `~/.dotfiles` (preserving history) before continuing.
 
 ## Supported platforms
 
@@ -26,11 +43,11 @@ No separate branches. One tree serves all supported shells and OSes.
 ## Directory layout
 
 ```
-dotfiles/
+~/.dotfiles/                   # real Git repository (canonical source of truth)
 ├── install.sh                 # orchestrator (CLI, traps, pipeline)
 ├── uninstall.sh               # reverse of install (symlinks + managed blocks)
 ├── bootstrap/
-│   └── ensure-dotfiles-home.sh
+│   └── ensure-dotfiles-home.sh  # require/move to ~/.dotfiles
 ├── lib/                       # installer-only modules (not sourced at shell startup)
 │   ├── common.sh              # constants, paths, confirm, realpath
 │   ├── logging.sh             # colors, levels, file log
@@ -41,15 +58,20 @@ dotfiles/
 │   ├── managed.sh             # append-mode BEGIN/END blocks
 │   ├── shell_install.sh       # shell / git / vim / starship
 │   └── rollback.sh            # journal reverse
-├── config/
-│   ├── shell/
-│   │   ├── lib/               # SHARED runtime — sourced by Bash and Zsh
-│   │   ├── bash/              # Bash compatibility layer
-│   │   ├── zsh/               # Zsh compatibility layer
-│   │   └── sh/                # POSIX sh profile + tools
+├── shell/                     # shell runtime (rc files live here)
+│   ├── lib/                   # SHARED runtime — sourced by Bash and Zsh
+│   ├── bash/                  # Bash compatibility layer
+│   ├── zsh/                   # Zsh compatibility layer
+│   ├── sh/                    # POSIX sh profile + tools
+│   ├── .zaliases
+│   └── .zfunctions
+├── config/                    # app configs
+│   ├── nvim/
+│   ├── alacritty/
+│   ├── zellij/
+│   ├── tmux/
 │   ├── starship/
-│   ├── terminal/
-│   └── editor/
+│   └── terminal/
 ├── git/
 ├── vim/
 ├── scripts/install.sh         # compatibility wrapper
@@ -64,7 +86,7 @@ parse_args
   → detect (OS, arch, pkg, shell, privileges)
   → version checks
   → journal + manifest init
-  → ensure ~/.dotfiles
+  → resolve repository root (require ~/.dotfiles; offer move)
   → install dependencies (unless --skip-deps)
   → install shell config (symlink | --append)
   → install git / vim / starship
@@ -81,7 +103,7 @@ On unexpected failure, `EXIT` trap invokes journal rollback.
 | Append | `--append` | Keep user rc files; inject managed `source` block |
 | Dry-run | `--dry-run` / `-n` | Log actions only |
 | Force | `--force` / `-f` | Backup + replace without prompting |
-| Yes | `--yes` / `-y` | Auto-confirm prompts |
+| Yes | `--yes` / `-y` | Auto-confirm prompts; auto-move repo if needed |
 | Deps only | `--only-deps` | Packages only |
 | Config only | `--skip-deps` | No package installs |
 
@@ -182,9 +204,9 @@ Templates live under `config/terminal/` and `git/`.
 
 ## Extending
 
-**New shared alias/function:** edit `config/shell/lib/aliases.sh` or `functions.sh`.
+**New shared alias/function:** edit `shell/lib/aliases.sh` or `functions.sh` (exposed via `shell/.zaliases` / `shell/.zfunctions`).
 
-**New shell-specific option:** edit `bash/modules/options.bash` or `zsh/modules/options.zsh`.
+**New shell-specific option:** edit `shell/bash/modules/options.bash` or `shell/zsh/modules/options.zsh`.
 
 **New dependency:** add logical name to `lib/deps.sh` and a mapping in `lib/package.sh` (`df_pkg_name`).
 
