@@ -1,1 +1,5 @@
-general.import = ["./themes/tokio-night.toml"] 
+# Active color scheme — change this one path to switch themes.
+# Available: themes/tokio-night.toml | nord.toml | ibm-5153.toml | sabre-gds.toml
+
+[general]
+import = ["themes/tokio-night.toml"]

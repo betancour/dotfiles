@@ -1,2 +1,19 @@
-# Used by the Activity.desktop app
-general.import = [ "~/.config/alacritty/pane.toml" ]
+# Alternate profile for Activity / system-monitor launchers.
+# Usage:
+#   alacritty --config-file ~/.config/alacritty/btop.toml -e btop
+
+[general]
+live_config_reload = true
+import = [
+  "theme.toml",
+  "font.toml",
+  "font-size.toml",
+  "window.toml",
+]
+
+[window]
+dimensions = { columns = 120, lines = 40 }
+opacity = 0.95
+
+[scrolling]
+history = 1000

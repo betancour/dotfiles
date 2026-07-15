@@ -1,4 +1,5 @@
 [font]
-    normal  = { family = "BlexMono Nerd Font", style = "Regular"    }
-    bold    = { family = "BlexMono Nerd Font", style = "Bold"       }
-    italic  = { family = "BlexMono Nerd Font", style = "Italic"     }
+normal      = { family = "BlexMono Nerd Font", style = "Regular" }
+bold        = { family = "BlexMono Nerd Font", style = "Bold" }
+italic      = { family = "BlexMono Nerd Font", style = "Italic" }
+bold_italic = { family = "BlexMono Nerd Font", style = "Bold Italic" }

@@ -1,0 +1,24 @@
+# Extra keybindings on top of Alacritty defaults.
+# See: https://alacritty.org/config-alacritty-bindings.html
+#
+# Command = Super on macOS (⌘). Control|Shift stays cross-platform.
+
+[keyboard]
+bindings = [
+  # Windows / tabs
+  { key = "N", mods = "Command", action = "CreateNewWindow" },
+  { key = "T", mods = "Command", action = "CreateNewTab" },
+  { key = "W", mods = "Command", action = "Quit" },
+
+  # Font size
+  { key = "Equals", mods = "Command", action = "IncreaseFontSize" },
+  { key = "Minus", mods = "Command", action = "DecreaseFontSize" },
+  { key = "Key0", mods = "Command", action = "ResetFontSize" },
+
+  # Search / vi mode (handy when not inside a multiplexer)
+  { key = "F", mods = "Command", action = "SearchForward" },
+  { key = "Space", mods = "Control|Shift", action = "ToggleViMode" },
+
+  # Fullscreen
+  { key = "Return", mods = "Command", action = "ToggleFullscreen" },
+]

@@ -1,0 +1,34 @@
+# Terminal runtime: environment, shell, scrollback, cursor, selection, mouse.
+#
+# Shell intentionally uses a plain login shell. Start tmux/zellij from the
+# shell (or a desktop launcher with -e), so Alacritty stays usable when a
+# multiplexer is missing and nested sessions are avoided.
+
+[env]
+# Prefer Alacritty's native terminfo when present (checked via `infocmp alacritty`).
+# Uncomment for hosts that only know xterm-256color:
+# TERM = "xterm-256color"
+COLORTERM = "truecolor"
+
+[terminal]
+osc52 = "OnlyCopy"
+
+[terminal.shell]
+program = "/bin/zsh"
+args = ["-l"]
+
+[scrolling]
+history = 50000
+multiplier = 3
+
+[cursor]
+style = { shape = "Block", blinking = "Off" }
+unfocused_hollow = true
+thickness = 0.15
+
+[selection]
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+save_to_clipboard = true
+
+[mouse]
+hide_when_typing = true

@@ -343,3 +343,36 @@ df_install_starship_config() {
     df_link_file "$_df_src" "${HOME}/.config/starship.toml"
     unset _df_src
 }
+
+# Alacritty config directory (symlink whole tree into XDG config).
+df_install_alacritty_config() {
+    _df_src="${DOTFILES_ROOT}/config/alacritty"
+    _df_dest="${HOME}/.config/alacritty"
+    if [ ! -d "$_df_src" ] || [ ! -f "${_df_src}/alacritty.toml" ]; then
+        log_verbose "No alacritty config in repo; skip"
+        unset _df_src _df_dest
+        return 0
+    fi
+    log_step "Installing Alacritty configuration"
+    df_mkdir_p "${HOME}/.config"
+    df_link_file "$_df_src" "$_df_dest" || {
+        log_warn "Alacritty config not linked (existing tree at $_df_dest; use --force)"
+        unset _df_src _df_dest
+        return 0
+    }
+    if df_has_cmd python3 && [ "$DOTFILES_DRY_RUN" != "1" ]; then
+        if python3 - "$_df_src" <<'PY'
+import sys, tomllib
+from pathlib import Path
+root = Path(sys.argv[1])
+for p in sorted(root.rglob("*.toml")):
+    tomllib.load(p.open("rb"))
+PY
+        then
+            log_verbose "Alacritty TOML syntax OK"
+        else
+            log_warn "Alacritty TOML syntax check failed"
+        fi
+    fi
+    unset _df_src _df_dest
+}

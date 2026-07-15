@@ -332,6 +332,7 @@ df_install_main() {
         df_install_vim || log_warn "Vim config install had issues"
     fi
     df_install_starship_config || true
+    df_install_alacritty_config || true
 
     # Summary
     log_step "Summary"

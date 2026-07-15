@@ -94,6 +94,7 @@ $HOME/.gitconfig
 $HOME/.gitignore_global
 $HOME/.vimrc
 $HOME/.config/starship.toml
+$HOME/.config/alacritty
 "
 
 df_uninstall_symlinks() {

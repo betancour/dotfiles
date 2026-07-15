@@ -1,4 +1,5 @@
 [font]
-normal = { family = "MesloLGLDZ Nerd Font Mono", style = "Regular" }
-bold = { family = "MesloLGLDZ Nerd Font Mono", style = "Bold" }
-italic = { family = "MesloLGLDZ Nerd Font Mono", style = "Italic" }
+normal      = { family = "MesloLGLDZ Nerd Font Mono", style = "Regular" }
+bold        = { family = "MesloLGLDZ Nerd Font Mono", style = "Bold" }
+italic      = { family = "MesloLGLDZ Nerd Font Mono", style = "Italic" }
+bold_italic = { family = "MesloLGLDZ Nerd Font Mono", style = "Bold Italic" }

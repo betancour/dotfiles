@@ -1,5 +1,9 @@
+# Font metrics — good candidate for machine-local overrides
+# (e.g. external 4K display vs laptop panel).
+
 [font]
 size = 16.0
 
 [font.offset]
+x = 0
 y = 2

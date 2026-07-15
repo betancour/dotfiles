@@ -1,1 +1,6 @@
-general.import = ["~/.config/alacritty/fonts/CascadiaCodeNF.toml"]
+# Active typeface — change this one path to switch fonts.
+# Available under fonts/: CascadiaCodeNF | JetBrainsMono | FiraMono |
+#                        CaskaydiaMono | BlexMono | MesloLGS
+
+[general]
+import = ["fonts/CascadiaCodeNF.toml"]
