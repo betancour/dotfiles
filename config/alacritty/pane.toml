@@ -1,0 +1,9 @@
+[window]
+  padding.x = 10
+  padding.y = 10
+  decorations = "None"
+  opacity = 0.90
+  dimensions.columns = 100
+  dimensions.lines = 45
+  position.x = 550
+  position.y = 550

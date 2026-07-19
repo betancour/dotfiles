@@ -2,4 +2,4 @@
 # Available: themes/tokio-night.toml | nord.toml | ibm-5153.toml | sabre-gds.toml
 
 [general]
-import = ["themes/tokio-night.toml"]
+import = ["themes/gruvbox.toml"]
