@@ -9,7 +9,6 @@ DOTFILES_ENV_LOADED=1
 
 dotfiles_source_once "${DOTFILES_LIB_DIR}/platform.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/xdg.sh"
-dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/privacy.sh"
 
 umask 077
@@ -45,16 +44,112 @@ export BAT_CONFIG_PATH="${XDG_CONFIG_HOME}/bat/config"
 export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
 export DOCKER_CONFIG="${XDG_CONFIG_HOME}/docker"
 export WGETRC="${XDG_CONFIG_HOME}/wget/wgetrc"
+
+# Ruby (gem)
 export GEM_HOME="${XDG_DATA_HOME}/gem"
 export GEM_SPEC_CACHE="${XDG_CACHE_HOME}/gem"
+export BUNDLE_USER_HOME="${XDG_CONFIG_HOME}/bundle"
+export BUNDLE_USER_CACHE="${XDG_CACHE_HOME}/bundle"
+export BUNDLE_USER_CONFIG="${XDG_CONFIG_HOME}/bundle/config"
+export BUNDLE_USER_PLUGIN="${XDG_DATA_HOME}/bundle"
+
+# Node.js / npm / corepack
 export NODE_REPL_HISTORY="${XDG_DATA_HOME}/node_repl_history"
 export NPM_CONFIG_USERCONFIG="${XDG_CONFIG_HOME}/npm/npmrc"
+export NPM_CONFIG_CACHE="${XDG_CACHE_HOME}/npm"
+export NPM_CONFIG_PREFIX="${NPM_CONFIG_PREFIX:-$HOME/.npm-global}"
+export COREPACK_HOME="${XDG_DATA_HOME}/corepack"
+export TS_NODE_HISTORY="${XDG_STATE_HOME}/ts_node_repl_history"
+
+# Bun
+export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+export BUN_INSTALL_CACHE_DIR="${XDG_CACHE_HOME}/bun"
+
+# Deno
+export DENO_DIR="${XDG_CACHE_HOME}/deno"
+export DENO_INSTALL_ROOT="${XDG_DATA_HOME}/deno"
+
+# pnpm / Yarn
+export PNPM_HOME="${XDG_DATA_HOME}/pnpm"
+export YARN_CACHE_FOLDER="${XDG_CACHE_HOME}/yarn"
+export YARN_GLOBAL_FOLDER="${XDG_DATA_HOME}/yarn"
+
+# NVM / fnm (paths only; init is lazy in tools.sh / profile.sh)
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+export FNM_DIR="${FNM_DIR:-${XDG_DATA_HOME}/fnm}"
+
+# Java — resolve JAVA_HOME for all sessions (login + non-login)
+export GRADLE_USER_HOME="${XDG_DATA_HOME}/gradle"
+if [ -z "${JAVA_HOME:-}" ]; then
+    if is_macos; then
+        for _jhome in \
+            /opt/homebrew/opt/openjdk \
+            /opt/homebrew/opt/openjdk@26 \
+            /opt/homebrew/opt/openjdk@25 \
+            /opt/homebrew/opt/openjdk@21 \
+            /opt/homebrew/opt/openjdk@17 \
+            /usr/local/opt/openjdk
+        do
+            if [ -d "$_jhome/libexec/openjdk.jdk/Contents/Home" ]; then
+                export JAVA_HOME="$_jhome/libexec/openjdk.jdk/Contents/Home"
+                break
+            elif [ -d "$_jhome" ]; then
+                export JAVA_HOME="$_jhome"
+                break
+            fi
+        done
+        unset _jhome
+        if [ -z "${JAVA_HOME:-}" ] && [ -x /usr/libexec/java_home ]; then
+            JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null) && export JAVA_HOME
+        fi
+    elif is_linux; then
+        for _jhome in \
+            /usr/lib/jvm/default-java \
+            /usr/lib/jvm/java-21-openjdk \
+            /usr/lib/jvm/java-21-openjdk-amd64 \
+            /usr/lib/jvm/java-17-openjdk \
+            /usr/lib/jvm/java-17-openjdk-amd64 \
+            /usr/lib/jvm/java-11-openjdk \
+            /usr/lib/jvm/java-11-openjdk-amd64
+        do
+            if [ -d "$_jhome" ]; then
+                export JAVA_HOME="$_jhome"
+                break
+            fi
+        done
+        unset _jhome
+    fi
+fi
+
+# Python
 export PYTHONPYCACHEPREFIX="${XDG_CACHE_HOME}/python"
 export PYTHONUSERBASE="${XDG_DATA_HOME}/python"
+export PIP_CACHE_DIR="${XDG_CACHE_HOME}/pip"
+export PIPX_HOME="${XDG_DATA_HOME}/pipx"
+export PIPX_BIN_DIR="${HOME}/.local/bin"
+export UV_CACHE_DIR="${XDG_CACHE_HOME}/uv"
+export WORKON_HOME="${XDG_DATA_HOME}/virtualenvs"
+export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
+
+# Rust
 export RUSTUP_HOME="${XDG_DATA_HOME}/rustup"
 export CARGO_HOME="${XDG_DATA_HOME}/cargo"
+
+# Go
 export GOPATH="${XDG_DATA_HOME}/go"
 export GOCACHE="${XDG_CACHE_HOME}/go-build"
+export GOMODCACHE="${XDG_CACHE_HOME}/go/mod"
+
+# Mise (XDG-friendly defaults when installed)
+export MISE_DATA_DIR="${MISE_DATA_DIR:-${XDG_DATA_HOME}/mise}"
+export MISE_CACHE_DIR="${MISE_CACHE_DIR:-${XDG_CACHE_HOME}/mise}"
+export MISE_CONFIG_DIR="${MISE_CONFIG_DIR:-${XDG_CONFIG_HOME}/mise}"
+
+# SDKMAN (optional; init stays lazy)
+export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+
+# PATH after toolchain vars so BUN_INSTALL / PNPM_HOME / CARGO_HOME resolve correctly
+dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
 
 if is_macos; then
     export CLICOLOR=1

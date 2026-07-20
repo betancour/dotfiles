@@ -1,13 +1,12 @@
-# Terminal runtime: environment, shell, scrollback, cursor, selection, mouse.
-#
-# Shell intentionally uses a plain login shell. Start tmux/zellij from the
-# shell (or a desktop launcher with -e), so Alacritty stays usable when a
-# multiplexer is missing and nested sessions are avoided.
+# =============================================
+#  ULTRA LOW-POWER + YOUR PREFERENCES
+# =============================================
+
+[general]
+live_config_reload = false          # Saves CPU
+ipc_socket = false
 
 [env]
-# Prefer Alacritty's native terminfo when present (checked via `infocmp alacritty`).
-# Uncomment for hosts that only know xterm-256color:
-# TERM = "xterm-256color"
 COLORTERM = "truecolor"
 
 [terminal]
@@ -17,8 +16,15 @@ osc52 = "OnlyCopy"
 program = "/bin/zsh"
 args = ["-l"]
 
+[window]
+dynamic_title = false
+decorations = "None"
+opacity = 1.0
+blur = false
+startup_mode = "Windowed"
+
 [scrolling]
-history = 50000
+history = 5000                      # Reduced from 50k (big power + memory saver)
 multiplier = 3
 
 [cursor]
@@ -32,3 +38,17 @@ save_to_clipboard = true
 
 [mouse]
 hide_when_typing = true
+
+[bell]
+# "None" is invalid in Alacritty 0.17+; duration = 0 disables the visual bell
+animation = "Linear"
+duration = 0
+
+[debug]
+renderer = "gles2"                  # Most important for battery
+# renderer = "gles2pure"            # Try this if you want even lower GPU usage
+# vsync removed — unused in Alacritty 0.17+
+render_timer = false
+persistent_logging = false
+log_level = "Off"
+prefer_egl = true
