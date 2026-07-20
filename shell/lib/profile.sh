@@ -87,10 +87,11 @@ if is_macos; then
         launchctl setenv LANG "${LANG:-}" 2>/dev/null || true
         [ -n "${JAVA_HOME:-}" ] && launchctl setenv JAVA_HOME "$JAVA_HOME" 2>/dev/null || true
         [ -n "${BUN_INSTALL:-}" ] && launchctl setenv BUN_INSTALL "$BUN_INSTALL" 2>/dev/null || true
+        [ -n "${DOTNET_ROOT:-}" ] && launchctl setenv DOTNET_ROOT "$DOTNET_ROOT" 2>/dev/null || true
     fi
 elif is_linux; then
     if command -v systemctl >/dev/null 2>&1; then
-        systemctl --user import-environment PATH EDITOR LANG JAVA_HOME BUN_INSTALL 2>/dev/null || true
+        systemctl --user import-environment PATH EDITOR LANG JAVA_HOME BUN_INSTALL DOTNET_ROOT 2>/dev/null || true
     fi
 fi
 

@@ -104,6 +104,20 @@ elif is_linux; then
         /usr/lib/jvm/java-11-openjdk/bin
 fi
 
+# .NET SDK (dotnet CLI lives in DOTNET_ROOT; global tools in tools/)
+if [ -n "${DOTNET_ROOT:-}" ]; then
+    _dotfiles_path_add "$DOTNET_ROOT"
+    _dotfiles_path_add "$DOTNET_ROOT/tools"
+fi
+_dotfiles_path_add "$HOME/.dotnet"
+_dotfiles_path_add "$HOME/.dotnet/tools"
+_dotfiles_path_add /usr/local/share/dotnet
+if is_macos; then
+    _dotfiles_path_add_first \
+        /opt/homebrew/opt/dotnet/libexec \
+        /usr/local/opt/dotnet/libexec
+fi
+
 # Android SDK (optional)
 if [ -n "${ANDROID_HOME:-}" ]; then
     _dotfiles_path_add "${ANDROID_HOME}/platform-tools"

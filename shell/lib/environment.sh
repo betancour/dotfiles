@@ -148,7 +148,25 @@ export MISE_CONFIG_DIR="${MISE_CONFIG_DIR:-${XDG_CONFIG_HOME}/mise}"
 # SDKMAN (optional; init stays lazy)
 export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
 
-# PATH after toolchain vars so BUN_INSTALL / PNPM_HOME / CARGO_HOME resolve correctly
+# .NET SDK — resolve DOTNET_ROOT for user and system installs
+export DOTNET_CLI_TELEMETRY_OPTOUT="${DOTNET_CLI_TELEMETRY_OPTOUT:-1}"
+export DOTNET_NOLOGO="${DOTNET_NOLOGO:-1}"
+if [ -z "${DOTNET_ROOT:-}" ]; then
+    for _dn_root in \
+        "$HOME/.dotnet" \
+        /usr/local/share/dotnet \
+        /opt/homebrew/opt/dotnet/libexec \
+        /usr/local/opt/dotnet/libexec
+    do
+        if [ -x "${_dn_root}/dotnet" ]; then
+            export DOTNET_ROOT="$_dn_root"
+            break
+        fi
+    done
+    unset _dn_root
+fi
+
+# PATH after toolchain vars so BUN_INSTALL / PNPM_HOME / CARGO_HOME / DOTNET_ROOT resolve correctly
 dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
 
 if is_macos; then
