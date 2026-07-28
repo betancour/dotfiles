@@ -98,7 +98,10 @@ fi
 # --- Feature flags for interactive modules ---
 command -v kubectl >/dev/null 2>&1 && export __KUBECTL_AVAILABLE=1
 
-# Session identity for logout/cleanup (shell-agnostic names)
-export DOTFILES_SESSION_ID="$$_$(date +%s)"
-export DOTFILES_LOGIN_TIME="$(date '+%Y-%m-%d %H:%M:%S')"
+# Session identity for logout/cleanup — one date(1) for both stamps.
+# login.sh's dotfiles_ensure_session_start is a no-op when these are set.
+_df_now=$(date '+%Y-%m-%d %H:%M:%S %s')
+export DOTFILES_LOGIN_TIME=${_df_now% *}
+export DOTFILES_SESSION_ID=$$_${_df_now##* }
+unset _df_now
 export PATH

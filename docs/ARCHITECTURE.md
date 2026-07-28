@@ -181,6 +181,8 @@ Set in environment or `*.local` files:
 | `DOTFILES_SSH_ADD_CONFIRM`  | `0`     | `ssh-add -c` per key            |
 | `ZSH_PROFILE_STARTUP`       | unset   | Print `zprof` after `.zshrc`    |
 
+Top-level interactive shells (`SHLVL=1`) always print a compact **start line** (session start, uptime since last reboot, shell ready time). The full welcome banner remains opt-in via `DOTFILES_SHOW_LOGIN_INFO`.
+
 ## Local customization
 
 Never edit tracked files for machine-specific settings. Use:
@@ -195,7 +197,12 @@ Templates live under `config/terminal/` and `git/`.
 ## Performance notes
 
 - Platform flags are computed once in `platform.sh`.
-- Login banners and docker probes are off by default.
+- Full login banners and docker probes are off by default (compact start/uptime line still prints on top-level terminals).
+- Login collectors prefer kernel interfaces over pipelines: Linux `/proc/uptime` + `/proc/stat`, macOS `sysctl kern.boottime` (one call for uptime + boot stamp). Results are cached for the process.
+- Shell ready time uses builtins where possible (zsh float `SECONDS`; bash `EPOCHREALTIME` with a single `awk` only when floats are required).
+- Formatting helpers avoid per-character `printf` loops; separators use in-shell pad expansion.
+- Session stamps (`DOTFILES_LOGIN_TIME` / `DOTFILES_SESSION_ID`) use one `date(1)` call (profile + login ensure).
+- Interactive rc load order is documented in `.bashrc` / `.zshrc`: environment → options → UI → tools → aliases → login last so **Ready** measures full interactive cost.
 - NVM and mise are lazy stubs until first invocation.
 - Zsh reuses `.zcompdump` for 24h (`compinit -C`).
 - PATH is built in a single pass with duplicate checks.

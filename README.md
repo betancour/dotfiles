@@ -174,6 +174,8 @@ Feature flags (export in a `*.local` file):
 | `DOTFILES_SHOW_DEV_STATUS=1` | off | Git/Node summary on login |
 | `DOTFILES_SSH_ADD_CONFIRM=1` | off | Confirm each `ssh-add` |
 
+On every top-level terminal start you also get a compact start line (always on): session start time, system uptime since last reboot, and shell ready time.
+
 ## Make targets
 
 ```sh
