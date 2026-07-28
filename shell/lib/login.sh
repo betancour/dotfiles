@@ -177,13 +177,28 @@ dotfiles_check_updates() {
     _last=
     [ -f "$_check_file" ] && _last=$(cat "$_check_file" 2>/dev/null)
     [ "$_last" = "$_today" ] && unset _check_file _today _last && return 0
+    mkdir -p "$(dirname "$_check_file")" 2>/dev/null || true
     echo "$_today" > "$_check_file"
 
+    # Slow package checks run quietly in the background (no job-control noise).
     if is_macos && command -v brew >/dev/null 2>&1; then
-        (
-            _n=$(brew outdated --quiet 2>/dev/null | wc -l | tr -d ' ')
-            [ "${_n:-0}" -gt 0 ] && echo "Notice: $_n Homebrew packages can be updated. Run: brew upgrade"
-        ) &
+        dotfiles_bg_quiet sh -c '
+            _n=$(brew outdated --quiet 2>/dev/null | wc -l | tr -d " ")
+            _n=${_n:-0}
+            if [ "$_n" -gt 0 ] 2>/dev/null; then
+                if [ -t 1 ] && [ "${TERM:-}" != dumb ]; then
+                    _y=$(printf "\033[33m"); _r=$(printf "\033[0m"); _d=$(printf "\033[2m")
+                else
+                    _y= _r= _d=
+                fi
+                if [ "$_n" -eq 1 ]; then
+                    _msg="1 Homebrew update available"
+                else
+                    _msg="$_n Homebrew updates available"
+                fi
+                printf "\n%s%s%s %s(run: brew upgrade)%s\n" "$_y" "$_msg" "$_r" "$_d" "$_r"
+            fi
+        '
     fi
     unset _check_file _today _last
 }

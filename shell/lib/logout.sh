@@ -52,11 +52,21 @@ if [ -f "${HISTFILE:-}" ] && [ -s "$HISTFILE" ]; then
     unset _hist_dir _backup
 fi
 
-# Background cleanup of ephemeral session files
-(
-    [ -n "${DOTFILES_SESSION_ID:-}" ] && \
-        find /tmp -name "*${DOTFILES_SESSION_ID}*" -user "${USER:-$(id -un)}" -delete 2>/dev/null
-) &
+# Quiet background cleanup of ephemeral session files (no job-control noise).
+# platform.sh is already sourced above for is_*; it also defines dotfiles_bg_quiet.
+if [ -n "${DOTFILES_SESSION_ID:-}" ]; then
+    _sid="$DOTFILES_SESSION_ID"
+    _user="${USER:-$(id -un)}"
+    if typeset -f dotfiles_bg_quiet >/dev/null 2>&1 \
+        || declare -f dotfiles_bg_quiet >/dev/null 2>&1; then
+        dotfiles_bg_quiet sh -c \
+            "find /tmp -name '*${_sid}*' -user '${_user}' -delete 2>/dev/null"
+    else
+        ( find /tmp -name "*${_sid}*" -user "$_user" -delete 2>/dev/null ) &
+        disown "$!" 2>/dev/null || true
+    fi
+    unset _sid _user
+fi
 
 # Farewell (interactive terminals only)
 if [ -t 1 ]; then

@@ -7,10 +7,10 @@ padding = { x = 10, y = 10 }
 dynamic_padding = true
 # "Buttonless" / "Transparent" are macOS-only; "None" is portable.
 decorations = "None"
-opacity = 0.90
+opacity = 100.0
 blur = true
 startup_mode = "Windowed"
 dynamic_title = true
 # macOS only — ignored elsewhere: Option as Alt for readline/tmux/vim
 option_as_alt = "Both"
-dimensions = { columns = 90, lines = 45 }
+dimensions = { columns = 120, lines = 45 }

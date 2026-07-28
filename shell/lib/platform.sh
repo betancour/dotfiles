@@ -21,3 +21,19 @@ esac
 
 is_macos() { [ "${DOTFILES_IS_MACOS:-0}" -eq 1 ]; }
 is_linux() { [ "${DOTFILES_IS_LINUX:-0}" -eq 1 ]; }
+
+# Run a command in the background without shell job-control noise
+# (no "[N] pid" start line, no "done" completion line).
+# Usage: dotfiles_bg_quiet command [args...]
+# For compound commands, wrap in a subshell: dotfiles_bg_quiet sh -c '...'
+dotfiles_bg_quiet() {
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        # zsh: &! backgrounds and disowns immediately (no job table entry)
+        "$@" &!
+    elif [ -n "${BASH_VERSION:-}" ]; then
+        "$@" &
+        disown "$!" 2>/dev/null || true
+    else
+        "$@" &
+    fi
+}
