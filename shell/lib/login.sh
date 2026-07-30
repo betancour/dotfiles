@@ -506,8 +506,9 @@ dotfiles_check_updates() {
 }
 
 dotfiles_show_random_tip() {
-    # Cheap entropy: seconds + pid. No date forks beyond %S if we reuse SECONDS.
-    _idx=$(( (${SECONDS:-0} + $$) % 8 ))
+    # Cheap entropy: seconds + pid. Truncate float SECONDS (zsh typeset -F).
+    _s=${SECONDS:-0}
+    _idx=$(( (${_s%.*} + $$) % 8 ))
     _dotfiles_term_colors
     case $_idx in
         0) printf '%s\n' "${DIM}Tip: Use z for smart directory jumping (zoxide)${RESET}" ;;
@@ -520,7 +521,7 @@ dotfiles_show_random_tip() {
         7) printf '%s\n' "${DIM}Tip: Type help to see available custom commands${RESET}" ;;
     esac
     echo
-    unset _idx BOLD DIM CYAN GREEN BLUE YELLOW MAGENTA RESET
+    unset _s _idx BOLD DIM CYAN GREEN BLUE YELLOW MAGENTA RESET
 }
 
 # =============================================================================
@@ -564,8 +565,11 @@ dotfiles_login() {
     dotfiles_ssh_agent_setup
 
     if [ "$_tty" -eq 1 ] && [ "$_top" -eq 1 ]; then
-        # ~10% of top-level sessions.
-        [ $(( (${SECONDS:-0} + $$) % 10 )) -eq 0 ] && dotfiles_show_random_tip
+        # ~10% of top-level sessions. Truncate float SECONDS (zsh typeset -F);
+        # [ -eq ] requires an integer expression.
+        _s=${SECONDS:-0}
+        [ $(( (${_s%.*} + $$) % 10 )) -eq 0 ] && dotfiles_show_random_tip
+        unset _s
     fi
 
     unset _tty _top
