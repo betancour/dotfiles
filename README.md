@@ -186,12 +186,28 @@ make install-sh
 make install-both
 make install-all
 make install-deps
+make install-java-tools   # latest stable Maven + Gradle → ~/.java-tools
+make update-java-tools    # same; upgrades only when a newer release exists
+make java-tools-status
 make dry-run
 make uninstall
 make validate         # syntax-check all shell files + installer
 make lint             # shellcheck (if installed)
 make clean            # remove broken symlinks in $HOME
 ```
+
+## Java tools (Maven + Gradle)
+
+Maven and Gradle are **not** installed by `./install.sh` and are **never** updated at shell startup. Install or upgrade them on demand:
+
+```sh
+make install-java-tools          # or: install-java-tools
+make update-java-tools           # same script; skips when already current
+scripts/install-java-tools.sh --dry-run
+scripts/install-java-tools.sh status
+```
+
+The script discovers the latest **stable** Maven (GA versions from Maven Central metadata; previews such as 4.0.0-rc are skipped) and the latest **stable** Gradle (official `services.gradle.org/versions/current` JSON), verifies checksums, and installs under `~/.java-tools/`. `MAVEN_HOME`, `GRADLE_HOME`, and `PATH` are set by `shell/lib/environment.sh` and `shell/lib/path.sh` when those directories exist.
 
 ## Performance
 

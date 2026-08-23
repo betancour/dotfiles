@@ -8,6 +8,7 @@ SH_LIB       := $(SHELL_CONFIG)/lib
 
 .PHONY: help install install-zsh install-bash install-sh install-both install-all \
 	install-deps dry-run uninstall \
+	install-java-tools update-java-tools java-tools-status \
 	validate validate-zsh validate-bash validate-sh lint clean
 
 help:
@@ -19,6 +20,9 @@ help:
 	@echo "  install-both    Install Bash + Zsh"
 	@echo "  install-all     Install Bash + Zsh + sh"
 	@echo "  install-deps    Install packages only"
+	@echo "  install-java-tools  Install latest stable Maven + Gradle into ~/.java-tools"
+	@echo "  update-java-tools   Same as install-java-tools (upgrade if newer)"
+	@echo "  java-tools-status   Show installed vs latest Maven / Gradle"
 	@echo "  dry-run         Show what install would do"
 	@echo "  uninstall       Remove managed symlinks / blocks"
 	@echo "  validate        Syntax-check shared lib + all shells"
@@ -46,6 +50,15 @@ install-all:
 install-deps:
 	@sh "$(DOTFILES_DIR)/install.sh" --only-deps
 
+install-java-tools:
+	@sh "$(SCRIPTS_DIR)/install-java-tools.sh" install
+
+update-java-tools:
+	@sh "$(SCRIPTS_DIR)/install-java-tools.sh" update
+
+java-tools-status:
+	@sh "$(SCRIPTS_DIR)/install-java-tools.sh" status
+
 dry-run:
 	@sh "$(DOTFILES_DIR)/install.sh" --dry-run --yes auto
 
@@ -63,6 +76,8 @@ validate: validate-zsh validate-bash validate-sh
 	done
 	@bash -n "$(DOTFILES_DIR)/install.sh"
 	@bash -n "$(DOTFILES_DIR)/uninstall.sh"
+	@bash -n "$(SCRIPTS_DIR)/install.sh"
+	@bash -n "$(SCRIPTS_DIR)/install-java-tools.sh"
 	@echo "All syntax checks passed."
 
 validate-zsh:
@@ -97,6 +112,7 @@ lint:
 			"$(DOTFILES_DIR)/install.sh" \
 			"$(DOTFILES_DIR)/uninstall.sh" \
 			"$(SCRIPTS_DIR)/install.sh" \
+			"$(SCRIPTS_DIR)/install-java-tools.sh" \
 			"$(LIB_DIR)"/*.sh \
 			"$(DOTFILES_DIR)/bootstrap"/*.sh \
 			"$(SHELL_CONFIG)/sh/.profile" \

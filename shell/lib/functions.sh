@@ -165,6 +165,52 @@ weather() {
         "https://wttr.in/${1:-}?format=%C+%t+%h+%w" && echo
 }
 
+# Maven / Gradle: manual install/update (never runs at shell startup).
+_dotfiles_java_tools_script() {
+    _df_root="${DOTFILES_DIR:-${DOTFILES_ROOT:-$HOME/.dotfiles}}"
+    printf '%s\n' "${_df_root}/scripts/install-java-tools.sh"
+    unset _df_root
+}
+
+_dotfiles_java_tools_activate() {
+    _df_root="${JAVA_TOOLS_HOME:-$HOME/.java-tools}"
+    if [ -d "${_df_root}/maven/bin" ]; then
+        export MAVEN_HOME="${_df_root}/maven"
+        case ":$PATH:" in
+            *":$MAVEN_HOME/bin:"*) ;;
+            *) PATH="$MAVEN_HOME/bin:$PATH" ;;
+        esac
+    fi
+    if [ -d "${_df_root}/gradle/bin" ]; then
+        export GRADLE_HOME="${_df_root}/gradle"
+        case ":$PATH:" in
+            *":$GRADLE_HOME/bin:"*) ;;
+            *) PATH="$GRADLE_HOME/bin:$PATH" ;;
+        esac
+    fi
+    export PATH
+    unset _df_root
+}
+
+install-java-tools() {
+    _df_script=$(_dotfiles_java_tools_script)
+    [ -f "$_df_script" ] || { echo "install-java-tools.sh not found: $_df_script" >&2; unset _df_script; return 1; }
+    sh "$_df_script" "$@" || { unset _df_script; return 1; }
+    _dotfiles_java_tools_activate
+    unset _df_script
+}
+
+update-java-tools() {
+    install-java-tools update "$@"
+}
+
+java-tools-status() {
+    _df_script=$(_dotfiles_java_tools_script)
+    [ -f "$_df_script" ] || { echo "install-java-tools.sh not found: $_df_script" >&2; unset _df_script; return 1; }
+    sh "$_df_script" status "$@"
+    unset _df_script
+}
+
 help() {
     cat <<'EOF'
 Custom shell functions:
@@ -174,6 +220,7 @@ Custom shell functions:
   Git        gitcp  gitbr  gitlog
   Docker     dpshow  dclean
   Utilities  genpass  weather
+  Java       install-java-tools  update-java-tools  java-tools-status
 
 Type 'help' to show this again.
 EOF

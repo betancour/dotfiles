@@ -65,7 +65,7 @@ log_error() {
 
 log_verbose() {
     if [ "${DOTFILES_VERBOSE:-0}" = "1" ]; then
-        printf '%s[DEBUG]%s %s\n' "$C_DIM" "$C_RST" "$*"
+        printf '%s[DEBUG]%s %s\n' "$C_DIM" "$C_RST" "$*" >&2
         _df_log_to_file DEBUG "$@"
     fi
 }

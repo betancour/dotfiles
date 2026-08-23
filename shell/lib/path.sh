@@ -150,5 +150,17 @@ elif is_linux; then
     _dotfiles_path_add /usr/local/sbin
 fi
 
+# Maven / Gradle last so ~/.java-tools wins over brew/distro packages.
+# Added here (not in the Java block) because _dotfiles_path_add prepends
+# and skips duplicates — an earlier add would let Homebrew shadow them.
+if [ -n "${MAVEN_HOME:-}" ]; then
+    _dotfiles_path_add "${MAVEN_HOME}/bin"
+fi
+if [ -n "${GRADLE_HOME:-}" ]; then
+    _dotfiles_path_add "${GRADLE_HOME}/bin"
+fi
+_dotfiles_path_add "${JAVA_TOOLS_HOME:-$HOME/.java-tools}/maven/bin"
+_dotfiles_path_add "${JAVA_TOOLS_HOME:-$HOME/.java-tools}/gradle/bin"
+
 unset -f _dotfiles_path_add _dotfiles_path_add_first
 export PATH

@@ -74,7 +74,8 @@ No separate branches. One tree serves all supported shells and OSes.
 │   └── terminal/
 ├── git/
 ├── vim/
-├── scripts/install.sh         # compatibility wrapper
+├── scripts/install.sh              # compatibility wrapper
+├── scripts/install-java-tools.sh   # Maven + Gradle (manual; ~/.java-tools)
 └── docs/
 ```
 
@@ -216,6 +217,8 @@ Templates live under `config/terminal/` and `git/`.
 **New shell-specific option:** edit `shell/bash/modules/options.bash` or `shell/zsh/modules/options.zsh`.
 
 **New dependency:** add logical name to `lib/deps.sh` and a mapping in `lib/package.sh` (`df_pkg_name`).
+
+**Maven / Gradle:** not package-manager deps. `scripts/install-java-tools.sh` downloads the latest stable official archives into `~/.java-tools/` (checksum-verified, idempotent). Shell startup only exports `MAVEN_HOME` / `GRADLE_HOME` and prepends `bin` when those trees exist — no version checks, no network. Re-run the script or `make update-java-tools` to pick up a newer release.
 
 **New OS support:** extend `lib/detect.sh` / `package.sh`; prefer capability detection over OS switches.
 

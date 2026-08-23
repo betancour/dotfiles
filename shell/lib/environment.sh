@@ -80,6 +80,15 @@ export FNM_DIR="${FNM_DIR:-${XDG_DATA_HOME}/fnm}"
 
 # Java — resolve JAVA_HOME for all sessions (login + non-login)
 export GRADLE_USER_HOME="${XDG_DATA_HOME}/gradle"
+# Maven / Gradle installs live under ~/.java-tools (see scripts/install-java-tools.sh).
+# Homes are set only when the tree exists; PATH is assembled in path.sh.
+export JAVA_TOOLS_HOME="${JAVA_TOOLS_HOME:-$HOME/.java-tools}"
+if [ -z "${MAVEN_HOME:-}" ] && [ -d "${JAVA_TOOLS_HOME}/maven" ]; then
+    export MAVEN_HOME="${JAVA_TOOLS_HOME}/maven"
+fi
+if [ -z "${GRADLE_HOME:-}" ] && [ -d "${JAVA_TOOLS_HOME}/gradle" ]; then
+    export GRADLE_HOME="${JAVA_TOOLS_HOME}/gradle"
+fi
 if [ -z "${JAVA_HOME:-}" ]; then
     if is_macos; then
         for _jhome in \

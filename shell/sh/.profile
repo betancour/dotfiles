@@ -53,6 +53,16 @@ elif [ -x /usr/local/bin/brew ]; then
     eval "$(/usr/local/bin/brew shellenv)"
 fi
 
+# Maven / Gradle (scripts/install-java-tools.sh). After brew so these win.
+if [ -d "${JAVA_TOOLS_HOME:-$HOME/.java-tools}/maven" ]; then
+    export MAVEN_HOME="${MAVEN_HOME:-${JAVA_TOOLS_HOME:-$HOME/.java-tools}/maven}"
+    _df_path_prepend "$MAVEN_HOME/bin"
+fi
+if [ -d "${JAVA_TOOLS_HOME:-$HOME/.java-tools}/gradle" ]; then
+    export GRADLE_HOME="${GRADLE_HOME:-${JAVA_TOOLS_HOME:-$HOME/.java-tools}/gradle}"
+    _df_path_prepend "$GRADLE_HOME/bin"
+fi
+
 export PATH
 
 # Editor / pager

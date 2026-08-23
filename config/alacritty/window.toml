@@ -13,5 +13,5 @@ startup_mode = "Windowed"
 dynamic_title = true
 # macOS only — ignored elsewhere: Option as Alt for readline/tmux/vim
 option_as_alt = "Both"
-dimensions = { columns = 122, lines = 45 }
-position = {x = 700, y = 0} 
+dimensions = { columns = 128, lines = 45 }
+position = {x = 580, y = 0} 
