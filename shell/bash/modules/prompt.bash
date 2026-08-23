@@ -1,7 +1,7 @@
 # prompt.bash — Bash prompt with Git status
 # Skipped when starship is installed (initialized later in tools.bash).
 
-if command -v starship >/dev/null 2>&1; then
+if [ "${TERM:-}" != dumb ] && command -v starship >/dev/null 2>&1; then
     return 0 2>/dev/null || true
 fi
 
@@ -20,11 +20,19 @@ __git_prompt() {
         || git rev-parse --short HEAD 2>/dev/null) || true
     [ -z "${_branch:-}" ] && return 0
 
-    _dirty= _staged= _untracked=
-    git diff --quiet 2>/dev/null || _dirty='●'
-    git diff --quiet --cached 2>/dev/null || _staged='+'
-    [ -n "$(git ls-files --other --exclude-standard 2>/dev/null)" ] && _untracked='?'
+    _dirty= _staged= _untracked= _line=
+    while IFS= read -r _line || [ -n "$_line" ]; do
+        case $_line in
+            \?\?*) _untracked='?' ;;
+            \ ?*)  _dirty='●' ;;
+            ?\ *)  _staged='+' ;;
+            ??*)   _staged='+'; _dirty='●' ;;
+        esac
+    done <<EOF
+$(git status --porcelain 2>/dev/null)
+EOF
     _status="${_dirty}${_staged}${_untracked}"
+    unset _line
 
     if [ "$_color_prompt" = yes ]; then
         if [ -n "$_status" ]; then

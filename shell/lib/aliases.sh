@@ -91,7 +91,7 @@ fi
 # General
 alias python='python3'
 alias cls='clear'
-alias reload='exec "${SHELL:-$0}" -l'
+reload() { exec "${SHELL:-zsh}" -l; }
 alias x='exit'
 alias df='df -h'
 

@@ -14,8 +14,12 @@ if [ -z "${XDG_RUNTIME_DIR:-}" ]; then
     unset _xdg_uid
 fi
 
+# mkdir only when missing. umask 077 (environment.sh) makes new dirs 700;
+# skip chmod on the existing-dir hot path.
 for _xdg_dir in "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME" "$XDG_CACHE_HOME"; do
-    [ -d "$_xdg_dir" ] || mkdir -p "$_xdg_dir"
-    chmod 700 "$_xdg_dir" 2>/dev/null || true
+    if [ ! -d "$_xdg_dir" ]; then
+        mkdir -p "$_xdg_dir"
+        chmod 700 "$_xdg_dir" 2>/dev/null || true
+    fi
 done
 unset _xdg_dir

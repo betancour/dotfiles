@@ -116,25 +116,27 @@ dotfiles_ensure_session_start() {
 # =============================================================================
 
 # Format integer seconds → compact uptime string (no forks).
+# Writes _DOTFILES_FMT (avoid $() subshell on the compact start-line path).
 _dotfiles_fmt_uptime_secs() {
     _s=$1
-    [ -n "$_s" ] || { printf 'unknown'; return; }
+    _DOTFILES_FMT=unknown
+    [ -n "$_s" ] || { unset _s; return; }
     # Drop fractional part if any.
     _s=${_s%%.*}
-    case $_s in '' | *[!0-9]*) printf 'unknown'; unset _s; return ;; esac
+    case $_s in '' | *[!0-9]*) unset _s; return ;; esac
 
     _d=$((_s / 86400))
     _h=$(( (_s % 86400) / 3600 ))
     _m=$(( (_s % 3600) / 60 ))
 
     if [ "$_d" -gt 0 ]; then
-        printf '%s' "${_d}d ${_h}h ${_m}m"
+        _DOTFILES_FMT="${_d}d ${_h}h ${_m}m"
     elif [ "$_h" -gt 0 ]; then
-        printf '%s' "${_h}h ${_m}m"
+        _DOTFILES_FMT="${_h}h ${_m}m"
     elif [ "$_m" -gt 0 ]; then
-        printf '%s' "${_m}m"
+        _DOTFILES_FMT="${_m}m"
     else
-        printf '%s' "${_s}s"
+        _DOTFILES_FMT="${_s}s"
     fi
     unset _s _d _h _m
 }
@@ -163,7 +165,9 @@ _dotfiles_collect_boot_state() {
         # "secs.frac idle.frac" — pure read, no fork.
         read -r _up_raw _ </proc/uptime 2>/dev/null || _up_raw=
         if [ -n "$_up_raw" ]; then
-            _DOTFILES_C_UPTIME=$(_dotfiles_fmt_uptime_secs "$_up_raw")
+            _dotfiles_fmt_uptime_secs "$_up_raw"
+            _DOTFILES_C_UPTIME=${_DOTFILES_FMT:-unknown}
+            unset _DOTFILES_FMT
         fi
         unset _up_raw
 
@@ -196,9 +200,14 @@ _dotfiles_collect_boot_state() {
                 '' | *[!0-9]*) _bsec= ;;
             esac
             if [ -n "$_bsec" ]; then
-                _now=$(date +%s)
-                _DOTFILES_C_UPTIME=$(_dotfiles_fmt_uptime_secs $((_now - _bsec)))
-                unset _now
+                if [ -n "${EPOCHSECONDS:-}" ]; then
+                    _now=$EPOCHSECONDS
+                else
+                    _now=$(date +%s)
+                fi
+                _dotfiles_fmt_uptime_secs $((_now - _bsec))
+                _DOTFILES_C_UPTIME=${_DOTFILES_FMT:-unknown}
+                unset _now _DOTFILES_FMT
             fi
             # Human boot time from trailing calendar fields after '}'.
             # kern.boottime: "{ sec = N, usec = M } Day Mon D HH:MM:SS YYYY"

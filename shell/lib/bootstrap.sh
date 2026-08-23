@@ -4,17 +4,19 @@
 # Resolve this file's directory (shell/lib/) and parents.
 # Layout: ~/.dotfiles/shell/{lib,zsh,bash,sh}/  — real repo at ~/.dotfiles
 if [ -n "${ZSH_VERSION:-}" ]; then
-    # %x = path of the file currently being sourced
+    # %x = path of the file currently being sourced; :A:h / :h are builtins (no cd/pwd)
     DOTFILES_LIB_DIR="${${(%):-%x}:A:h}"
+    DOTFILES_SHELL_DIR="${DOTFILES_LIB_DIR:h}"
+    DOTFILES_DIR="${DOTFILES_SHELL_DIR:h}"
 elif [ -n "${BASH_VERSION:-}" ]; then
     DOTFILES_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    DOTFILES_SHELL_DIR="$(cd "${DOTFILES_LIB_DIR}/.." && pwd)"
+    DOTFILES_DIR="$(cd "${DOTFILES_SHELL_DIR}/.." && pwd)"
 else
     DOTFILES_LIB_DIR="${DOTFILES_LIB_DIR:-$HOME/.dotfiles/shell/lib}"
+    DOTFILES_SHELL_DIR="$(cd "${DOTFILES_LIB_DIR}/.." && pwd)"
+    DOTFILES_DIR="$(cd "${DOTFILES_SHELL_DIR}/.." && pwd)"
 fi
-
-DOTFILES_SHELL_DIR="$(cd "${DOTFILES_LIB_DIR}/.." && pwd)"
-# shell/ is a top-level directory of the repository
-DOTFILES_DIR="$(cd "${DOTFILES_SHELL_DIR}/.." && pwd)"
 
 
 if [ -n "${ZSH_VERSION:-}" ]; then

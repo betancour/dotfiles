@@ -173,6 +173,7 @@ Feature flags (export in a `*.local` file):
 | `DOTFILES_SHOW_LOGIN_INFO=1` | off | Login system banner |
 | `DOTFILES_SHOW_DEV_STATUS=1` | off | Git/Node summary on login |
 | `DOTFILES_SSH_ADD_CONFIRM=1` | off | Confirm each `ssh-add` |
+| `DOTFILES_USE_OMZ=1` | off | Load the Oh My Zsh framework (slow; standalone plugins are the default) |
 
 On every top-level terminal start you also get a compact start line (always on): session start time, system uptime since last reboot, and shell ready time.
 
@@ -214,7 +215,9 @@ The script discovers the latest **stable** Maven (GA versions from Maven Central
 Startup stays lean by default:
 
 - No login banners or docker probes unless enabled
-- Lazy NVM / mise stubs
+- Lazy NVM / mise / pyenv / rbenv stubs
+- Oh My Zsh framework off unless `DOTFILES_USE_OMZ=1` (avoids a second `compinit`)
+- Cached `starship` / `zoxide` / `direnv` / `kubectl` init scripts
 - Single-pass PATH construction
 - Zsh completion dump reuse (`compinit -C` when fresh)
 - Starship used only when installed; otherwise lightweight git prompts

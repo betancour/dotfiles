@@ -50,7 +50,4 @@ if ! type -t __git_ps1 >/dev/null 2>&1; then
     unset _gitp
 fi
 
-if [ -n "${__KUBECTL_AVAILABLE:-}" ] && command -v kubectl >/dev/null 2>&1; then
-    # shellcheck source=/dev/null
-    . <(kubectl completion bash)
-fi
+

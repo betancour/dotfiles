@@ -27,8 +27,10 @@ _dotfiles_ssh_add_key() {
     _keypath="$1"
     if [ "${DOTFILES_SSH_ADD_CONFIRM:-0}" = 1 ]; then
         ssh-add -c -q "$_keypath" 2>/dev/null || true
-    elif is_macos && ssh-add -h 2>&1 | grep -q 'apple-use-keychain'; then
-        ssh-add --apple-use-keychain -q "$_keypath" 2>/dev/null || true
+    elif is_macos; then
+        # Prefer Keychain; fall back if this ssh-add build has no Apple flag.
+        ssh-add --apple-use-keychain -q "$_keypath" 2>/dev/null \
+            || ssh-add -q "$_keypath" 2>/dev/null || true
     else
         ssh-add -q "$_keypath" 2>/dev/null || true
     fi

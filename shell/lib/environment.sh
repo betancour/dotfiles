@@ -19,12 +19,19 @@ export LC_ALL="${LC_ALL:-en_US.UTF-8}"
 export LC_CTYPE="${LC_CTYPE:-en_US.UTF-8}"
 
 # Editor and pager — prefer nvim, then vim, then vi (no repeated lookups later)
-if command -v nvim >/dev/null 2>&1; then
-    export EDITOR=nvim VISUAL=nvim
-elif command -v vim >/dev/null 2>&1; then
-    export EDITOR=vim VISUAL=vim
+if [ -z "${EDITOR:-}" ]; then
+    if [ -x /opt/homebrew/bin/nvim ] || [ -x /usr/local/bin/nvim ] \
+        || [ -x "$HOME/.local/bin/nvim" ]; then
+        export EDITOR=nvim VISUAL=nvim
+    elif command -v nvim >/dev/null 2>&1; then
+        export EDITOR=nvim VISUAL=nvim
+    elif [ -x /usr/bin/vim ] || command -v vim >/dev/null 2>&1; then
+        export EDITOR=vim VISUAL=vim
+    else
+        export EDITOR=vi VISUAL=vi
+    fi
 else
-    export EDITOR=vi VISUAL=vi
+    export VISUAL="${VISUAL:-$EDITOR}"
 fi
 
 export PAGER=less

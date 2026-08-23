@@ -29,6 +29,7 @@ is_linux() { [ "${DOTFILES_IS_LINUX:-0}" -eq 1 ]; }
 dotfiles_bg_quiet() {
     if [ -n "${ZSH_VERSION:-}" ]; then
         # zsh: &! backgrounds and disowns immediately (no job table entry)
+        # shellcheck disable=SC1035,SC1072,SC1073
         "$@" &!
     elif [ -n "${BASH_VERSION:-}" ]; then
         "$@" &

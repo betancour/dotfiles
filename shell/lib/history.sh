@@ -15,16 +15,18 @@ dotfiles_secure_history_file() {
     _hf="${1:-${HISTFILE:-}}"
     [ -z "$_hf" ] && unset _hf && return 0
 
-    _hd="$(dirname "$_hf")"
-    [ -d "$_hd" ] || mkdir -p "$_hd"
-    chmod 700 "$_hd" 2>/dev/null || true
-
+    # Existing history files are already 600 from first create; skip chmod
+    # on the interactive hot path (was ~5ms of syscalls per shell).
     if [ -f "$_hf" ]; then
-        chmod 600 "$_hf" 2>/dev/null || true
-    elif [ ! -e "$_hf" ]; then
-        : > "$_hf"
-        chmod 600 "$_hf" 2>/dev/null || true
+        unset _hf
+        return 0
     fi
+
+    _hd="${_hf%/*}"
+    [ "$_hd" = "$_hf" ] && _hd=.
+    [ -d "$_hd" ] || mkdir -p "$_hd"
+    : > "$_hf"
+    chmod 600 "$_hf" 2>/dev/null || true
     unset _hf _hd
 }
 

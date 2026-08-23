@@ -40,8 +40,7 @@ dotfiles_source_once "${DOTFILES_SHELL_DIR}/.zfunctions"
 [[ -r "${ZDOTDIR:-$HOME}/.zshrc.local" ]] && source "${ZDOTDIR:-$HOME}/.zshrc.local"
 [[ -r "/etc/zshrc_${TERM_PROGRAM:-}" ]] && source "/etc/zshrc_${TERM_PROGRAM}"
 
-# Terminal line discipline (interactive TTY only; ignore failure on dumb).
-stty -ixon 2>/dev/null || true
+# Flow control is disabled via setopt NO_FLOW_CONTROL (no stty fork).
 
 # Non-login interactive: login shells run this from .zlogin instead.
 if [[ ! -o login ]]; then

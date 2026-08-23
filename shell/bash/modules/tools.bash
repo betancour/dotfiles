@@ -19,19 +19,14 @@ if command -v fzf >/dev/null 2>&1; then
     unset _fzf
 fi
 
-# Zoxide
-if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init bash)"
+# Zoxide / direnv / starship / kubectl — cached until the binary is newer
+_dotfiles_eval_cached zoxide_init zoxide init bash || true
+_dotfiles_eval_cached direnv_hook direnv hook bash || true
+if [ "${TERM:-}" != dumb ]; then
+    _dotfiles_eval_cached starship_init starship init bash || true
 fi
-
-# direnv
-if command -v direnv >/dev/null 2>&1; then
-    eval "$(direnv hook bash)"
-fi
-
-# Starship prompt (optional; takes precedence over modules/prompt.bash when present)
-if command -v starship >/dev/null 2>&1; then
-    eval "$(starship init bash)"
+if [ -n "${__KUBECTL_AVAILABLE:-}" ]; then
+    _dotfiles_eval_cached kubectl_comp kubectl completion bash || true
 fi
 
 # NVM: load .nvmrc on cd (simple, no chpwd hooks in Bash)
@@ -44,10 +39,13 @@ if [ -n "${NVM_DIR:-}" ] && [ -d "$NVM_DIR" ]; then
     }
 fi
 
-# GRC colorizer
+# GRC colorizer (first match only)
 if is_macos; then
-    [ -s /opt/homebrew/etc/grc.bash ] && . /opt/homebrew/etc/grc.bash
-    [ -s /usr/local/etc/grc.bash ] && . /usr/local/etc/grc.bash
+    if [ -s /opt/homebrew/etc/grc.bash ]; then
+        . /opt/homebrew/etc/grc.bash
+    elif [ -s /usr/local/etc/grc.bash ]; then
+        . /usr/local/etc/grc.bash
+    fi
 elif is_linux; then
     [ -s /etc/grc.bash ] && . /etc/grc.bash
 fi

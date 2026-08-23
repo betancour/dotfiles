@@ -37,8 +37,16 @@ cdf() {
         echo "fzf not found" >&2
         return 1
     fi
-    _dir=$(find . -type d 2>/dev/null | fzf --height 40%)
-    [ -n "$_dir" ] && cd "$_dir"
+    if command -v fd >/dev/null 2>&1; then
+        _dir=$(fd --type d --hidden --exclude .git 2>/dev/null | fzf --height 40%)
+    elif command -v fdfind >/dev/null 2>&1; then
+        _dir=$(fdfind --type d --hidden --exclude .git 2>/dev/null | fzf --height 40%)
+    else
+        _dir=$(find . -type d 2>/dev/null | fzf --height 40%)
+    fi
+    if [ -n "$_dir" ]; then
+        cd "$_dir" || { unset _dir; return 1; }
+    fi
     unset _dir
 }
 
@@ -62,12 +70,24 @@ extract() {
 
 findfile() {
     [ "$#" -eq 0 ] && { echo "Usage: findfile <name>"; return 1; }
-    find . -type f -iname "*$1*" 2>/dev/null
+    if command -v fd >/dev/null 2>&1; then
+        fd --type f --hidden --exclude .git -i "$1"
+    elif command -v fdfind >/dev/null 2>&1; then
+        fdfind --type f --hidden --exclude .git -i "$1"
+    else
+        find . -type f -iname "*$1*" 2>/dev/null
+    fi
 }
 
 finddir() {
     [ "$#" -eq 0 ] && { echo "Usage: finddir <name>"; return 1; }
-    find . -type d -iname "*$1*" 2>/dev/null
+    if command -v fd >/dev/null 2>&1; then
+        fd --type d --hidden --exclude .git -i "$1"
+    elif command -v fdfind >/dev/null 2>&1; then
+        fdfind --type d --hidden --exclude .git -i "$1"
+    else
+        find . -type d -iname "*$1*" 2>/dev/null
+    fi
 }
 
 fsize() {

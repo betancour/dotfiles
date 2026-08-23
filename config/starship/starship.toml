@@ -33,6 +33,7 @@ format = "([$symbol$branch]($style) )"
 [git_status]
 style = "bold yellow"
 format = "([\\[$all_status$ahead_behind\\]]($style) )"
+ignore_submodules = true
 conflicted = "⇕"
 ahead = "⇡${count}"
 behind = "⇣${count}"

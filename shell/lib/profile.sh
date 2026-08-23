@@ -25,19 +25,23 @@ fi
 dotfiles_ssh_agent_start
 
 # --- GPG agent ---
+# One gpgconf call (no-op if already running). $TTY is a zsh builtin; else /dev/tty.
 if command -v gpgconf >/dev/null 2>&1; then
-    if ! pgrep -u "$USER" gpg-agent >/dev/null 2>&1; then
-        gpgconf --launch gpg-agent 2>/dev/null || true
-    fi
-    GPG_TTY=$(tty 2>/dev/null) && export GPG_TTY
+    gpgconf --launch gpg-agent 2>/dev/null || true
+    GPG_TTY=${TTY:-/dev/tty}
+    export GPG_TTY
 fi
 
-# --- Version managers (init only when installed) ---
+# --- Version managers (shims already on PATH from path.sh; init is lazy) ---
 # JAVA_HOME / BUN_INSTALL / toolchain PATH entries live in environment.sh + path.sh.
 if [ -x "${PYENV_ROOT:-$HOME/.pyenv}/bin/pyenv" ] || [ -x "$HOME/.pyenv/bin/pyenv" ]; then
     export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
     case ":$PATH:" in *":$PYENV_ROOT/bin:"*) ;; *) PATH="$PYENV_ROOT/bin:$PATH" ;; esac
-    eval "$(pyenv init -)"
+    pyenv() {
+        unset -f pyenv
+        eval "$(command pyenv init -)"
+        pyenv "$@"
+    }
 fi
 
 # NVM: directory only here; lazy function lives in tools.sh
@@ -62,7 +66,11 @@ fi
 
 if [ -d "$HOME/.rbenv" ]; then
     case ":$PATH:" in *":$HOME/.rbenv/bin:"*) ;; *) PATH="$HOME/.rbenv/bin:$PATH" ;; esac
-    eval "$(rbenv init - --no-rehash)"
+    rbenv() {
+        unset -f rbenv
+        eval "$(command rbenv init - --no-rehash)"
+        rbenv "$@"
+    }
 fi
 
 # Rustup/cargo env (prefer XDG CARGO_HOME, fall back to ~/.cargo)
@@ -80,20 +88,17 @@ if [ -z "${SDKMAN_DIR:-}" ] && [ -d "$HOME/.sdkman" ]; then
 fi
 
 # --- Desktop / session environment export ---
+# GUI apps inherit PATH/EDITOR/LANG. Extra toolchain vars are already on PATH
+# for shells; each launchctl setenv is a fork, so keep this to the essentials.
 if is_macos; then
     if command -v launchctl >/dev/null 2>&1; then
         launchctl setenv PATH "$PATH" 2>/dev/null || true
         launchctl setenv EDITOR "${EDITOR:-}" 2>/dev/null || true
         launchctl setenv LANG "${LANG:-}" 2>/dev/null || true
-        [ -n "${JAVA_HOME:-}" ] && launchctl setenv JAVA_HOME "$JAVA_HOME" 2>/dev/null || true
-        [ -n "${MAVEN_HOME:-}" ] && launchctl setenv MAVEN_HOME "$MAVEN_HOME" 2>/dev/null || true
-        [ -n "${GRADLE_HOME:-}" ] && launchctl setenv GRADLE_HOME "$GRADLE_HOME" 2>/dev/null || true
-        [ -n "${BUN_INSTALL:-}" ] && launchctl setenv BUN_INSTALL "$BUN_INSTALL" 2>/dev/null || true
-        [ -n "${DOTNET_ROOT:-}" ] && launchctl setenv DOTNET_ROOT "$DOTNET_ROOT" 2>/dev/null || true
     fi
 elif is_linux; then
     if command -v systemctl >/dev/null 2>&1; then
-        systemctl --user import-environment PATH EDITOR LANG JAVA_HOME MAVEN_HOME GRADLE_HOME BUN_INSTALL DOTNET_ROOT 2>/dev/null || true
+        systemctl --user import-environment PATH EDITOR LANG 2>/dev/null || true
     fi
 fi
 

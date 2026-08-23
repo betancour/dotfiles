@@ -10,15 +10,20 @@ export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/.zcompdump-${HOST}-${ZS
 [[ -d /usr/local/share/zsh/site-functions ]] && fpath=(/usr/local/share/zsh/site-functions $fpath)
 [[ -d "$HOME/.grok/completions/zsh" ]] && fpath=("$HOME/.grok/completions/zsh" $fpath)
 
-autoload -Uz compinit
-# Reuse dump when younger than 24h (-C skips security check → faster startup)
-if [[ -f "$ZSH_COMPDUMP"(#qN.mh-24) ]]; then
-    compinit -C -d "$ZSH_COMPDUMP"
-else
-    compinit -d "$ZSH_COMPDUMP"
-fi
+# Skip fpath security audit (compaudit) — the dump is under our cache dir.
+ZSH_DISABLE_COMPFIX=true
 
-autoload -Uz bashcompinit && bashcompinit
+autoload -Uz compinit
+# Oh My Zsh's oh-my-zsh.sh calls compinit itself; skip the duplicate dump.
+if [[ "${DOTFILES_USE_OMZ:-0}" != 1 ]]; then
+    # Reuse dump when younger than 24h (-C skips security check → faster startup)
+    if [[ -f "$ZSH_COMPDUMP"(#qN.mh-24) ]]; then
+        compinit -C -d "$ZSH_COMPDUMP"
+    else
+        compinit -d "$ZSH_COMPDUMP"
+    fi
+    autoload -Uz bashcompinit && bashcompinit
+fi
 
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
@@ -33,7 +38,7 @@ zstyle ':completion:*' squeeze-slashes true
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completion"
 
-if command -v compdef >/dev/null 2>&1; then
+if (( $+functions[compdef] )); then
     compdef _files backup fsize extract
     compdef _directories mkcd cdf finddir
 fi

@@ -22,19 +22,12 @@ if command -v fzf >/dev/null 2>&1; then
     unset _fzf
 fi
 
-# Zoxide
-if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init zsh)"
-fi
-
-# direnv
-if command -v direnv >/dev/null 2>&1; then
-    eval "$(direnv hook zsh)"
-fi
-
-# Starship prompt (optional; replaces modules/prompt.zsh when present)
-if command -v starship >/dev/null 2>&1; then
-    eval "$(starship init zsh)"
+# Zoxide / direnv / starship — cached until the binary is newer than the dump
+_dotfiles_eval_cached zoxide_init zoxide init zsh || true
+_dotfiles_eval_cached direnv_hook direnv hook zsh || true
+# Starship refuses dumb terminals (scp, emacs, `zsh -c`); keep native prompt.
+if [[ "${TERM:-}" != dumb ]]; then
+    _dotfiles_eval_cached starship_init starship init zsh || true
 fi
 
 # NVM: .nvmrc on directory change (Zsh chpwd hook)
@@ -48,15 +41,18 @@ if [[ -n "${NVM_DIR:-}" && -d "$NVM_DIR" ]]; then
     add-zsh-hook chpwd _dotfiles_load_nvmrc
 fi
 
-# Kubectl completion
-if [[ -n "${__KUBECTL_AVAILABLE:-}" ]] && command -v kubectl >/dev/null 2>&1; then
-    source <(kubectl completion zsh)
+# Kubectl completion (generated once; reused until kubectl is newer)
+if [[ -n "${__KUBECTL_AVAILABLE:-}" ]]; then
+    _dotfiles_eval_cached kubectl_comp kubectl completion zsh || true
 fi
 
-# GRC colorizer
+# GRC colorizer (first match only)
 if is_macos; then
-    [[ -s /opt/homebrew/etc/grc.zsh ]] && source /opt/homebrew/etc/grc.zsh
-    [[ -s /usr/local/etc/grc.zsh ]] && source /usr/local/etc/grc.zsh
+    if [[ -s /opt/homebrew/etc/grc.zsh ]]; then
+        source /opt/homebrew/etc/grc.zsh
+    elif [[ -s /usr/local/etc/grc.zsh ]]; then
+        source /usr/local/etc/grc.zsh
+    fi
 elif is_linux; then
     [[ -s /etc/grc.zsh ]] && source /etc/grc.zsh
 fi
