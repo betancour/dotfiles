@@ -132,11 +132,13 @@ Removes managed symlinks and managed blocks. Leaves the repository at `~/.dotfil
 ├── git/                       # gitconfig + global gitignore
 ├── vim/
 ├── scripts/install.sh
-├── docs/ARCHITECTURE.md
+├── docs/
+│   ├── ARCHITECTURE.md
+│   └── HARPOON.md          # Neovim Harpoon keymap contract
 └── Makefile
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for boot order and design decisions.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for boot order and design decisions. Harpoon maps: [docs/HARPOON.md](docs/HARPOON.md).
 
 ## Dependencies
 

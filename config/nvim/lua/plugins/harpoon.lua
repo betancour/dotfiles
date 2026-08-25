@@ -1,71 +1,74 @@
--- ThePrimeagen Harpoon 2 — classic Primeagen keymaps
+-- ThePrimeagen Harpoon 2. Keymap contract: docs/HARPOON.md
+-- Do not steal <C-hjkl>, <C-s>, or tmux <M-1>..<M-9>. Ctrl-Shift dies in the tty.
 return {
-	"ThePrimeagen/harpoon",
-	branch = "harpoon2",
-	dependencies = { "nvim-lua/plenary.nvim" },
-	opts = {
-		settings = {
-			save_on_toggle = true,
-			sync_on_ui_close = true,
-		},
-	},
-	keys = {
-		{
-			"<leader>a",
-			function()
-				require("harpoon"):list():add()
-			end,
-			desc = "Harpoon add file",
-		},
-		{
-			"<C-e>",
-			function()
-				local harpoon = require("harpoon")
-				harpoon.ui:toggle_quick_menu(harpoon:list())
-			end,
-			desc = "Harpoon quick menu",
-		},
-		{
-			"<C-h>",
-			function()
-				require("harpoon"):list():select(1)
-			end,
-			desc = "Harpoon file 1",
-		},
-		{
-			"<C-t>",
-			function()
-				require("harpoon"):list():select(2)
-			end,
-			desc = "Harpoon file 2",
-		},
-		{
-			"<C-n>",
-			function()
-				require("harpoon"):list():select(3)
-			end,
-			desc = "Harpoon file 3",
-		},
-		{
-			"<C-s>",
-			function()
-				require("harpoon"):list():select(4)
-			end,
-			desc = "Harpoon file 4",
-		},
-		{
-			"<C-S-P>",
-			function()
-				require("harpoon"):list():prev()
-			end,
-			desc = "Harpoon prev",
-		},
-		{
-			"<C-S-N>",
-			function()
-				require("harpoon"):list():next()
-			end,
-			desc = "Harpoon next",
-		},
-	},
+  "ThePrimeagen/harpoon",
+  branch = "harpoon2",
+  dependencies = { "nvim-lua/plenary.nvim" },
+  opts = {
+    settings = {
+      save_on_toggle = true,
+      sync_on_ui_close = true,
+    },
+  },
+  config = function(_, opts)
+    local harpoon = require("harpoon")
+    harpoon:setup(opts)
+    harpoon:extend(require("harpoon.extensions").builtins.navigate_with_number())
+    harpoon:extend({
+      UI_CREATE = function(cx)
+        vim.keymap.set("n", "<C-v>", function()
+          harpoon.ui:select_menu_item({ vsplit = true })
+        end, { buffer = cx.bufnr, desc = "Harpoon vsplit" })
+        vim.keymap.set("n", "<C-x>", function()
+          harpoon.ui:select_menu_item({ split = true })
+        end, { buffer = cx.bufnr, desc = "Harpoon split" })
+        vim.keymap.set("n", "<C-t>", function()
+          harpoon.ui:select_menu_item({ tabedit = true })
+        end, { buffer = cx.bufnr, desc = "Harpoon tab" })
+      end,
+    })
+  end,
+  keys = function()
+    local keys = {
+      {
+        "<leader>a",
+        function()
+          require("harpoon"):list():add()
+        end,
+        desc = "Harpoon add file",
+      },
+      {
+        "<leader>h",
+        function()
+          local harpoon = require("harpoon")
+          harpoon.ui:toggle_quick_menu(harpoon:list())
+        end,
+        desc = "Harpoon quick menu",
+      },
+      {
+        "[a",
+        function()
+          require("harpoon"):list():prev({ ui_nav_wrap = true })
+        end,
+        desc = "Harpoon prev",
+      },
+      {
+        "]a",
+        function()
+          require("harpoon"):list():next({ ui_nav_wrap = true })
+        end,
+        desc = "Harpoon next",
+      },
+    }
+    for i = 1, 4 do
+      table.insert(keys, {
+        "<leader>" .. i,
+        function()
+          require("harpoon"):list():select(i)
+        end,
+        desc = "Harpoon file " .. i,
+      })
+    end
+    return keys
+  end,
 }
