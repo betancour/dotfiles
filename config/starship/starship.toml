@@ -4,7 +4,8 @@
 "$schema" = "https://starship.rs/config-schema.json"
 
 add_newline = true
-command_timeout = 500
+# 500ms (Starship default) is too tight for Apple Git on first prompt.
+command_timeout = 1000
 
 format = """
 $username\

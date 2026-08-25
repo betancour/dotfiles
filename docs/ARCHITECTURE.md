@@ -212,7 +212,7 @@ Templates live under `config/terminal/` and `git/`.
 - macOS `launchctl setenv` exports only `PATH` / `EDITOR` / `LANG` (each call is a fork).
 - PATH is built in a single pass with duplicate checks. XDG / history dirs are created only when missing.
 - Shared modules use source-once markers to avoid re-work.
-- Native git prompts are skipped when `starship` is on `PATH`. Git `core.untrackedCache` + `core.fsmonitor` keep `git status` (and therefore the prompt) cheap.
+- Native git prompts are skipped when `starship` is on `PATH`. Git `core.untrackedCache` keeps `git status` (and therefore the prompt) cheap. `core.fsmonitor` is left off globally — the built-in daemon is per-repo and can stall first-prompt `git status` past Starship's `command_timeout`.
 
 ## Extending
 

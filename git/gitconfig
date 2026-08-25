@@ -7,7 +7,10 @@
     whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
     excludesfile = ~/.gitignore_global
     untrackedCache = true
-    fsmonitor = true
+    # Do not enable core.fsmonitor globally. The built-in daemon starts
+    # once per repo and stalls git status (Starship's prompt) past the
+    # command timeout. Enable it only in large working trees:
+    #   git config core.fsmonitor true
 
 [color]
     ui = auto
