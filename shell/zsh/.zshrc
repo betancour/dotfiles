@@ -49,3 +49,6 @@ if [[ ! -o login ]]; then
 fi
 
 [[ -n "${ZSH_PROFILE_STARTUP:-}" ]] && zprof 2>/dev/null
+
+# bun completions
+[ -s "/Users/betancour/.bun/_bun" ] && source "/Users/betancour/.bun/_bun"
