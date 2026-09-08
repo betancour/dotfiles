@@ -2,16 +2,20 @@
 # Position is intentionally omitted so the window manager places the window
 # (portable across displays and machines).
 
+# Window chrome and layout.
+# Tuned for 13.6" M2 Air (1470×956) with left widgets + a large browser.
+
 [window]
-padding = { x = 10, y = 10 }
+dimensions = { columns = 125, lines = 44 }
+padding = { x = 18, y = 14 }
 dynamic_padding = true
-# "Buttonless" / "Transparent" are macOS-only; "None" is portable.
-decorations = "None"
-opacity = 100.0
+decorations = "Buttonless"
+opacity = 1.0
 blur = false
 startup_mode = "Windowed"
 dynamic_title = true
-# macOS only — ignored elsewhere: Option as Alt for readline/tmux/vim
 option_as_alt = "Both"
-dimensions = { columns = 95, lines = 45 }
-position = {x = 580, y = 0} 
+resize_increments = true
+
+# Move left vs the last values. Lower x if it is still right of Firefox.
+position = { x = 310, y = 93 }
