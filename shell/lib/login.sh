@@ -89,6 +89,12 @@ dotfiles_center_text() {
     unset _text _color _width _plain _plen _pad _rpad
 }
 
+# IBM 5153 / CGA background ribbon (one row of colored cells). TTY only.
+_dotfiles_color_ribbon() {
+    _dotfiles_is_tty || return 0
+    printf '%s\n' $'\033[41m \033[41m \033[41m \033[40m \033[44m \033[40m \033[41m \033[46m \033[45m \033[41m \033[46m \033[43m \033[41m \033[44m \033[45m \033[40m \033[44m \033[40m \033[41m \033[44m \033[41m \033[41m \033[46m \033[42m \033[41m \033[44m \033[43m \033[41m \033[45m \033[40m \033[40m \033[44m \033[40m \033[41m \033[44m \033[42m \033[41m \033[46m \033[44m \033[41m \033[46m \033[47m \033[0m'
+}
+
 # =============================================================================
 # Session identity (cheap; shared with logout duration)
 # =============================================================================
@@ -351,7 +357,9 @@ dotfiles_show_start_time() {
     [ -n "${_DOTFILES_C_BOOT}" ] && _line="${_line} ${DIM}(boot ${_DOTFILES_C_BOOT})${RESET}"
     [ -n "$_ready" ] && _line="${_line}  ${GREEN}Ready:${RESET} ${_ready}"
 
-    printf '\n%s\n\n' "$_line"
+    printf '\n%s\n' "$_line"
+    _dotfiles_color_ribbon
+    printf '\n'
     unset _ready _line BOLD DIM CYAN GREEN BLUE YELLOW MAGENTA RESET
 }
 
