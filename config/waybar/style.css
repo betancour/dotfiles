@@ -70,7 +70,7 @@ tooltip {
 
 /* ---------- SCREEN RECORD INDICATOR ---------- */
 #custom-screenrecording-indicator.active {
-  color: #a55555;
+  color: #00FF66;
   font-weight: bold;
 }
 
@@ -81,9 +81,10 @@ tooltip {
 
 /* ---------- BATTERY STATES ---------- */
 #battery.warning {
-  color: #f9e2af;
+  color: #6FA783;
 }
 #battery.critical {
-  color: #f38ba8;
+  color: #00FF66;
+  font-weight: bold;
 }
 

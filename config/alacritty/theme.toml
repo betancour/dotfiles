@@ -1,5 +1,6 @@
 # Active color scheme — change this one path to switch themes.
-# Available: themes/tokio-night.toml | nord.toml | ibm-5153.toml | sabre-gds.toml
+# Active: Green Phosphor (one hue; Neovim, Grok, tmux, and Starship match it)
+# Available: themes/green-phosphor.toml | tokio-night.toml | nord.toml | ibm-5153.toml | catppuccin-mocha.toml | dracula.toml | gruvbox.toml | linux.toml | rose-pine-moon.toml
 
 [general]
-import = ["themes/sabre-gds.toml"]
+import = ["themes/green-phosphor.toml"]

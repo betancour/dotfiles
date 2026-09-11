@@ -378,3 +378,126 @@ PY
     fi
     unset _df_alacritty_src _df_alacritty_dest
 }
+
+# Tmux XDG config (tmux.conf sources ~/.config/tmux/tmux.conf).
+df_install_tmux_config() {
+    _df_tmux_src="${DOTFILES_ROOT}/config/tmux/tmux.conf"
+    _df_tmux_dest="${HOME}/.config/tmux/tmux.conf"
+    if [ ! -f "$_df_tmux_src" ]; then
+        log_verbose "No tmux.conf in repo; skip"
+        unset _df_tmux_src _df_tmux_dest
+        return 0
+    fi
+    log_step "Installing tmux configuration"
+    df_mkdir_p "${HOME}/.config/tmux"
+    df_link_file "$_df_tmux_src" "$_df_tmux_dest" || {
+        log_warn "tmux config not linked (existing file at $_df_tmux_dest; use --force)"
+        unset _df_tmux_src _df_tmux_dest
+        return 0
+    }
+    unset _df_tmux_src _df_tmux_dest
+}
+
+# Zellij config directory (symlink whole tree into XDG config).
+df_install_zellij_config() {
+    _df_zellij_src="${DOTFILES_ROOT}/config/zellij"
+    _df_zellij_dest="${HOME}/.config/zellij"
+    if [ ! -d "$_df_zellij_src" ] || [ ! -f "${_df_zellij_src}/config.kdl" ]; then
+        log_verbose "No zellij config in repo; skip"
+        unset _df_zellij_src _df_zellij_dest
+        return 0
+    fi
+    log_step "Installing Zellij configuration"
+    df_mkdir_p "${HOME}/.config"
+    df_link_file "$_df_zellij_src" "$_df_zellij_dest" || {
+        log_warn "Zellij config not linked (existing tree at $_df_zellij_dest; use --force)"
+        unset _df_zellij_src _df_zellij_dest
+        return 0
+    }
+    unset _df_zellij_src _df_zellij_dest
+}
+
+# Waybar config directory (Linux bars; harmless no-op on macOS if unused).
+df_install_waybar_config() {
+    _df_waybar_src="${DOTFILES_ROOT}/config/waybar"
+    _df_waybar_dest="${HOME}/.config/waybar"
+    if [ ! -d "$_df_waybar_src" ]; then
+        log_verbose "No waybar config in repo; skip"
+        unset _df_waybar_src _df_waybar_dest
+        return 0
+    fi
+    log_step "Installing Waybar configuration"
+    df_mkdir_p "${HOME}/.config"
+    df_link_file "$_df_waybar_src" "$_df_waybar_dest" || {
+        log_warn "Waybar config not linked (existing tree at $_df_waybar_dest; use --force)"
+        unset _df_waybar_src _df_waybar_dest
+        return 0
+    }
+    unset _df_waybar_src _df_waybar_dest
+}
+
+# Grok Build user settings (theme, permissions, UI). Credentials stay in
+# ~/.grok/auth.json and are never tracked.
+df_install_grok_config() {
+    _df_grok_src="${DOTFILES_ROOT}/config/grok/config.toml"
+    _df_grok_dest="${HOME}/.grok/config.toml"
+    if [ ! -f "$_df_grok_src" ]; then
+        log_verbose "No grok config in repo; skip"
+        unset _df_grok_src _df_grok_dest
+        return 0
+    fi
+    log_step "Installing Grok configuration"
+    df_mkdir_p "${HOME}/.grok"
+    df_link_file "$_df_grok_src" "$_df_grok_dest" || {
+        log_warn "Grok config not linked (existing file at $_df_grok_dest; use --force)"
+        unset _df_grok_src _df_grok_dest
+        return 0
+    }
+    unset _df_grok_src _df_grok_dest
+}
+
+# Overlay files into ~/.config/nvim (LazyVim tree or a fresh colors/plugins dir).
+# Does not replace init.lua / lazy-lock.json.
+df_install_nvim_overlay() {
+    _df_nvim_src="${DOTFILES_ROOT}/config/nvim"
+    _df_nvim_dest="${HOME}/.config/nvim"
+    if [ ! -d "$_df_nvim_src" ]; then
+        unset _df_nvim_src _df_nvim_dest
+        return 0
+    fi
+    log_step "Installing Neovim overlay"
+    df_mkdir_p "${_df_nvim_dest}/colors"
+    df_mkdir_p "${_df_nvim_dest}/lua/config"
+    df_mkdir_p "${_df_nvim_dest}/lua/plugins"
+    df_mkdir_p "${_df_nvim_dest}/plugin/after"
+
+    for _df_nvim_rel in \
+        colors/green-phosphor.lua \
+        lua/config/options.lua \
+        lua/plugins/harpoon.lua \
+        lua/plugins/refactoring.lua \
+        lua/plugins/snacks-animated-scrolling-off.lua \
+        lua/plugins/statusline.lua \
+        lua/plugins/theme.lua \
+        plugin/after/transparency.lua
+    do
+        if [ -f "${_df_nvim_src}/${_df_nvim_rel}" ]; then
+            df_link_file "${_df_nvim_src}/${_df_nvim_rel}" "${_df_nvim_dest}/${_df_nvim_rel}" || true
+        fi
+    done
+
+    # Drop renamed leftovers from earlier overlay names.
+    for _df_nvim_stale in \
+        "${_df_nvim_dest}/colors/sabre.lua" \
+        "${_df_nvim_dest}/lua/plugins/coloscheme.lua"
+    do
+        df_unlink_if_ours "$_df_nvim_stale" "$DOTFILES_ROOT"
+        if [ -e "$_df_nvim_stale" ] && [ ! -L "$_df_nvim_stale" ]; then
+            if df_should_replace "$_df_nvim_stale"; then
+                df_backup_path "$_df_nvim_stale" >/dev/null || true
+            fi
+        fi
+    done
+
+    unset _df_nvim_src _df_nvim_dest _df_nvim_rel _df_nvim_stale
+}

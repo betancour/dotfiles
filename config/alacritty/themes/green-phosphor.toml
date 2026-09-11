@@ -1,0 +1,39 @@
+# Green Phosphor — one hue, four stops. Canonical palette for the whole stack.
+#   bg    #000000
+#   dark  #003318   surfaces (cursorline / status)
+#   dim   #6FA783   comments / inactive / ANSI bright black
+#   fg    #00FF66   all text and every chromatic ANSI slot
+#
+# Neovim: colors/green-phosphor.lua   Grok: [ui] theme = "terminal"
+
+[colors.primary]
+background = "#000000"
+foreground = "#00FF66"
+
+[colors.cursor]
+text   = "#000000"
+cursor = "#00FF66"
+
+[colors.selection]
+text       = "#000000"
+background = "#00FF66"
+
+[colors.normal]
+black   = "#000000"
+red     = "#00FF66"
+green   = "#00FF66"
+yellow  = "#00FF66"
+blue    = "#00FF66"
+magenta = "#00FF66"
+cyan    = "#00FF66"
+white   = "#00FF66"
+
+[colors.bright]
+black   = "#6FA783"
+red     = "#00FF66"
+green   = "#00FF66"
+yellow  = "#00FF66"
+blue    = "#00FF66"
+magenta = "#00FF66"
+cyan    = "#00FF66"
+white   = "#00FF66"

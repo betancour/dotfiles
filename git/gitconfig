@@ -22,27 +22,27 @@
     prompt = false
 
 [color "branch"]
-    current = yellow bold
-    local = green bold
-    remote = cyan bold
+    current = green bold
+    local = green
+    remote = green
 
 [color "diff"]
-    meta = yellow bold
-    frag = magenta bold
-    old = red bold
+    meta = green bold
+    frag = green
+    old = green reverse
     new = green bold
-    whitespace = red reverse
+    whitespace = green reverse
 
 [color "status"]
     added = green bold
-    changed = blue bold
-    untracked = red bold
+    changed = green
+    untracked = green
 
 [gitflow "prefix"]
     versiontag = v
 
 [alias]
-    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    lg = log --color --graph --pretty=format:'%C(green)%h%Creset -%C(green)%d%Creset %s %C(green)(%cr) %C(bold green)<%an>%Creset' --abbrev-commit
 
 [filter "lfs"]
     clean = git-lfs clean -- %f

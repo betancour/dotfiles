@@ -95,6 +95,19 @@ $HOME/.gitignore_global
 $HOME/.vimrc
 $HOME/.config/starship.toml
 $HOME/.config/alacritty
+$HOME/.config/tmux/tmux.conf
+$HOME/.config/zellij
+$HOME/.config/waybar
+$HOME/.grok/config.toml
+$HOME/.config/nvim/colors/sabre.lua
+$HOME/.config/nvim/colors/green-phosphor.lua
+$HOME/.config/nvim/lua/config/options.lua
+$HOME/.config/nvim/lua/plugins/harpoon.lua
+$HOME/.config/nvim/lua/plugins/refactoring.lua
+$HOME/.config/nvim/lua/plugins/snacks-animated-scrolling-off.lua
+$HOME/.config/nvim/lua/plugins/statusline.lua
+$HOME/.config/nvim/lua/plugins/theme.lua
+$HOME/.config/nvim/plugin/after/transparency.lua
 "
 
 df_uninstall_symlinks() {

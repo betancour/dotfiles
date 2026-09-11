@@ -71,4 +71,4 @@ Restart Neovim, or:
 :Lazy reload harpoon
 ```
 
-`~/.config/nvim` is a separate LazyVim tree, **not** a symlink into this repository. Copy `config/nvim/lua/plugins/harpoon.lua` there if that instance should match.
+`~/.config/nvim` is a separate LazyVim tree. The installer links overlay files from `config/nvim/` into that tree (harpoon, Green Phosphor, statusline, …) without replacing LazyVim itself.

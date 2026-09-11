@@ -1,0 +1,30 @@
+# Grok Build user settings. Linked to ~/.grok/config.toml by the installer.
+# Do not put credentials here — Grok stores those in ~/.grok/auth.json (untracked).
+#
+# Theme: "terminal" inherits Alacritty Green Phosphor (every chromatic slot is #00FF66).
+# Enable it ahead of rollout with [features] terminal_theme = true.
+
+[cli]
+installer = "internal"
+
+[ui]
+max_thoughts_width = 120
+fork_secondary_model = "grok-build"
+yolo = false
+compact_mode = false
+permission_mode = "always-approve"
+theme = "terminal"
+
+[features]
+terminal_theme = true
+
+[marketplace]
+official_marketplace_auto_installed = true
+default_skills_installs_purged = true
+
+[[marketplace.sources]]
+name = "xAI Official"
+git = "https://github.com/xai-org/plugin-marketplace.git"
+
+[privacy]
+privacy_banner_acked = "2026-08-13T14:58:08Z"

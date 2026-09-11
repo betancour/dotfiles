@@ -1,4 +1,4 @@
-theme "ansi"
+theme "green-phosphor"
 default_layout "compact"
 on_force_close "quit"
 
@@ -210,5 +210,21 @@ keybinds clear-defaults=true {
     }
     renamepane {
         bind "Esc" { UndoRenamePane; SwitchToMode "pane"; }
+    }
+}
+
+themes {
+    green-phosphor {
+        bg "#000000"
+        fg "#00FF66"
+        red "#00FF66"
+        green "#00FF66"
+        blue "#00FF66"
+        yellow "#00FF66"
+        magenta "#00FF66"
+        orange "#00FF66"
+        cyan "#00FF66"
+        black "#000000"
+        white "#00FF66"
     }
 }

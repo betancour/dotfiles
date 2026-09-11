@@ -36,9 +36,9 @@ EOF
 
     if [ "$_color_prompt" = yes ]; then
         if [ -n "$_status" ]; then
-            printf ' \033[0;36m[\033[1;31m%s\033[0;33m%s\033[0;36m]\033[0m' "$_branch" "$_status"
+            printf ' \033[0;32m[\033[1;32m%s%s\033[0;32m]\033[0m' "$_branch" "$_status"
         else
-            printf ' \033[0;36m[\033[1;32m%s\033[0;36m]\033[0m' "$_branch"
+            printf ' \033[0;32m[\033[1;32m%s\033[0;32m]\033[0m' "$_branch"
         fi
     else
         printf ' [%s%s]' "$_branch" "$_status"
@@ -50,12 +50,12 @@ __prompt_arrow() {
     if [ $? -eq 0 ]; then
         printf '\033[1;32m❯\033[0m'
     else
-        printf '\033[1;31m❯\033[0m'
+        printf '\033[1;42;30m❯\033[0m'
     fi
 }
 
 if [ "$_color_prompt" = yes ]; then
-    PS1='\[\033[1;35m\]\u\[\033[0m\]@\[\033[1;36m\]\h\[\033[0m\] \[\033[1;34m\][\w]\[\033[0m\]$(__git_prompt) \[\033[1;34m\][\D{%H:%M:%S}]\[\033[0m\]\n$(__prompt_arrow) '
+    PS1='\[\033[1;32m\]\u\[\033[0m\]@\[\033[1;32m\]\h\[\033[0m\] \[\033[1;32m\][\w]\[\033[0m\]$(__git_prompt) \[\033[0;32m\][\D{%H:%M:%S}]\[\033[0m\]\n$(__prompt_arrow) '
 else
     PS1='\u@\h [\w]$(__git_prompt) [\D{%H:%M:%S}]\n❯ '
 fi

@@ -38,11 +38,11 @@ If you already have a real directory at `~/.config/alacritty`, use `--force` (ex
 Edit only the switch files:
 
 ```toml
-# theme.toml
-import = ["themes/nord.toml"]
+# theme.toml  (active: Green Phosphor — Neovim, Grok, tmux, Starship)
+import = ["themes/green-phosphor.toml"]
 
 # font.toml
-import = ["fonts/JetBrainsMono.toml"]
+import = ["fonts/CascadiaCodeNF.toml"]
 ```
 
 Live reload is enabled (`live_config_reload = true`); most changes apply without restart. Window dimensions and shell still require a restart.

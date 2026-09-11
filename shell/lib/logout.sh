@@ -93,18 +93,18 @@ if [ -t 1 ] && [ "${TERM:-}" != dumb ]; then
         _dotfiles_term_colors
     else
         BOLD=$(printf '\033[1m')
-        CYAN=$(printf '\033[36m')
         GREEN=$(printf '\033[32m')
-        YELLOW=$(printf '\033[33m')
+        CYAN=$GREEN
+        YELLOW=$GREEN
         RESET=$(printf '\033[0m')
     fi
 
     echo
     dotfiles_separator_line '=' "$_WIDTH"
-    dotfiles_center_text "Goodbye, ${USER:-user}!" "${BOLD}${CYAN}" "$_WIDTH"
+    dotfiles_center_text "Goodbye, ${USER:-user}!" "${BOLD}${GREEN}" "$_WIDTH"
     dotfiles_separator_line '-' "$_WIDTH"
     dotfiles_center_text "Session ended: ${_session_end}" "$GREEN" "$_WIDTH"
-    dotfiles_center_text "Session duration: ${_session_duration}" "$YELLOW" "$_WIDTH"
+    dotfiles_center_text "Session duration: ${_session_duration}" "$GREEN" "$_WIDTH"
     dotfiles_separator_line '=' "$_WIDTH"
     echo
 

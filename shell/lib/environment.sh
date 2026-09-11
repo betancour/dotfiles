@@ -45,7 +45,9 @@ export HISTSIZE=50000
 export SAVEHIST=50000
 
 # Tool config paths (XDG)
-export FZF_DEFAULT_OPTS="--height=50% --layout=reverse --border --inline-info --color=dark --bind=ctrl-u:page-up,ctrl-d:page-down"
+export FZF_DEFAULT_OPTS="--height=50% --layout=reverse --border --inline-info --color=fg:green,bg:-1,hl:green,fg+:black,bg+:green,hl+:black,info:green,prompt:green,pointer:green,marker:green,spinner:green,header:8,border:green,gutter:-1 --bind=ctrl-u:page-up,ctrl-d:page-down"
+export BAT_THEME="${BAT_THEME:-ansi}"
+export GREP_COLORS="${GREP_COLORS:-ms=1;32:mc=1;32:sl=:cx=:fn=32:ln=32:bn=32:se=32}"
 export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/config"
 export BAT_CONFIG_PATH="${XDG_CONFIG_HOME}/bat/config"
 export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
@@ -185,13 +187,13 @@ fi
 # PATH after toolchain vars so BUN_INSTALL / PNPM_HOME / CARGO_HOME / DOTNET_ROOT resolve correctly
 dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
 
+export LS_COLORS="di=1;32:ln=4;32:so=32:pi=32:ex=1;32:bd=32:cd=32:su=7;32:sg=7;32:tw=1;32:ow=1;32"
+
 if is_macos; then
     export CLICOLOR=1
-    export LSCOLORS="GxFxCxDxBxegedabagaced"
+    export LSCOLORS="Cxcxcxcxbxexexabagaced"
     export HOMEBREW_NO_ANALYTICS=1
     export HOMEBREW_NO_AUTO_UPDATE=1
     export HOMEBREW_NO_ENV_HINTS=1
     export SHELL_SESSION_HISTORY=0
-elif is_linux; then
-    export LS_COLORS="di=1;36:ln=1;35:so=1;32:pi=1;33:ex=1;31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=34;43"
 fi

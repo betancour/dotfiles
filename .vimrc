@@ -24,17 +24,20 @@ set wildmode=list:longest
 set cmdheight=2
 set laststatus=2
 
-" Colors and Syntax
+" Colors and Syntax — Green Phosphor via the terminal 16-color map
 syntax enable
 set background=dark
-try
-	colorscheme desert
-catch
-endtry
+highlight Normal ctermfg=green ctermbg=black
+highlight Comment ctermfg=8
+highlight LineNr ctermfg=8
+highlight ColorColumn ctermbg=0
+highlight Visual ctermfg=black ctermbg=green
+highlight Search ctermfg=black ctermbg=green
+highlight StatusLine ctermfg=black ctermbg=green
+highlight Error ctermfg=black ctermbg=green cterm=bold
 
 " 42 Norm Compliance: Line length limit
 set colorcolumn=80
-highlight ColorColumn ctermbg=8
 
 " Indentation (42 Norm: 4 spaces, no tabs)
 set autoindent

@@ -30,15 +30,16 @@ _dotfiles_is_tty() {
 # Populate SGR color variables (caller unsets).
 # ANSI-C quoting ($'...') is Bash/Zsh — zero forks vs printf.
 # Sets: BOLD DIM CYAN GREEN BLUE YELLOW MAGENTA RESET  (empty if non-TTY)
+# One hue: every named color is green so banners match Green Phosphor off Alacritty.
 _dotfiles_term_colors() {
     if _dotfiles_is_tty; then
         BOLD=$'\033[1m'
         DIM=$'\033[2m'
-        CYAN=$'\033[36m'
         GREEN=$'\033[32m'
-        BLUE=$'\033[34m'
-        YELLOW=$'\033[33m'
-        MAGENTA=$'\033[35m'
+        CYAN=$GREEN
+        BLUE=$GREEN
+        YELLOW=$GREEN
+        MAGENTA=$GREEN
         RESET=$'\033[0m'
     else
         BOLD= DIM= CYAN= GREEN= BLUE= YELLOW= MAGENTA= RESET=
@@ -89,10 +90,10 @@ dotfiles_center_text() {
     unset _text _color _width _plain _plen _pad _rpad
 }
 
-# IBM 5153 / CGA background ribbon (one row of colored cells). TTY only.
+# Phosphor luminance ribbon (one hue). TTY only.
 _dotfiles_color_ribbon() {
     _dotfiles_is_tty || return 0
-    printf '%s\n' $'\033[41m \033[41m \033[41m \033[40m \033[44m \033[40m \033[41m \033[46m \033[45m \033[41m \033[46m \033[43m \033[41m \033[44m \033[45m \033[40m \033[44m \033[40m \033[41m \033[44m \033[41m \033[41m \033[46m \033[42m \033[41m \033[44m \033[43m \033[41m \033[45m \033[40m \033[40m \033[44m \033[40m \033[41m \033[44m \033[42m \033[41m \033[46m \033[44m \033[41m \033[46m \033[47m \033[0m'
+    printf '%s\n' $'\033[40m  \033[42m  \033[40;32m  \033[1;42m  \033[0;32m  \033[42m  \033[40m  \033[0m'
 }
 
 # =============================================================================
@@ -506,7 +507,7 @@ dotfiles_check_updates() {
             _n=${_n:-0}
             if [ "$_n" -gt 0 ] 2>/dev/null; then
                 if [ -t 1 ] && [ "${TERM:-}" != dumb ]; then
-                    _y=$(printf "\033[33m"); _r=$(printf "\033[0m"); _d=$(printf "\033[2m")
+                    _y=$(printf "\033[32m"); _r=$(printf "\033[0m"); _d=$(printf "\033[2m")
                 else
                     _y= _r= _d=
                 fi

@@ -1,4 +1,4 @@
-# Starship prompt — https://starship.rs
+# Starship prompt — Green Phosphor (green / reverse only).
 # Linked to ~/.config/starship.toml by the installer when present.
 
 "$schema" = "https://starship.rs/config-schema.json"
@@ -19,20 +19,20 @@ $character"""
 
 [character]
 success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
+error_symbol = "[❯](bold bg:green fg:black)"
 
 [directory]
 truncation_length = 3
 truncate_to_repo = true
-style = "bold blue"
+style = "bold green"
 
 [git_branch]
 symbol = ""
-style = "bold cyan"
+style = "green"
 format = "([$symbol$branch]($style) )"
 
 [git_status]
-style = "bold yellow"
+style = "green"
 format = "([\\[$all_status$ahead_behind\\]]($style) )"
 ignore_submodules = true
 conflicted = "⇕"
@@ -47,15 +47,15 @@ renamed = "»"
 deleted = "✘"
 
 [username]
-style_user = "bold purple"
+style_user = "green"
 format = "[$user]($style)@"
 show_always = false
 
 [hostname]
 ssh_only = true
-format = "[$hostname](bold cyan) "
+format = "[$hostname](bold green) "
 disabled = false
 
 [cmd_duration]
 min_time = 2000
-format = "took [$duration](bold yellow) "
+format = "took [$duration](green) "

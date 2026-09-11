@@ -37,17 +37,24 @@ There is no second copy of the repository under `~/dotfiles`, `~/Development`, o
 Example home links after install:
 
 ```text
-~/.gitconfig        → ~/.dotfiles/git/gitconfig
-~/.gitignore_global → ~/.dotfiles/git/gitignore_global
-~/.vimrc            → ~/.dotfiles/vim/vimrc
-~/.zshrc            → ~/.dotfiles/shell/zsh/.zshrc
-~/.zprofile         → ~/.dotfiles/shell/zsh/.zprofile
-~/.zlogin           → ~/.dotfiles/shell/zsh/.zlogin
-~/.zlogout          → ~/.dotfiles/shell/zsh/.zlogout
-~/.zshenv           → ~/.dotfiles/shell/zsh/.zshenv
-~/.zaliases         → ~/.dotfiles/shell/.zaliases
-~/.zfunctions       → ~/.dotfiles/shell/.zfunctions
+~/.gitconfig              → ~/.dotfiles/git/gitconfig
+~/.gitignore_global       → ~/.dotfiles/git/gitignore_global
+~/.vimrc                  → ~/.dotfiles/vim/vimrc
+~/.zshrc                  → ~/.dotfiles/shell/zsh/.zshrc
+~/.zprofile               → ~/.dotfiles/shell/zsh/.zprofile
+~/.zlogin                 → ~/.dotfiles/shell/zsh/.zlogin
+~/.zlogout                → ~/.dotfiles/shell/zsh/.zlogout
+~/.zshenv                 → ~/.dotfiles/shell/zsh/.zshenv
+~/.zaliases               → ~/.dotfiles/shell/.zaliases
+~/.zfunctions             → ~/.dotfiles/shell/.zfunctions
+~/.config/alacritty       → ~/.dotfiles/config/alacritty
+~/.config/starship.toml   → ~/.dotfiles/config/starship/starship.toml
+~/.config/tmux/tmux.conf  → ~/.dotfiles/config/tmux/tmux.conf
+~/.config/zellij          → ~/.dotfiles/config/zellij
+~/.grok/config.toml       → ~/.dotfiles/config/grok/config.toml
 ```
+
+Grok credentials stay in `~/.grok/auth.json` and are never tracked. `~/.config/nvim` is a LazyVim tree; the installer links overlay files (Green Phosphor colorscheme, statusline, harpoon, …) into it.
 
 ## What the installer does
 
@@ -58,7 +65,7 @@ Example home links after install:
 | Repository root | Requires `~/.dotfiles` (physical dir); offers to move if run elsewhere |
 | Dependencies | Installs CLI tools via apt/dnf/yum/pacman/zypper/apk/brew |
 | Shell config | Symlinks entry points (or `--append` managed blocks) |
-| Git / Vim / Starship | Optional config links |
+| Git / Vim / Starship / Alacritty / tmux / Zellij / Waybar / Grok / Neovim overlay | Config links |
 | Journal | Records actions for rollback / uninstall |
 
 ### Shell targets
@@ -122,8 +129,9 @@ Removes managed symlinks and managed blocks. Leaves the repository at `~/.dotfil
 │   ├── .zaliases
 │   └── .zfunctions
 ├── config/                    # app configs (XDG-style)
-│   ├── nvim/
-│   ├── alacritty/
+│   ├── nvim/          # LazyVim overlay (Green Phosphor, harpoon, …)
+│   ├── alacritty/     # Green Phosphor theme (symlink → ~/.config/alacritty)
+│   ├── grok/          # Grok Build config.toml (no credentials)
 │   ├── zellij/
 │   ├── tmux/
 │   ├── starship/

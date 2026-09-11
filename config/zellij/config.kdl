@@ -1,4 +1,4 @@
-theme "ansi"
+theme "green-phosphor"
 default_layout "compact"
 on_force_close "quit"
 
@@ -222,20 +222,20 @@ keybinds clear-defaults=true {
     }
 }
 
-// Tokyo Night Theme
+// Green Phosphor — same four stops as Alacritty green-phosphor.toml.
 themes {
-    tokyo-night {
-        bg "#1a1b26"
-        fg "#c0caf5"
-        red "#f7768e"
-        green "#9ece6a"
-        blue "#7aa2f7"
-        yellow "#e0af68"
-        magenta "#bb9af7"
-        orange "#ff9e64"
-        cyan "#7dcfff"
-        black "#15161e"
-        white "#c0caf5"
+    green-phosphor {
+        bg "#000000"
+        fg "#00FF66"
+        red "#00FF66"
+        green "#00FF66"
+        blue "#00FF66"
+        yellow "#00FF66"
+        magenta "#00FF66"
+        orange "#00FF66"
+        cyan "#00FF66"
+        black "#000000"
+        white "#00FF66"
     }
 }
 

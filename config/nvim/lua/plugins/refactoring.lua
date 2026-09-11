@@ -6,6 +6,7 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		"lewis6991/async.nvim",
 	},
+	lazy = false,
 	opts = {},
 	keys = {
 		{
