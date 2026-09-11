@@ -333,6 +333,7 @@ df_install_main() {
     fi
     df_install_starship_config || true
     df_install_alacritty_config || true
+    df_install_eza_config || true
     df_install_tmux_config || true
     df_install_zellij_config || true
     df_install_waybar_config || true

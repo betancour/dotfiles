@@ -379,6 +379,25 @@ PY
     unset _df_alacritty_src _df_alacritty_dest
 }
 
+# eza theme directory (theme.yml). EZA_COLORS must stay unset so this file wins.
+df_install_eza_config() {
+    _df_eza_src="${DOTFILES_ROOT}/config/eza"
+    _df_eza_dest="${HOME}/.config/eza"
+    if [ ! -d "$_df_eza_src" ] || [ ! -f "${_df_eza_src}/theme.yml" ]; then
+        log_verbose "No eza theme in repo; skip"
+        unset _df_eza_src _df_eza_dest
+        return 0
+    fi
+    log_step "Installing eza theme"
+    df_mkdir_p "${HOME}/.config"
+    df_link_file "$_df_eza_src" "$_df_eza_dest" || {
+        log_warn "eza theme not linked (existing tree at $_df_eza_dest; use --force)"
+        unset _df_eza_src _df_eza_dest
+        return 0
+    }
+    unset _df_eza_src _df_eza_dest
+}
+
 # Tmux XDG config (tmux.conf sources ~/.config/tmux/tmux.conf).
 df_install_tmux_config() {
     _df_tmux_src="${DOTFILES_ROOT}/config/tmux/tmux.conf"

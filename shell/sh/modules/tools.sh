@@ -11,9 +11,9 @@ fi
 
 # Listing
 if command -v eza >/dev/null 2>&1; then
-    alias ls='eza -lh --group-directories-first --color=auto'
-    alias ll='eza -l --group-directories-first --color=auto'
-    alias la='eza -la --group-directories-first --color=auto'
+    alias ls='eza -lh --group-directories-first --icons=auto --color=always'
+    alias ll='eza -l --group-directories-first --icons=auto --color=always'
+    alias la='eza -la --group-directories-first --icons=auto --color=always'
 elif command -v exa >/dev/null 2>&1; then
     alias ls='exa -lh --group-directories-first'
     alias ll='exa -l --group-directories-first'

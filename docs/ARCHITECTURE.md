@@ -68,6 +68,7 @@ No separate branches. One tree serves all supported shells and OSes.
 ├── config/                    # app configs
 │   ├── nvim/               # overlay into ~/.config/nvim (Green Phosphor)
 │   ├── alacritty/          # Green Phosphor
+│   ├── eza/                # listing theme.yml
 │   ├── grok/               # ~/.grok/config.toml (auth.json is not tracked)
 │   ├── zellij/
 │   ├── tmux/
@@ -91,7 +92,7 @@ parse_args
   → resolve repository root (require ~/.dotfiles; offer move)
   → install dependencies (unless --skip-deps)
   → install shell config (symlink | --append)
-  → install git / vim / starship / alacritty / tmux / zellij / waybar / grok / nvim overlay
+  → install git / vim / starship / alacritty / eza / tmux / zellij / waybar / grok / nvim overlay
   → summary
 ```
 

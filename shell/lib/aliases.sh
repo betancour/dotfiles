@@ -24,11 +24,11 @@ fi
 if command -v eza >/dev/null 2>&1; then
     alias ls='eza -lh --group-directories-first --icons=auto --color=always'
     alias lsa='eza -lha --group-directories-first --icons=auto --color=always'
-    alias l='eza -G --color=always --group-directories-first'
-    alias ll='eza -l --color=always --group-directories-first'
-    alias la='eza -la --color=always --group-directories-first'
-    alias lt='eza --tree --level=2 --long --icons=auto --git'
-    alias lta='eza --tree --level=2 --long --icons=auto --git -a'
+    alias l='eza -G --group-directories-first --icons=auto --color=always'
+    alias ll='eza -l --group-directories-first --icons=auto --color=always'
+    alias la='eza -la --group-directories-first --icons=auto --color=always'
+    alias lt='eza --tree --level=2 --long --group-directories-first --icons=auto --color=always --git'
+    alias lta='eza --tree --level=2 --long --group-directories-first --icons=auto --color=always --git -a'
 else
     # GNU ls vs BSD ls color flag detection (one test, no OS branch)
     if ls --color=auto / >/dev/null 2>&1; then

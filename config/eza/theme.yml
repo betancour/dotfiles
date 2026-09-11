@@ -1,0 +1,106 @@
+# Green Phosphor — eza listing theme
+# Same stops as Neovim colors/green-phosphor.lua and Alacritty green-phosphor.toml.
+#
+#   bg      #000000
+#   dim     #6FA783   comments / inactive / permission read
+#   ink     #00FF66   files / write / execute
+#   bright  #B5FFCE   folders (nvim Title / Keyword)
+#
+# File-type accents sit on the same CRT: mint links, amber source, lilac
+# media, rose for danger. Truecolor so they survive the 16-color ANSI collapse.
+
+colourful: true
+
+filekinds:
+  normal: { foreground: "#00FF66" }
+  directory: { foreground: "#B5FFCE", is_bold: true }
+  symlink: { foreground: "#5DEBBC", is_underline: true }
+  pipe: { foreground: "#E8C547" }
+  block_device: { foreground: "#E8C547", is_bold: true }
+  char_device: { foreground: "#E8C547", is_bold: true }
+  socket: { foreground: "#FF5C5C", is_bold: true }
+  special: { foreground: "#E8C547" }
+  executable: { foreground: "#00FF66", is_bold: true }
+  mount_point: { foreground: "#B5FFCE", is_bold: true, is_underline: true }
+
+perms:
+  user_read: { foreground: "#6FA783" }
+  user_write: { foreground: "#00FF66" }
+  user_execute_file: { foreground: "#00FF66", is_bold: true }
+  user_execute_other: { foreground: "#00FF66", is_bold: true }
+  group_read: { foreground: "#6FA783" }
+  group_write: { foreground: "#00FF66" }
+  group_execute: { foreground: "#00FF66", is_bold: true }
+  other_read: { foreground: "#6FA783" }
+  other_write: { foreground: "#00FF66" }
+  other_execute: { foreground: "#00FF66", is_bold: true }
+  special_user_file: { foreground: "#FF5C5C" }
+  special_other: { foreground: "#FF5C5C" }
+  attribute: { foreground: "#6FA783" }
+
+size:
+  major: { foreground: "#00FF66", is_bold: true }
+  minor: { foreground: "#6FA783" }
+  number_byte: { foreground: "#6FA783" }
+  number_kilo: { foreground: "#00FF66" }
+  number_mega: { foreground: "#E8C547" }
+  number_giga: { foreground: "#FF5C5C" }
+  number_huge: { foreground: "#C4A6FF" }
+  unit_byte: { foreground: "#6FA783" }
+  unit_kilo: { foreground: "#00FF66" }
+  unit_mega: { foreground: "#E8C547" }
+  unit_giga: { foreground: "#FF5C5C" }
+  unit_huge: { foreground: "#C4A6FF" }
+
+users:
+  user_you: { foreground: "#00FF66", is_bold: true }
+  user_root: { foreground: "#000000", background: "#00FF66" }
+  user_other: { foreground: "#6FA783" }
+  group_yours: { foreground: "#00FF66" }
+  group_other: { foreground: "#6FA783" }
+  group_root: { foreground: "#000000", background: "#00FF66" }
+
+links:
+  normal: { foreground: "#5DEBBC" }
+  multi_link_file: { foreground: "#000000", background: "#E8C547" }
+
+git:
+  new: { foreground: "#00FF66", is_bold: true }
+  modified: { foreground: "#E8C547" }
+  deleted: { foreground: "#FF5C5C" }
+  renamed: { foreground: "#5DEBBC" }
+  typechange: { foreground: "#C4A6FF" }
+  ignored: { foreground: "#6FA783", is_dimmed: true }
+  conflicted: { foreground: "#FF5C5C", is_bold: true }
+
+git_repo:
+  branch_main: { foreground: "#00FF66", is_bold: true }
+  branch_other: { foreground: "#E8C547" }
+  git_clean: { foreground: "#00FF66" }
+  git_dirty: { foreground: "#E8C547", is_bold: true }
+
+file_type:
+  image: { foreground: "#C4A6FF" }
+  video: { foreground: "#A78BFA", is_bold: true }
+  music: { foreground: "#5DEBBC" }
+  lossless: { foreground: "#5DEBBC", is_bold: true }
+  crypto: { foreground: "#00FF66", is_bold: true }
+  document: { foreground: "#B5FFCE" }
+  compressed: { foreground: "#FF5C5C" }
+  temp: { foreground: "#6FA783", is_dimmed: true }
+  compiled: { foreground: "#E8C547" }
+  build: { foreground: "#E8C547", is_bold: true, is_underline: true }
+  source: { foreground: "#E8C547", is_bold: true }
+
+punctuation: { foreground: "#6FA783" }
+date: { foreground: "#6FA783" }
+inode: { foreground: "#6FA783" }
+blocks: { foreground: "#6FA783" }
+header: { foreground: "#B5FFCE", is_bold: true }
+octal: { foreground: "#6FA783" }
+flags: { foreground: "#00FF66" }
+
+symlink_path: { foreground: "#5DEBBC" }
+control_char: { foreground: "#FF5C5C" }
+broken_symlink: { foreground: "#FF5C5C" }
+broken_path_overlay: { foreground: "#FF5C5C", is_underline: true }

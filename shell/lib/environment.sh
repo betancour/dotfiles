@@ -187,7 +187,20 @@ fi
 # PATH after toolchain vars so BUN_INSTALL / PNPM_HOME / CARGO_HOME / DOTNET_ROOT resolve correctly
 dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
 
-export LS_COLORS="di=1;32:ln=4;32:so=32:pi=32:ex=1;32:bd=32:cd=32:su=7;32:sg=7;32:tw=1;32:ow=1;32"
+# eza 0.23 reads theme.yml from EZA_CONFIG_DIR (not XDG_CONFIG_HOME alone).
+# EZA_COLORS would override the file, so leave it unset.
+#   dim #6FA783  ink #00FF66  bright #B5FFCE  link #5DEBBC  rose #FF5C5C
+#   amber #E8C547
+unset EZA_COLORS EXA_COLORS
+export EZA_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/eza"
+_gp_dim='38;2;111;167;131'
+_gp_ink='38;2;0;255;102'
+_gp_bright='1;38;2;181;255;206'
+_gp_link='4;38;2;93;235;188'
+_gp_rose='38;2;255;92;92'
+_gp_amber='38;2;232;197;71'
+export LS_COLORS="di=${_gp_bright}:ln=${_gp_link}:so=1;${_gp_rose}:pi=${_gp_amber}:ex=1;${_gp_ink}:bd=1;${_gp_amber}:cd=1;${_gp_amber}:su=38;2;0;0;0;48;2;0;255;102:sg=38;2;0;0;0;48;2;0;255;102:tw=${_gp_bright}:ow=${_gp_bright}:or=${_gp_rose}:fi=${_gp_ink}"
+unset _gp_dim _gp_ink _gp_bright _gp_link _gp_rose _gp_amber
 
 if is_macos; then
     export CLICOLOR=1

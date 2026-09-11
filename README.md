@@ -48,6 +48,7 @@ Example home links after install:
 ~/.zaliases               → ~/.dotfiles/shell/.zaliases
 ~/.zfunctions             → ~/.dotfiles/shell/.zfunctions
 ~/.config/alacritty       → ~/.dotfiles/config/alacritty
+~/.config/eza             → ~/.dotfiles/config/eza
 ~/.config/starship.toml   → ~/.dotfiles/config/starship/starship.toml
 ~/.config/tmux/tmux.conf  → ~/.dotfiles/config/tmux/tmux.conf
 ~/.config/zellij          → ~/.dotfiles/config/zellij

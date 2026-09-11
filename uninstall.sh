@@ -95,6 +95,7 @@ $HOME/.gitignore_global
 $HOME/.vimrc
 $HOME/.config/starship.toml
 $HOME/.config/alacritty
+$HOME/.config/eza
 $HOME/.config/tmux/tmux.conf
 $HOME/.config/zellij
 $HOME/.config/waybar
