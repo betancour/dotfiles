@@ -222,20 +222,20 @@ keybinds clear-defaults=true {
     }
 }
 
-// Green Phosphor — same four stops as Alacritty green-phosphor.toml.
+// Green Phosphor — same hex as Alacritty / Neovim.
 themes {
     green-phosphor {
         bg "#000000"
         fg "#00FF66"
-        red "#00FF66"
+        red "#FF3B3B"
         green "#00FF66"
-        blue "#00FF66"
-        yellow "#00FF66"
-        magenta "#00FF66"
-        orange "#00FF66"
-        cyan "#00FF66"
+        blue "#1BE5EE"
+        yellow "#F9D544"
+        magenta "#C8F23C"
+        orange "#F9D544"
+        cyan "#5DEBBC"
         black "#000000"
-        white "#00FF66"
+        white "#B5FFCE"
     }
 }
 

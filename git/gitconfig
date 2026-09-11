@@ -24,25 +24,25 @@
 [color "branch"]
     current = green bold
     local = green
-    remote = green
+    remote = cyan
 
 [color "diff"]
-    meta = green bold
-    frag = green
-    old = green reverse
+    meta = yellow bold
+    frag = cyan
+    old = red
     new = green bold
-    whitespace = green reverse
+    whitespace = red reverse
 
 [color "status"]
     added = green bold
-    changed = green
-    untracked = green
+    changed = yellow
+    untracked = cyan
 
 [gitflow "prefix"]
     versiontag = v
 
 [alias]
-    lg = log --color --graph --pretty=format:'%C(green)%h%Creset -%C(green)%d%Creset %s %C(green)(%cr) %C(bold green)<%an>%Creset' --abbrev-commit
+    lg = log --color --graph --pretty=format:'%C(green)%h%Creset -%C(yellow)%d%Creset %s %C(cyan)(%cr) %C(bold green)<%an>%Creset' --abbrev-commit
 
 [filter "lfs"]
     clean = git-lfs clean -- %f

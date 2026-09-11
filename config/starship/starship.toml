@@ -1,10 +1,8 @@
-# Starship prompt — Green Phosphor (green / reverse only).
-# Linked to ~/.config/starship.toml by the installer when present.
+# Starship — Green Phosphor (hex = Neovim tokens)
 
 "$schema" = "https://starship.rs/config-schema.json"
 
 add_newline = true
-# 500ms (Starship default) is too tight for Apple Git on first prompt.
 command_timeout = 1000
 
 format = """
@@ -18,21 +16,21 @@ $line_break\
 $character"""
 
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold bg:green fg:black)"
+success_symbol = "[❯](bold #00FF66)"
+error_symbol = "[❯](bold bg:#FF3B3B fg:#000000)"
 
 [directory]
 truncation_length = 3
 truncate_to_repo = true
-style = "bold green"
+style = "bold #B5FFCE"
 
 [git_branch]
 symbol = ""
-style = "green"
+style = "#1BE5EE"
 format = "([$symbol$branch]($style) )"
 
 [git_status]
-style = "green"
+style = "#F9D544"
 format = "([\\[$all_status$ahead_behind\\]]($style) )"
 ignore_submodules = true
 conflicted = "⇕"
@@ -47,15 +45,15 @@ renamed = "»"
 deleted = "✘"
 
 [username]
-style_user = "green"
+style_user = "#00FF66"
 format = "[$user]($style)@"
 show_always = false
 
 [hostname]
 ssh_only = true
-format = "[$hostname](bold green) "
+format = "[$hostname](bold #5DEBBC) "
 disabled = false
 
 [cmd_duration]
 min_time = 2000
-format = "took [$duration](green) "
+format = "took [$duration](#F9D544) "

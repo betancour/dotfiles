@@ -1,39 +1,71 @@
-# Green Phosphor — one hue, four stops. Canonical palette for the whole stack.
-#   bg    #000000
-#   dark  #003318   surfaces (cursorline / status)
-#   dim   #6FA783   comments / inactive / ANSI bright black
-#   fg    #00FF66   all text and every chromatic ANSI slot
+# Green Phosphor — canonical 16-color map for the whole stack.
+# Same hex as Neovim colors/green-phosphor.lua (Itten + Hering on a P1 CRT).
 #
-# Neovim: colors/green-phosphor.lua   Grok: [ui] theme = "terminal"
+#   Light-dark   comments recede (#6FA783), keywords are brightest (#B5FFCE)
+#   Warm-cool    literals lime/amber vs callables cyan
+#   Complement   red is reserved for errors (opposite of phosphor green)
+#
+# ANSI roles (Grok theme = "terminal", tmux, git, starship inherit these):
+#   black         #000000  bg
+#   red           #FF3B3B  error
+#   green         #00FF66  ident / success
+#   yellow        #F9D544  const / warning
+#   blue          #1BE5EE  func (cool pole — not navy)
+#   magenta       #C8F23C  string (warm lime)
+#   cyan          #5DEBBC  param / links
+#   white         #B5FFCE  keyword
+#   bright black  #6FA783  dim / Grok chrome
+#   bright green  #B5FFCE  keyword
+#   bright yellow #C8F23C  string
+#   bright blue   #B2E2E4  type
+#   bright cyan   #1BE5EE  func
+#   bright white  #DEFAE6
 
 [colors.primary]
 background = "#000000"
 foreground = "#00FF66"
+dim_foreground = "#6FA783"
 
 [colors.cursor]
 text   = "#000000"
 cursor = "#00FF66"
 
+[colors.vi_mode_cursor]
+text   = "#000000"
+cursor = "#1BE5EE"
+
 [colors.selection]
 text       = "#000000"
 background = "#00FF66"
 
+[colors.search.matches]
+foreground = "#000000"
+background = "#F9D544"
+
+[colors.search.focused_match]
+foreground = "#000000"
+background = "#00FF66"
+
+[colors.footer_bar]
+foreground = "#00FF66"
+background = "#003318"
+
 [colors.normal]
 black   = "#000000"
-red     = "#00FF66"
+red     = "#FF3B3B"
 green   = "#00FF66"
-yellow  = "#00FF66"
-blue    = "#00FF66"
-magenta = "#00FF66"
-cyan    = "#00FF66"
-white   = "#00FF66"
+yellow  = "#F9D544"
+blue    = "#1BE5EE"
+magenta = "#C8F23C"
+cyan    = "#5DEBBC"
+white   = "#B5FFCE"
 
 [colors.bright]
 black   = "#6FA783"
-red     = "#00FF66"
-green   = "#00FF66"
-yellow  = "#00FF66"
-blue    = "#00FF66"
-magenta = "#00FF66"
-cyan    = "#00FF66"
-white   = "#00FF66"
+red     = "#FF3B3B"
+green   = "#B5FFCE"
+yellow  = "#C8F23C"
+blue    = "#B2E2E4"
+magenta = "#5DEBBC"
+cyan    = "#1BE5EE"
+white   = "#DEFAE6"

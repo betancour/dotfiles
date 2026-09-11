@@ -1,7 +1,8 @@
 # Grok Build user settings. Linked to ~/.grok/config.toml by the installer.
 # Do not put credentials here — Grok stores those in ~/.grok/auth.json (untracked).
 #
-# Theme: "terminal" inherits Alacritty Green Phosphor (every chromatic slot is #00FF66).
+# Theme: "terminal" inherits Alacritty's 16-color Green Phosphor map
+# (ident, func cyan, string lime, const amber, error red, dim chrome).
 # Enable it ahead of rollout with [features] terminal_theme = true.
 
 [cli]

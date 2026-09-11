@@ -45,7 +45,7 @@ export HISTSIZE=50000
 export SAVEHIST=50000
 
 # Tool config paths (XDG)
-export FZF_DEFAULT_OPTS="--height=50% --layout=reverse --border --inline-info --color=fg:green,bg:-1,hl:green,fg+:black,bg+:green,hl+:black,info:green,prompt:green,pointer:green,marker:green,spinner:green,header:8,border:green,gutter:-1 --bind=ctrl-u:page-up,ctrl-d:page-down"
+export FZF_DEFAULT_OPTS="--height=50% --layout=reverse --border --inline-info --color=fg:#00FF66,bg:-1,hl:#1BE5EE,fg+:#000000,bg+:#00FF66,hl+:#000000,info:#F9D544,prompt:#B5FFCE,pointer:#00FF66,marker:#C8F23C,spinner:#5DEBBC,header:#6FA783,border:#00FF66,gutter:-1 --bind=ctrl-u:page-up,ctrl-d:page-down"
 export BAT_THEME="${BAT_THEME:-ansi}"
 export GREP_COLORS="${GREP_COLORS:-ms=1;32:mc=1;32:sl=:cx=:fn=32:ln=32:bn=32:se=32}"
 export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/config"
@@ -189,18 +189,17 @@ dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
 
 # eza 0.23 reads theme.yml from EZA_CONFIG_DIR (not XDG_CONFIG_HOME alone).
 # EZA_COLORS would override the file, so leave it unset.
-#   dim #6FA783  ink #00FF66  bright #B5FFCE  link #5DEBBC  rose #FF5C5C
-#   amber #E8C547
+# Tokens match Neovim green-phosphor.lua (keyword, ident, func, param, const, red).
 unset EZA_COLORS EXA_COLORS
 export EZA_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/eza"
-_gp_dim='38;2;111;167;131'
-_gp_ink='38;2;0;255;102'
-_gp_bright='1;38;2;181;255;206'
-_gp_link='4;38;2;93;235;188'
-_gp_rose='38;2;255;92;92'
-_gp_amber='38;2;232;197;71'
-export LS_COLORS="di=${_gp_bright}:ln=${_gp_link}:so=1;${_gp_rose}:pi=${_gp_amber}:ex=1;${_gp_ink}:bd=1;${_gp_amber}:cd=1;${_gp_amber}:su=38;2;0;0;0;48;2;0;255;102:sg=38;2;0;0;0;48;2;0;255;102:tw=${_gp_bright}:ow=${_gp_bright}:or=${_gp_rose}:fi=${_gp_ink}"
-unset _gp_dim _gp_ink _gp_bright _gp_link _gp_rose _gp_amber
+_gp_ident='38;2;0;255;102'
+_gp_keyword='1;38;2;181;255;206'
+_gp_func='1;38;2;27;229;238'
+_gp_param='4;38;2;93;235;188'
+_gp_const='38;2;249;213;68'
+_gp_err='38;2;255;59;59'
+export LS_COLORS="di=${_gp_keyword}:ln=${_gp_param}:so=1;${_gp_err}:pi=${_gp_const}:ex=${_gp_func}:bd=1;${_gp_const}:cd=1;${_gp_const}:su=38;2;0;0;0;48;2;255;59;59:sg=38;2;0;0;0;48;2;255;59;59:tw=${_gp_keyword}:ow=${_gp_keyword}:or=${_gp_err}:fi=${_gp_ident}"
+unset _gp_ident _gp_keyword _gp_func _gp_param _gp_const _gp_err
 
 if is_macos; then
     export CLICOLOR=1
