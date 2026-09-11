@@ -91,9 +91,44 @@ dotfiles_center_text() {
 }
 
 # Phosphor luminance ribbon (one hue). TTY only.
+#_dotfiles_color_ribbon() {
+#    _dotfiles_is_tty || return 0
+#    printf '%s\n' $'\033[40m  \033[42m  \033[40;32m  \033[1;42m  \033[0;32m  \033[42m  \033[40m  \033[0m'
+#}
+
+# Cruz-Diez-inspired chromatic vibration ribbon. TTY only.
+#_dotfiles_color_ribbon() {
+#    _dotfiles_is_tty || return 0
+#
+#    printf '%s\n' \
+#        $'\033[41m \033[43m \033[41m \033[45m \033[44m \033[46m \033[42m \033[43m \033[0m'
+#}
+
+# Chromatic displacement ribbon.
+# Cruz-Diez-inspired: color interaction, vibration and optical movement.
+# TTY only.
+
 _dotfiles_color_ribbon() {
     _dotfiles_is_tty || return 0
-    printf '%s\n' $'\033[40m  \033[42m  \033[40;32m  \033[1;42m  \033[0;32m  \033[42m  \033[40m  \033[0m'
+
+    printf '%b' \
+        '\e[48;2;220;35;45m  '\
+        '\e[48;2;255;110;20m  '\
+        '\e[48;2;255;205;20m  '\
+        '\e[48;2;100;205;65m  '\
+        '\e[48;2;20;190;180m  '\
+        '\e[48;2;20;105;220m  '\
+        '\e[48;2;110;45;190m  '\
+        '\e[48;2;255;255;255m  '\
+        '\e[48;2;220;35;45m  '\
+        '\e[48;2;255;110;20m  '\
+        '\e[48;2;255;205;20m  '\
+        '\e[48;2;100;205;65m  '\
+        '\e[48;2;20;190;180m  '\
+        '\e[48;2;20;105;220m  '\
+        '\e[48;2;110;45;190m  '\
+        '\e[48;2;5;5;5m  '\
+        '\e[0m'
 }
 
 # =============================================================================
