@@ -1,4 +1,4 @@
-# Starship — Green Phosphor (hex = Neovim tokens)
+# Starship — Tokyo Night
 
 "$schema" = "https://starship.rs/config-schema.json"
 
@@ -16,23 +16,23 @@ $line_break\
 $character"""
 
 [character]
-success_symbol = "[❯](bold #00FF66)"
-error_symbol = "[❯](bold bg:#FF3B3B fg:#000000)"
+success_symbol = "[❯](bold #9ece6a)"
+error_symbol = "[❯](bold #f7768e)"
 
 [directory]
 truncation_length = 3
 truncate_to_repo = true
-style = "bold #B5FFCE"
+style = "bold #7aa2f7"
 
 [git_branch]
 symbol = ""
-style = "#1BE5EE"
 format = "([$symbol$branch]($style) )"
+style = "#bb9af7"
 
 [git_status]
-style = "#F9D544"
 format = "([\\[$all_status$ahead_behind\\]]($style) )"
 ignore_submodules = true
+style = "#e0af68"
 conflicted = "⇕"
 ahead = "⇡${count}"
 behind = "⇣${count}"
@@ -45,15 +45,17 @@ renamed = "»"
 deleted = "✘"
 
 [username]
-style_user = "#00FF66"
 format = "[$user]($style)@"
 show_always = false
+style_user = "#7dcfff"
 
 [hostname]
 ssh_only = true
-format = "[$hostname](bold #5DEBBC) "
+format = "[$hostname] "
 disabled = false
+style = "#bb9af7"
 
 [cmd_duration]
 min_time = 2000
-format = "took [$duration](#F9D544) "
+format = "took [$duration]($style) "
+style = "#e0af68"

@@ -1,6 +1,22 @@
-theme "green-phosphor"
 default_layout "compact"
 on_force_close "quit"
+theme "tokyo-night"
+
+themes {
+    tokyo-night {
+        fg "#c0caf5"
+        bg "#1a1b26"
+        black "#15161e"
+        red "#f7768e"
+        green "#9ece6a"
+        yellow "#e0af68"
+        blue "#7aa2f7"
+        magenta "#bb9af7"
+        cyan "#7dcfff"
+        white "#a9b1d6"
+        orange "#ff9e64"
+    }
+}
 
 // Essential macOS and shell configuration
 default_shell "/bin/zsh"
@@ -219,23 +235,6 @@ keybinds clear-defaults=true {
     }
     renamepane {
         bind "Esc" { UndoRenamePane; SwitchToMode "pane"; }
-    }
-}
-
-// Green Phosphor — same hex as Alacritty / Neovim.
-themes {
-    green-phosphor {
-        bg "#000000"
-        fg "#00FF66"
-        red "#FF3B3B"
-        green "#00FF66"
-        blue "#1BE5EE"
-        yellow "#F9D544"
-        magenta "#C8F23C"
-        orange "#F9D544"
-        cyan "#5DEBBC"
-        black "#000000"
-        white "#B5FFCE"
     }
 }
 

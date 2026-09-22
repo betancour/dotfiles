@@ -11,24 +11,17 @@ fi
 
 # Listing
 if command -v eza >/dev/null 2>&1; then
-    alias ls='eza -lh --group-directories-first --icons=auto --color=always'
-    alias ll='eza -l --group-directories-first --icons=auto --color=always'
-    alias la='eza -la --group-directories-first --icons=auto --color=always'
+    alias ls='eza -lh --group-directories-first --icons=auto'
+    alias ll='eza -l --group-directories-first --icons=auto'
+    alias la='eza -la --group-directories-first --icons=auto'
 elif command -v exa >/dev/null 2>&1; then
     alias ls='exa -lh --group-directories-first'
     alias ll='exa -l --group-directories-first'
     alias la='exa -la --group-directories-first'
 else
-    # Detect GNU vs BSD ls color flag (command ls avoids alias recursion).
-    if command ls --color=auto / >/dev/null 2>&1; then
-        alias ls='ls -lh --color=auto'
-        alias ll='ls -l --color=auto'
-        alias la='ls -la --color=auto'
-    else
-        alias ls='ls -lhG'
-        alias ll='ls -lG'
-        alias la='ls -laG'
-    fi
+    alias ls='ls -lh'
+    alias ll='ls -l'
+    alias la='ls -la'
 fi
 
 # bat / batcat
@@ -63,6 +56,7 @@ if command -v fzf >/dev/null 2>&1; then
         export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git/*'"
     fi
     [ -n "${FZF_DEFAULT_COMMAND:-}" ] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_DEFAULT_OPTS='--color=fg:#cdd6f4,bg:#1e1e2e,hl:#f38ba8,fg+:#cdd6f4,bg+:#313244,hl+:#f38ba8,info:#89b4fa,prompt:#cba6f7,pointer:#f5c2e7,marker:#a6e3a1,spinner:#f5c2e7,header:#89b4fa,border:#585b70'
 fi
 
 # direnv (hook when available)

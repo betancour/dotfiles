@@ -47,6 +47,7 @@ if command -v fzf >/dev/null 2>&1; then
         export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git/*'"
     fi
     [ -n "${FZF_DEFAULT_COMMAND:-}" ] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_DEFAULT_OPTS='--color=fg:#cdd6f4,bg:#1e1e2e,hl:#f38ba8,fg+:#cdd6f4,bg+:#313244,hl+:#f38ba8,info:#89b4fa,prompt:#cba6f7,pointer:#f5c2e7,marker:#a6e3a1,spinner:#f5c2e7,header:#89b4fa,border:#585b70'
 fi
 
 # lesspipe for binary-friendly less

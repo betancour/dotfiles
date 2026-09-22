@@ -55,7 +55,7 @@ Example home links after install:
 ~/.grok/config.toml       → ~/.dotfiles/config/grok/config.toml
 ```
 
-Grok credentials stay in `~/.grok/auth.json` and are never tracked. `~/.config/nvim` is a LazyVim tree; the installer links overlay files (Green Phosphor colorscheme, statusline, harpoon, …) into it.
+Grok credentials stay in `~/.grok/auth.json` and are never tracked. `~/.config/nvim` is a LazyVim tree; the installer links overlay files (Tokyo Night colorscheme, statusline, harpoon, …) into it.
 
 ## What the installer does
 
@@ -130,8 +130,8 @@ Removes managed symlinks and managed blocks. Leaves the repository at `~/.dotfil
 │   ├── .zaliases
 │   └── .zfunctions
 ├── config/                    # app configs (XDG-style)
-│   ├── nvim/          # LazyVim overlay (Green Phosphor, harpoon, …)
-│   ├── alacritty/     # Green Phosphor theme (symlink → ~/.config/alacritty)
+│   ├── nvim/          # LazyVim overlay (Tokyo Night, harpoon, …)
+│   ├── alacritty/     # Tokyo Night theme (symlink → ~/.config/alacritty)
 │   ├── grok/          # Grok Build config.toml (no credentials)
 │   ├── zellij/
 │   ├── tmux/

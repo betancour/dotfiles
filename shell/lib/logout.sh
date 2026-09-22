@@ -92,11 +92,7 @@ if [ -t 1 ] && [ "${TERM:-}" != dumb ]; then
         || declare -f _dotfiles_term_colors >/dev/null 2>&1; then
         _dotfiles_term_colors
     else
-        BOLD=$(printf '\033[1m')
-        GREEN=$(printf '\033[32m')
-        CYAN=$GREEN
-        YELLOW=$GREEN
-        RESET=$(printf '\033[0m')
+        BOLD= GREEN= CYAN= YELLOW= RESET=
     fi
 
     echo

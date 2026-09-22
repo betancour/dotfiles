@@ -19,11 +19,11 @@ zstyle ':vcs_info:git:*' actionformats '%b|%a%u%c'
 _dotfiles_vcs_prompt() {
     vcs_info
     [[ -z "${vcs_info_msg_0_:-}" ]] && return
-    print -n "%F{green}[${vcs_info_msg_0_}]%f"
+    print -n "[${vcs_info_msg_0_}]"
 }
 
 PROMPT='
-%F{green}%n%f@%F{green}%m%f %F{green}[%3~]%f$(_dotfiles_vcs_prompt) %F{green}[%D{%H:%M:%S}]%f
-%(?.%F{green}❯%f.%K{green}%F{black}❯%f%k) '
+%n@%m [%3~]$(_dotfiles_vcs_prompt) [%D{%H:%M:%S}]
+%(?.❯.%?❯) '
 
-RPROMPT='%(?..%K{green}%F{black}[%?]%f%k)'
+RPROMPT=''

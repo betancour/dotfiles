@@ -38,8 +38,8 @@ If you already have a real directory at `~/.config/alacritty`, use `--force` (ex
 Edit only the switch files:
 
 ```toml
-# theme.toml  (active: Green Phosphor — Neovim, Grok, tmux, Starship)
-import = ["themes/green-phosphor.toml"]
+# theme.toml  (active: Tokyo Night)
+import = ["themes/tokyo-night.toml"]
 
 # font.toml
 import = ["fonts/CascadiaCodeNF.toml"]

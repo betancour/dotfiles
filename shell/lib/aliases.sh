@@ -22,28 +22,19 @@ fi
 
 # File listing
 if command -v eza >/dev/null 2>&1; then
-    alias ls='eza -lh --group-directories-first --icons=auto --color=always'
-    alias lsa='eza -lha --group-directories-first --icons=auto --color=always'
-    alias l='eza -G --group-directories-first --icons=auto --color=always'
-    alias ll='eza -l --group-directories-first --icons=auto --color=always'
-    alias la='eza -la --group-directories-first --icons=auto --color=always'
-    alias lt='eza --tree --level=2 --long --group-directories-first --icons=auto --color=always --git'
-    alias lta='eza --tree --level=2 --long --group-directories-first --icons=auto --color=always --git -a'
+    alias ls='eza -lh --group-directories-first --icons=auto'
+    alias lsa='eza -lha --group-directories-first --icons=auto'
+    alias l='eza -G --group-directories-first --icons=auto'
+    alias ll='eza -l --group-directories-first --icons=auto'
+    alias la='eza -la --group-directories-first --icons=auto'
+    alias lt='eza --tree --level=2 --long --group-directories-first --icons=auto --git'
+    alias lta='eza --tree --level=2 --long --group-directories-first --icons=auto --git -a'
 else
-    # GNU ls vs BSD ls color flag detection (one test, no OS branch)
-    if ls --color=auto / >/dev/null 2>&1; then
-        alias ls='ls -lh --color=auto --group-directories-first'
-        alias lsa='ls -lha --color=auto --group-directories-first'
-        alias l='ls --color=auto --group-directories-first'
-        alias ll='ls -l --color=auto --group-directories-first'
-        alias la='ls -la --color=auto --group-directories-first'
-    else
-        alias ls='ls -lhG'
-        alias lsa='ls -lhaG'
-        alias l='ls -G'
-        alias ll='ls -lG'
-        alias la='ls -laG'
-    fi
+    alias ls='ls -lh'
+    alias lsa='ls -lha'
+    alias l='ls'
+    alias ll='ls -l'
+    alias la='ls -la'
     if command -v tree >/dev/null 2>&1; then
         alias lt='tree -L 2'
         alias lta='tree -aL 2'
@@ -57,16 +48,16 @@ fi
 if command -v rg >/dev/null 2>&1; then
     alias search='rg --files-with-matches'
 elif command -v ripgrep >/dev/null 2>&1; then
-    alias rg='ripgrep --color=auto'
+    alias rg='ripgrep'
     alias search='ripgrep --files-with-matches'
 else
-    alias rg='grep -r --color=auto'
+    alias rg='grep -r'
     alias search='grep -r -l'
 fi
 
 if command -v fzf >/dev/null 2>&1; then
     if command -v bat >/dev/null 2>&1; then
-        alias fzf_preview='fzf --preview "bat --style=numbers --color=always --line-range :500 {}"'
+        alias fzf_preview='fzf --preview "bat --style=numbers --line-range :500 {}"'
     else
         alias fzf_preview='fzf --preview "cat {}"'
     fi
@@ -81,11 +72,11 @@ fi
 # File viewing
 if command -v bat >/dev/null 2>&1; then
     alias cat='bat --style=auto'
-    alias preview='bat --style=numbers --color=always'
+    alias preview='bat --style=numbers'
 elif command -v batcat >/dev/null 2>&1; then
     alias bat='batcat'
     alias cat='batcat --style=auto'
-    alias preview='batcat --style=numbers --color=always'
+    alias preview='batcat --style=numbers'
 fi
 
 # General

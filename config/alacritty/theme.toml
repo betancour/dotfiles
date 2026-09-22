@@ -1,6 +1,3 @@
-# Active color scheme — change this one path to switch themes.
-# Active: Green Phosphor (Neovim syntax hues; Grok/tmux inherit the 16-color map)
-# Available: themes/green-phosphor.toml | tokio-night.toml | nord.toml | ibm-5153.toml | catppuccin-mocha.toml | dracula.toml | gruvbox.toml | linux.toml | rose-pine-moon.toml
-
 [general]
-import = ["themes/green-phosphor.toml"]
+# Active color scheme — Tokyo Night.
+import = ["themes/tokyo-night.toml"]

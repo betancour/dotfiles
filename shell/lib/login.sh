@@ -32,18 +32,7 @@ _dotfiles_is_tty() {
 # Sets: BOLD DIM CYAN GREEN BLUE YELLOW MAGENTA RESET  (empty if non-TTY)
 # One hue: every named color is green so banners match Green Phosphor off Alacritty.
 _dotfiles_term_colors() {
-    if _dotfiles_is_tty; then
-        BOLD=$'\033[1m'
-        DIM=$'\033[2m'
-        GREEN=$'\033[32m'
-        CYAN=$GREEN
-        BLUE=$GREEN
-        YELLOW=$GREEN
-        MAGENTA=$GREEN
-        RESET=$'\033[0m'
-    else
-        BOLD= DIM= CYAN= GREEN= BLUE= YELLOW= MAGENTA= RESET=
-    fi
+    BOLD= DIM= CYAN= GREEN= BLUE= YELLOW= MAGENTA= RESET=
 }
 
 dotfiles_login_width() {
@@ -541,11 +530,7 @@ dotfiles_check_updates() {
             _n=${_n##* }
             _n=${_n:-0}
             if [ "$_n" -gt 0 ] 2>/dev/null; then
-                if [ -t 1 ] && [ "${TERM:-}" != dumb ]; then
-                    _y=$(printf "\033[32m"); _r=$(printf "\033[0m"); _d=$(printf "\033[2m")
-                else
-                    _y= _r= _d=
-                fi
+                _y= _r= _d=
                 if [ "$_n" -eq 1 ]; then
                     _msg="1 Homebrew update available"
                 else

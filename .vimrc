@@ -24,17 +24,18 @@ set wildmode=list:longest
 set cmdheight=2
 set laststatus=2
 
-" Colors and Syntax — Green Phosphor via the terminal 16-color map
+" Colors and Syntax — Tokyo Night palette
 syntax enable
 set background=dark
-highlight Normal ctermfg=green ctermbg=black
-highlight Comment ctermfg=8
-highlight LineNr ctermfg=8
-highlight ColorColumn ctermbg=0
-highlight Visual ctermfg=black ctermbg=green
-highlight Search ctermfg=black ctermbg=green
-highlight StatusLine ctermfg=black ctermbg=green
-highlight Error ctermfg=black ctermbg=green cterm=bold
+set termguicolors
+highlight Normal guifg=#c0caf5 guibg=#1a1b26 ctermfg=white ctermbg=black
+highlight Comment guifg=#565f89 ctermfg=8
+highlight LineNr guifg=#3b4261 ctermfg=8
+highlight ColorColumn guibg=#1f2335 ctermbg=0
+highlight Visual guifg=#1a1b26 guibg=#7aa2f7 ctermfg=black ctermbg=blue
+highlight Search guifg=#1a1b26 guibg=#e0af68 ctermfg=black ctermbg=yellow
+highlight StatusLine guifg=#c0caf5 guibg=#24283b ctermfg=white ctermbg=black
+highlight Error guifg=#1a1b26 guibg=#f7768e ctermfg=black ctermbg=red cterm=bold
 
 " 42 Norm Compliance: Line length limit
 set colorcolumn=80

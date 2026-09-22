@@ -12,37 +12,17 @@
     # command timeout. Enable it only in large working trees:
     #   git config core.fsmonitor true
 
-[color]
-    ui = auto
-
 [diff]
     tool = vimdiff
 
 [difftool]
     prompt = false
 
-[color "branch"]
-    current = green bold
-    local = green
-    remote = cyan
-
-[color "diff"]
-    meta = yellow bold
-    frag = cyan
-    old = red
-    new = green bold
-    whitespace = red reverse
-
-[color "status"]
-    added = green bold
-    changed = yellow
-    untracked = cyan
-
 [gitflow "prefix"]
     versiontag = v
 
 [alias]
-    lg = log --color --graph --pretty=format:'%C(green)%h%Creset -%C(yellow)%d%Creset %s %C(cyan)(%cr) %C(bold green)<%an>%Creset' --abbrev-commit
+    lg = log --graph --abbrev-commit
 
 [filter "lfs"]
     clean = git-lfs clean -- %f

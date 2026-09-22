@@ -11,10 +11,7 @@
 # - Window chrome (opacity/blur/decorations) lives in window.toml.
 
 [env]
-# Prefer Alacritty's native terminfo when present (checked via `infocmp alacritty`).
-# Uncomment for hosts that only know xterm-256color:
-# TERM = "xterm-256color"
-COLORTERM = "truecolor"
+# Keep terminal capability detection with the terminal and shell defaults.
 
 [terminal]
 osc52 = "OnlyCopy"

@@ -21,17 +21,17 @@ set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)
 
 "set list
 "set listchars=space:·,tab:>-
-highlight SpecialKey ctermfg=gray guifg=gray
+set background=dark
+set termguicolors
 
 if &term =~ '256color'
   set t_ut=
 endif
 
-highlight LineNr ctermfg=gray guifg=gray
-highlight ColorColumn ctermbg=gray
-
-" Force background setting to light
-autocmd VimEnter * set background=light
+highlight Normal guifg=#c0caf5 guibg=#1a1b26 ctermfg=white ctermbg=black
+highlight SpecialKey guifg=#565f89 ctermfg=8
+highlight LineNr guifg=#3b4261 ctermfg=8
+highlight ColorColumn guibg=#1f2335 ctermbg=0
 
 " C Development Settings
 syntax enable

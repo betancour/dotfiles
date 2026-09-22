@@ -5,14 +5,6 @@ if [ "${TERM:-}" != dumb ] && command -v starship >/dev/null 2>&1; then
     return 0 2>/dev/null || true
 fi
 
-_color_prompt=
-case "${TERM:-}" in
-    *color*|*-256color|xterm*|screen*|tmux*) _color_prompt=yes ;;
-esac
-if [ -z "$_color_prompt" ] && [ -x /usr/bin/tput ] && tput setaf 1 >/dev/null 2>&1; then
-    _color_prompt=yes
-fi
-
 __git_prompt() {
     git rev-parse --git-dir >/dev/null 2>&1 || return 0
     _branch=$(git symbolic-ref --short HEAD 2>/dev/null \
@@ -34,34 +26,24 @@ EOF
     _status="${_dirty}${_staged}${_untracked}"
     unset _line
 
-    if [ "$_color_prompt" = yes ]; then
-        if [ -n "$_status" ]; then
-            printf ' \033[0;32m[\033[1;32m%s%s\033[0;32m]\033[0m' "$_branch" "$_status"
-        else
-            printf ' \033[0;32m[\033[1;32m%s\033[0;32m]\033[0m' "$_branch"
-        fi
-    else
+    if [ -n "$_status" ]; then
         printf ' [%s%s]' "$_branch" "$_status"
+    else
+        printf ' [%s]' "$_branch"
     fi
     unset _branch _dirty _staged _untracked _status
 }
 
 __prompt_arrow() {
     if [ $? -eq 0 ]; then
-        printf '\033[1;32m❯\033[0m'
+        printf '❯'
     else
-        printf '\033[1;42;30m❯\033[0m'
+        printf '❯'
     fi
 }
 
-if [ "$_color_prompt" = yes ]; then
-    PS1='\[\033[1;32m\]\u\[\033[0m\]@\[\033[1;32m\]\h\[\033[0m\] \[\033[1;32m\][\w]\[\033[0m\]$(__git_prompt) \[\033[0;32m\][\D{%H:%M:%S}]\[\033[0m\]\n$(__prompt_arrow) '
-else
-    PS1='\u@\h [\w]$(__git_prompt) [\D{%H:%M:%S}]\n❯ '
-fi
+PS1='\u@\h [\w]$(__git_prompt) [\D{%H:%M:%S}]\n$(__prompt_arrow) '
 
 case "${TERM:-}" in
     xterm*|rxvt*|screen*|tmux*) PS1="\[\e]0;\u@\h: \w\a\]$PS1" ;;
 esac
-
-unset _color_prompt

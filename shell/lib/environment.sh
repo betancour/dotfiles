@@ -2,8 +2,8 @@
 # Keep side effects minimal: no heavy tool init here (that belongs in profile/tools).
 
 if [ -n "${DOTFILES_ENV_LOADED:-}" ]; then
-    [ -n "${XDG_CONFIG_HOME:-}" ] && return 0
-    unset DOTFILES_ENV_LOADED
+  [ -n "${XDG_CONFIG_HOME:-}" ] && return 0
+  unset DOTFILES_ENV_LOADED
 fi
 DOTFILES_ENV_LOADED=1
 
@@ -20,18 +20,18 @@ export LC_CTYPE="${LC_CTYPE:-en_US.UTF-8}"
 
 # Editor and pager — prefer nvim, then vim, then vi (no repeated lookups later)
 if [ -z "${EDITOR:-}" ]; then
-    if [ -x /opt/homebrew/bin/nvim ] || [ -x /usr/local/bin/nvim ] \
-        || [ -x "$HOME/.local/bin/nvim" ]; then
-        export EDITOR=nvim VISUAL=nvim
-    elif command -v nvim >/dev/null 2>&1; then
-        export EDITOR=nvim VISUAL=nvim
-    elif [ -x /usr/bin/vim ] || command -v vim >/dev/null 2>&1; then
-        export EDITOR=vim VISUAL=vim
-    else
-        export EDITOR=vi VISUAL=vi
-    fi
+  if [ -x /opt/homebrew/bin/nvim ] || [ -x /usr/local/bin/nvim ] ||
+    [ -x "$HOME/.local/bin/nvim" ]; then
+    export EDITOR=nvim VISUAL=nvim
+  elif command -v nvim >/dev/null 2>&1; then
+    export EDITOR=nvim VISUAL=nvim
+  elif [ -x /usr/bin/vim ] || command -v vim >/dev/null 2>&1; then
+    export EDITOR=vim VISUAL=vim
+  else
+    export EDITOR=vi VISUAL=vi
+  fi
 else
-    export VISUAL="${VISUAL:-$EDITOR}"
+  export VISUAL="${VISUAL:-$EDITOR}"
 fi
 
 export PAGER=less
@@ -45,11 +45,8 @@ export HISTSIZE=50000
 export SAVEHIST=50000
 
 # Tool config paths (XDG)
-export FZF_DEFAULT_OPTS="--height=50% --layout=reverse --border --inline-info --color=fg:#00FF66,bg:-1,hl:#1BE5EE,fg+:#000000,bg+:#00FF66,hl+:#000000,info:#F9D544,prompt:#B5FFCE,pointer:#00FF66,marker:#C8F23C,spinner:#5DEBBC,header:#6FA783,border:#00FF66,gutter:-1 --bind=ctrl-u:page-up,ctrl-d:page-down"
-export BAT_THEME="${BAT_THEME:-ansi}"
-export GREP_COLORS="${GREP_COLORS:-ms=1;32:mc=1;32:sl=:cx=:fn=32:ln=32:bn=32:se=32}"
-export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/config"
-export BAT_CONFIG_PATH="${XDG_CONFIG_HOME}/bat/config"
+export BAT_CONFIG_PATH="${DOTFILES_DIR}/config/bat/config"
+export RIPGREP_CONFIG_PATH="${DOTFILES_DIR}/config/ripgrep/ripgrep.conf"
 export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
 export DOCKER_CONFIG="${XDG_CONFIG_HOME}/docker"
 export WGETRC="${XDG_CONFIG_HOME}/wget/wgetrc"
@@ -93,50 +90,48 @@ export GRADLE_USER_HOME="${XDG_DATA_HOME}/gradle"
 # Homes are set only when the tree exists; PATH is assembled in path.sh.
 export JAVA_TOOLS_HOME="${JAVA_TOOLS_HOME:-$HOME/.java-tools}"
 if [ -z "${MAVEN_HOME:-}" ] && [ -d "${JAVA_TOOLS_HOME}/maven" ]; then
-    export MAVEN_HOME="${JAVA_TOOLS_HOME}/maven"
+  export MAVEN_HOME="${JAVA_TOOLS_HOME}/maven"
 fi
 if [ -z "${GRADLE_HOME:-}" ] && [ -d "${JAVA_TOOLS_HOME}/gradle" ]; then
-    export GRADLE_HOME="${JAVA_TOOLS_HOME}/gradle"
+  export GRADLE_HOME="${JAVA_TOOLS_HOME}/gradle"
 fi
 if [ -z "${JAVA_HOME:-}" ]; then
-    if is_macos; then
-        for _jhome in \
-            /opt/homebrew/opt/openjdk \
-            /opt/homebrew/opt/openjdk@26 \
-            /opt/homebrew/opt/openjdk@25 \
-            /opt/homebrew/opt/openjdk@21 \
-            /opt/homebrew/opt/openjdk@17 \
-            /usr/local/opt/openjdk
-        do
-            if [ -d "$_jhome/libexec/openjdk.jdk/Contents/Home" ]; then
-                export JAVA_HOME="$_jhome/libexec/openjdk.jdk/Contents/Home"
-                break
-            elif [ -d "$_jhome" ]; then
-                export JAVA_HOME="$_jhome"
-                break
-            fi
-        done
-        unset _jhome
-        if [ -z "${JAVA_HOME:-}" ] && [ -x /usr/libexec/java_home ]; then
-            JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null) && export JAVA_HOME
-        fi
-    elif is_linux; then
-        for _jhome in \
-            /usr/lib/jvm/default-java \
-            /usr/lib/jvm/java-21-openjdk \
-            /usr/lib/jvm/java-21-openjdk-amd64 \
-            /usr/lib/jvm/java-17-openjdk \
-            /usr/lib/jvm/java-17-openjdk-amd64 \
-            /usr/lib/jvm/java-11-openjdk \
-            /usr/lib/jvm/java-11-openjdk-amd64
-        do
-            if [ -d "$_jhome" ]; then
-                export JAVA_HOME="$_jhome"
-                break
-            fi
-        done
-        unset _jhome
+  if is_macos; then
+    for _jhome in \
+      /opt/homebrew/opt/openjdk \
+      /opt/homebrew/opt/openjdk@26 \
+      /opt/homebrew/opt/openjdk@25 \
+      /opt/homebrew/opt/openjdk@21 \
+      /opt/homebrew/opt/openjdk@17 \
+      /usr/local/opt/openjdk; do
+      if [ -d "$_jhome/libexec/openjdk.jdk/Contents/Home" ]; then
+        export JAVA_HOME="$_jhome/libexec/openjdk.jdk/Contents/Home"
+        break
+      elif [ -d "$_jhome" ]; then
+        export JAVA_HOME="$_jhome"
+        break
+      fi
+    done
+    unset _jhome
+    if [ -z "${JAVA_HOME:-}" ] && [ -x /usr/libexec/java_home ]; then
+      JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null) && export JAVA_HOME
     fi
+  elif is_linux; then
+    for _jhome in \
+      /usr/lib/jvm/default-java \
+      /usr/lib/jvm/java-21-openjdk \
+      /usr/lib/jvm/java-21-openjdk-amd64 \
+      /usr/lib/jvm/java-17-openjdk \
+      /usr/lib/jvm/java-17-openjdk-amd64 \
+      /usr/lib/jvm/java-11-openjdk \
+      /usr/lib/jvm/java-11-openjdk-amd64; do
+      if [ -d "$_jhome" ]; then
+        export JAVA_HOME="$_jhome"
+        break
+      fi
+    done
+    unset _jhome
+  fi
 fi
 
 # Python
@@ -170,42 +165,27 @@ export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
 export DOTNET_CLI_TELEMETRY_OPTOUT="${DOTNET_CLI_TELEMETRY_OPTOUT:-1}"
 export DOTNET_NOLOGO="${DOTNET_NOLOGO:-1}"
 if [ -z "${DOTNET_ROOT:-}" ]; then
-    for _dn_root in \
-        "$HOME/.dotnet" \
-        /usr/local/share/dotnet \
-        /opt/homebrew/opt/dotnet/libexec \
-        /usr/local/opt/dotnet/libexec
-    do
-        if [ -x "${_dn_root}/dotnet" ]; then
-            export DOTNET_ROOT="$_dn_root"
-            break
-        fi
-    done
-    unset _dn_root
+  for _dn_root in \
+    "$HOME/.dotnet" \
+    /usr/local/share/dotnet \
+    /opt/homebrew/opt/dotnet/libexec \
+    /usr/local/opt/dotnet/libexec; do
+    if [ -x "${_dn_root}/dotnet" ]; then
+      export DOTNET_ROOT="$_dn_root"
+      break
+    fi
+  done
+  unset _dn_root
 fi
 
 # PATH after toolchain vars so BUN_INSTALL / PNPM_HOME / CARGO_HOME / DOTNET_ROOT resolve correctly
 dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
 
-# eza 0.23 reads theme.yml from EZA_CONFIG_DIR (not XDG_CONFIG_HOME alone).
-# EZA_COLORS would override the file, so leave it unset.
-# Tokens match Neovim green-phosphor.lua (keyword, ident, func, param, const, red).
-unset EZA_COLORS EXA_COLORS
-export EZA_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/eza"
-_gp_ident='38;2;0;255;102'
-_gp_keyword='1;38;2;181;255;206'
-_gp_func='1;38;2;27;229;238'
-_gp_param='4;38;2;93;235;188'
-_gp_const='38;2;249;213;68'
-_gp_err='38;2;255;59;59'
-export LS_COLORS="di=${_gp_keyword}:ln=${_gp_param}:so=1;${_gp_err}:pi=${_gp_const}:ex=${_gp_func}:bd=1;${_gp_const}:cd=1;${_gp_const}:su=38;2;0;0;0;48;2;255;59;59:sg=38;2;0;0;0;48;2;255;59;59:tw=${_gp_keyword}:ow=${_gp_keyword}:or=${_gp_err}:fi=${_gp_ident}"
-unset _gp_ident _gp_keyword _gp_func _gp_param _gp_const _gp_err
+unset BAT_THEME EZA_COLORS EXA_COLORS LS_COLORS LSCOLORS GREP_COLORS FZF_DEFAULT_OPTS
 
 if is_macos; then
-    export CLICOLOR=1
-    export LSCOLORS="Cxcxcxcxbxexexabagaced"
-    export HOMEBREW_NO_ANALYTICS=1
-    export HOMEBREW_NO_AUTO_UPDATE=1
-    export HOMEBREW_NO_ENV_HINTS=1
-    export SHELL_SESSION_HISTORY=0
+  export HOMEBREW_NO_ANALYTICS=1
+  export HOMEBREW_NO_AUTO_UPDATE=1
+  export HOMEBREW_NO_ENV_HINTS=1
+  export SHELL_SESSION_HISTORY=0
 fi

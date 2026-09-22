@@ -5,6 +5,7 @@ SCRIPTS_DIR  := $(DOTFILES_DIR)/scripts
 LIB_DIR      := $(DOTFILES_DIR)/lib
 SHELL_CONFIG := $(DOTFILES_DIR)/shell
 SH_LIB       := $(SHELL_CONFIG)/lib
+SH_LIB_BASH  := $(filter-out $(SH_LIB)/platform.sh,$(wildcard $(SH_LIB)/*.sh))
 
 .PHONY: help install install-zsh install-bash install-sh install-both install-all \
 	install-deps dry-run uninstall \
@@ -119,7 +120,7 @@ lint:
 			"$(SHELL_CONFIG)/sh/modules/tools.sh"; \
 		echo "Installer ShellCheck OK"; \
 		shellcheck -s bash -e SC2148,SC1091,SC2296,SC2298,SC2139,SC2262,SC2263 \
-			"$(SH_LIB)"/*.sh || true; \
+			$(SH_LIB_BASH) || true; \
 	else \
 		echo "shellcheck not installed — skipping (make install-deps or brew install shellcheck)"; \
 	fi
