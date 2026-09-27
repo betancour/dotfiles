@@ -49,5 +49,3 @@ if ! type -t __git_ps1 >/dev/null 2>&1; then
     done
     unset _gitp
 fi
-
-

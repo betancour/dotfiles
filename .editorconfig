@@ -1,0 +1,198 @@
+# .editorconfig
+# https://editorconfig.org
+#
+# Repository-wide editor configuration.
+# Keep this file intentionally editor-agnostic.
+
+root = true
+
+
+# ---------------------------------------------------------------------------
+# Global defaults
+# ---------------------------------------------------------------------------
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+
+# ---------------------------------------------------------------------------
+# Shell / Bash
+# ---------------------------------------------------------------------------
+#
+# Tabs are intentional here, including indentation inside functions,
+# conditionals, loops, and case statements.
+
+[*.sh]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+shell_variant = bash
+
+[*.bash]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+shell_variant = bash
+
+[*.zsh]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+
+[*.{ksh,csh,fish}]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+
+
+# ---------------------------------------------------------------------------
+# Lua
+# ---------------------------------------------------------------------------
+#
+# Lua conventionally uses spaces rather than tabs.
+# Four spaces gives good readability for configuration and Neovim code.
+
+[*.lua]
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+
+# ---------------------------------------------------------------------------
+# Markdown
+# ---------------------------------------------------------------------------
+#
+# Markdown uses spaces for structural indentation.
+# Do NOT trim trailing whitespace here: two trailing spaces are a valid
+# Markdown hard line break.
+#
+# Most Markdown formatters will handle wrapping independently.
+
+[*.md]
+indent_style = space
+indent_size = 2
+tab_width = 2
+trim_trailing_whitespace = false
+
+
+# ---------------------------------------------------------------------------
+# HTML
+# ---------------------------------------------------------------------------
+#
+# Two spaces is the common convention for HTML and works well with nested
+# elements without creating excessive horizontal indentation.
+
+[*.html]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+
+# ---------------------------------------------------------------------------
+# CSS
+# ---------------------------------------------------------------------------
+
+[*.css]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+
+# ---------------------------------------------------------------------------
+# JavaScript / TypeScript / JSON
+# ---------------------------------------------------------------------------
+
+[*.{js,jsx,mjs,cjs,ts,tsx}]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+[*.json]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+
+# ---------------------------------------------------------------------------
+# YAML
+# ---------------------------------------------------------------------------
+#
+# YAML forbids tabs for indentation.
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+
+# ---------------------------------------------------------------------------
+# XML
+# ---------------------------------------------------------------------------
+
+[*.xml]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+
+# ---------------------------------------------------------------------------
+# C / C++
+# ---------------------------------------------------------------------------
+
+[*.{c,h,cc,cpp,cxx,hpp}]
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+
+# ---------------------------------------------------------------------------
+# Assembly
+# ---------------------------------------------------------------------------
+#
+# Assembly often uses tabs for instruction/directive alignment.
+
+[*.{asm,s}]
+indent_style = tab
+indent_size = 8
+tab_width = 8
+
+
+# ---------------------------------------------------------------------------
+# Makefiles
+# ---------------------------------------------------------------------------
+#
+# Make requires a literal TAB before recipes.
+
+[Makefile]
+indent_style = tab
+indent_size = 8
+tab_width = 8
+
+[*.mk]
+indent_style = tab
+indent_size = 8
+tab_width = 8
+
+
+# ---------------------------------------------------------------------------
+# Git / patch files
+# ---------------------------------------------------------------------------
+
+[*.patch]
+trim_trailing_whitespace = false
+
+[*.diff]
+trim_trailing_whitespace = false
+
+
+# ---------------------------------------------------------------------------
+# Documentation / text
+# ---------------------------------------------------------------------------
+
+[*.{txt,text}]
+indent_style = space
+indent_size = 2
+tab_width = 2
