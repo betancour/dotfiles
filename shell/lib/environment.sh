@@ -46,6 +46,7 @@ export SAVEHIST=50000
 
 # Tool config paths (XDG)
 export BAT_CONFIG_PATH="${DOTFILES_DIR}/config/bat/config"
+export BAT_CONFIG_DIR="${DOTFILES_DIR}/config/bat"
 export RIPGREP_CONFIG_PATH="${DOTFILES_DIR}/config/ripgrep/ripgrep.conf"
 export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
 export DOCKER_CONFIG="${XDG_CONFIG_HOME}/docker"

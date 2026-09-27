@@ -493,6 +493,7 @@ df_install_nvim_overlay() {
     for _df_nvim_rel in \
         colors/green-phosphor.lua \
         lua/config/options.lua \
+        lua/plugins/editorconfig.lua \
         lua/plugins/harpoon.lua \
         lua/plugins/refactoring.lua \
         lua/plugins/snacks-animated-scrolling-off.lua \

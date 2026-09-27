@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>TokyoNight</string>
+  <key>settings</key>
+  <array>
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key>
+        <string>#1a1b26</string>
+        <key>caret</key>
+        <string>#c0caf5</string>
+        <key>foreground</key>
+        <string>#c0caf5</string>
+        <key>invisibles</key>
+        <string>#414868</string>
+        <key>lineHighlight</key>
+        <string>#1f2335</string>
+        <key>selection</key>
+        <string>#33467c</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>comment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#565f89</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>constant, entity.name.function, support.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#7aa2f7</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>constant.numeric, constant.language, keyword</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ff9e64</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>entity.name.type, storage.type, support.type</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#2ac3de</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>string, constant.other.symbol</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#9ece6a</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>variable, variable.language, variable.parameter</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#c0caf5</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>entity.name.tag, punctuation.definition.tag</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#f7768e</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>invalid, invalid.illegal</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#db4b4b</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>
