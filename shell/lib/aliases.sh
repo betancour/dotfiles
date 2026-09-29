@@ -87,7 +87,18 @@ alias x='exit'
 alias df='df -h'
 
 # Networking
-alias wget='curl -O'
+# Real wget keeps its own flags. The curl stand-in only covers `wget <url>`;
+# passing wget options through `curl -O` applies them to the wrong tool.
+if ! command -v wget >/dev/null 2>&1; then
+    wget() {
+        if [ "$#" -eq 1 ]; then
+            curl -fL -O -- "$1"
+        else
+            printf '%s\n' "wget is not installed; only 'wget <url>' is emulated (curl -fL -O)." >&2
+            return 127
+        fi
+    }
+fi
 alias ping='ping -c 5'
 
 if is_macos; then

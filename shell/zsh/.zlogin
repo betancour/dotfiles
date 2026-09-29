@@ -6,4 +6,6 @@ source "${${(%):-%x}:A:h}/../lib/bootstrap.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/login.sh"
 dotfiles_login
 
-[[ -r "${ZDOTDIR:-$HOME}/.zlogin.local" ]] && source "${ZDOTDIR:-$HOME}/.zlogin.local"
+if [[ -r "${ZDOTDIR:-$HOME}/.zlogin.local" ]]; then
+    source "${ZDOTDIR:-$HOME}/.zlogin.local"
+fi

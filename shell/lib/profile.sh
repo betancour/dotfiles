@@ -6,31 +6,21 @@ DOTFILES_PROFILE_LOADED=1
 
 . "${DOTFILES_LIB_DIR}/platform.sh"
 
-# --- Package manager / Homebrew ---
-if is_macos; then
-    for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew; do
-        if [ -x "$_brew" ]; then
-            case ":$PATH:" in
-                *":${_brew%/bin}/bin:"*) ;;
-                *) eval "$("$_brew" shellenv)" ;;
-            esac
-            break
-        fi
-    done
-    unset _brew
-fi
+# --- Package manager / Homebrew (no brew(1) fork) ---
+dotfiles_brew_env || true
 
-# --- SSH agent (start once per login session) ---
+# macOS path_helper runs after .zshenv and rearranges PATH. Rebuild so
+# managed directories stay in front and are not duplicated. Cheap: no forks.
+unset DOTFILES_PATH_LOADED
+# shellcheck source=path.sh
+. "${DOTFILES_LIB_DIR}/path.sh"
+
+# --- SSH agent (reuse a live agent; start one only if needed) ---
 . "${DOTFILES_LIB_DIR}/ssh-agent.sh"
-dotfiles_ssh_agent_start
+dotfiles_ssh_agent_setup
 
-# --- GPG agent ---
-# One gpgconf call (no-op if already running). $TTY is a zsh builtin; else /dev/tty.
-if command -v gpgconf >/dev/null 2>&1; then
-    gpgconf --launch gpg-agent 2>/dev/null || true
-    GPG_TTY=${TTY:-/dev/tty}
-    export GPG_TTY
-fi
+# gpg launches its own agent. Only the tty has to be ready for pinentry.
+dotfiles_gpg_tty
 
 # --- Version managers (shims already on PATH from path.sh; init is lazy) ---
 # JAVA_HOME / BUN_INSTALL / toolchain PATH entries live in environment.sh + path.sh.
@@ -88,13 +78,29 @@ if [ -z "${SDKMAN_DIR:-}" ] && [ -d "$HOME/.sdkman" ]; then
 fi
 
 # --- Desktop / session environment export ---
-# GUI apps inherit PATH/EDITOR/LANG. Extra toolchain vars are already on PATH
-# for shells; each launchctl setenv is a fork, so keep this to the essentials.
+# GUI apps inherit PATH/EDITOR/LANG. Each launchctl setenv is a fork, so
+# skip the trio when this exact triple was already published.
 if is_macos; then
     if command -v launchctl >/dev/null 2>&1; then
-        launchctl setenv PATH "$PATH" 2>/dev/null || true
-        launchctl setenv EDITOR "${EDITOR:-}" 2>/dev/null || true
-        launchctl setenv LANG "${LANG:-}" 2>/dev/null || true
+        _df_launch_dir="${XDG_STATE_HOME:-$HOME/.local/state}/shell"
+        _df_launch_stamp="${_df_launch_dir}/launchctl.stamp"
+        _df_sig="PATH=${PATH}
+EDITOR=${EDITOR-}
+LANG=${LANG-}"
+        _df_cur=
+        [ -r "$_df_launch_stamp" ] && _df_cur=$(< "$_df_launch_stamp")
+        if [ "$_df_cur" != "$_df_sig" ]; then
+            [ -d "$_df_launch_dir" ] || mkdir -p "$_df_launch_dir"
+            launchctl setenv PATH "$PATH" 2>/dev/null || true
+            launchctl setenv EDITOR "${EDITOR:-}" 2>/dev/null || true
+            launchctl setenv LANG "${LANG:-}" 2>/dev/null || true
+            _df_umask=$(umask)
+            umask 077
+            printf '%s' "$_df_sig" > "$_df_launch_stamp" 2>/dev/null || true
+            umask "$_df_umask"
+            unset _df_umask
+        fi
+        unset _df_launch_dir _df_launch_stamp _df_sig _df_cur
     fi
 elif is_linux; then
     if command -v systemctl >/dev/null 2>&1; then
@@ -102,13 +108,11 @@ elif is_linux; then
     fi
 fi
 
-# --- Feature flags for interactive modules ---
-command -v kubectl >/dev/null 2>&1 && export __KUBECTL_AVAILABLE=1
-
-# Session identity for logout/cleanup — one date(1) for both stamps.
-# login.sh's dotfiles_ensure_session_start is a no-op when these are set.
-_df_now=$(date '+%Y-%m-%d %H:%M:%S %s')
-export DOTFILES_LOGIN_TIME=${_df_now% *}
-export DOTFILES_SESSION_ID=$$_${_df_now##* }
-unset _df_now
+# Session identity for logout/cleanup. login.sh's ensure is a no-op once set.
+if dotfiles_now; then
+    export DOTFILES_LOGIN_TIME=$_df_now_clock
+    export DOTFILES_LOGIN_EPOCH=$_df_now_epoch
+    export DOTFILES_SESSION_ID=$$_$_df_now_epoch
+fi
+unset _df_now_clock _df_now_epoch
 export PATH

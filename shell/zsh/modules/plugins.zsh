@@ -32,18 +32,24 @@ if [[ "${DOTFILES_USE_OMZ:-0}" = 1 && -d "$HOME/.oh-my-zsh" ]]; then
     plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
     # shellcheck source=/dev/null
     source "$ZSH/oh-my-zsh.sh"
-else
+elif [[ -o zle ]]; then
     _dotfiles_source_first \
         /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
         /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
         "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" \
         "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
 
+# Syntax highlighting wraps ZLE widgets that exist at source time.
+# Call this at the end of .zshrc, after keybindings, fzf, and local binds.
+_dotfiles_load_syntax_highlighting() {
+    [[ "${DOTFILES_USE_OMZ:-0}" = 1 ]] && return 0
+    [[ -o interactive && -o zle ]] || return 0
+    [[ -t 0 || -t 1 ]] || return 0
     _dotfiles_source_first \
         /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
         /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
         "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
-        "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
-
-unset -f _dotfiles_source_first
+        "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+        || true
+}

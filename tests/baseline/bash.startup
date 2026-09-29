@@ -1,0 +1,7 @@
+beep=na
+extendedglob=na
+globdots=0
+histfile=~/.local/state/bash/history
+nullglob=0
+sharehistory=na
+umask=0077

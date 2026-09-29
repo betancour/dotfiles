@@ -30,9 +30,21 @@ _dotfiles_is_tty() {
 # Populate SGR color variables (caller unsets).
 # ANSI-C quoting ($'...') is Bash/Zsh — zero forks vs printf.
 # Sets: BOLD DIM CYAN GREEN BLUE YELLOW MAGENTA RESET  (empty if non-TTY)
-# One hue: every named color is green so banners match Green Phosphor off Alacritty.
+# Text is one green hue so the start line matches Green Phosphor.
+# The ribbon below is a separate Cruz-Diez chromatic bar.
 _dotfiles_term_colors() {
-    BOLD= DIM= CYAN= GREEN= BLUE= YELLOW= MAGENTA= RESET=
+    if _dotfiles_is_tty; then
+        BOLD=$'\033[1m'
+        DIM=$'\033[2m'
+        GREEN=$'\033[32m'
+        CYAN=$GREEN
+        BLUE=$GREEN
+        YELLOW=$GREEN
+        MAGENTA=$GREEN
+        RESET=$'\033[0m'
+    else
+        BOLD= DIM= CYAN= GREEN= BLUE= YELLOW= MAGENTA= RESET=
+    fi
 }
 
 dotfiles_login_width() {
@@ -79,45 +91,91 @@ dotfiles_center_text() {
     unset _text _color _width _plain _plen _pad _rpad
 }
 
-# Phosphor luminance ribbon (one hue). TTY only.
-#_dotfiles_color_ribbon() {
-#    _dotfiles_is_tty || return 0
-#    printf '%s\n' $'\033[40m  \033[42m  \033[40;32m  \033[1;42m  \033[0;32m  \033[42m  \033[40m  \033[0m'
-#}
-
-# Cruz-Diez-inspired chromatic vibration ribbon. TTY only.
-#_dotfiles_color_ribbon() {
-#    _dotfiles_is_tty || return 0
-#
-#    printf '%s\n' \
-#        $'\033[41m \033[43m \033[41m \033[45m \033[44m \033[46m \033[42m \033[43m \033[0m'
-#}
-
 # Chromatic displacement ribbon.
-# Cruz-Diez-inspired: color interaction, vibration and optical movement.
-# TTY only.
-
+# Cruz-Diez: red → orange → yellow → green → cyan → blue → purple,
+# a white break, the sequence again, then a near-black close.
+# Truecolor when the terminal can do it; 256- and 16-color otherwise.
+# TTY only. One printf, no subprocess.
 _dotfiles_color_ribbon() {
     _dotfiles_is_tty || return 0
 
-    printf '%b' \
-        '\e[48;2;220;35;45m  '\
-        '\e[48;2;255;110;20m  '\
-        '\e[48;2;255;205;20m  '\
-        '\e[48;2;100;205;65m  '\
-        '\e[48;2;20;190;180m  '\
-        '\e[48;2;20;105;220m  '\
-        '\e[48;2;110;45;190m  '\
-        '\e[48;2;255;255;255m  '\
-        '\e[48;2;220;35;45m  '\
-        '\e[48;2;255;110;20m  '\
-        '\e[48;2;255;205;20m  '\
-        '\e[48;2;100;205;65m  '\
-        '\e[48;2;20;190;180m  '\
-        '\e[48;2;20;105;220m  '\
-        '\e[48;2;110;45;190m  '\
-        '\e[48;2;5;5;5m  '\
-        '\e[0m'
+    _df_depth=16
+    case ${COLORTERM:-} in
+        truecolor|24bit|24-bit) _df_depth=24 ;;
+    esac
+    if [ "$_df_depth" -ne 24 ]; then
+        case ${TERM_PROGRAM:-} in
+            iTerm.app|WezTerm|ghostty|Apple_Terminal|alacritty|kitty|vscode|WarpTerminal|Hyper)
+                _df_depth=24
+                ;;
+        esac
+    fi
+    if [ "$_df_depth" -ne 24 ]; then
+        case ${TERM:-} in
+            *truecolor*|*24bit*|alacritty*|kitty*|ghostty*|wezterm*) _df_depth=24 ;;
+            *256color*|*256colour*) _df_depth=256 ;;
+        esac
+    fi
+
+    if [ "$_df_depth" -eq 24 ]; then
+        printf '%b' \
+            '\e[48;2;220;35;45m  '\
+            '\e[48;2;255;110;20m  '\
+            '\e[48;2;255;205;20m  '\
+            '\e[48;2;100;205;65m  '\
+            '\e[48;2;20;190;180m  '\
+            '\e[48;2;20;105;220m  '\
+            '\e[48;2;110;45;190m  '\
+            '\e[48;2;255;255;255m  '\
+            '\e[48;2;220;35;45m  '\
+            '\e[48;2;255;110;20m  '\
+            '\e[48;2;255;205;20m  '\
+            '\e[48;2;100;205;65m  '\
+            '\e[48;2;20;190;180m  '\
+            '\e[48;2;20;105;220m  '\
+            '\e[48;2;110;45;190m  '\
+            '\e[48;2;5;5;5m  '\
+            '\e[0m'
+    elif [ "$_df_depth" -eq 256 ]; then
+        printf '%b' \
+            '\e[48;5;196m  '\
+            '\e[48;5;208m  '\
+            '\e[48;5;220m  '\
+            '\e[48;5;46m  '\
+            '\e[48;5;43m  '\
+            '\e[48;5;33m  '\
+            '\e[48;5;93m  '\
+            '\e[48;5;231m  '\
+            '\e[48;5;196m  '\
+            '\e[48;5;208m  '\
+            '\e[48;5;220m  '\
+            '\e[48;5;46m  '\
+            '\e[48;5;43m  '\
+            '\e[48;5;33m  '\
+            '\e[48;5;93m  '\
+            '\e[48;5;16m  '\
+            '\e[0m'
+    else
+        printf '%b' \
+            '\e[41m  '\
+            '\e[43m  '\
+            '\e[103m  '\
+            '\e[42m  '\
+            '\e[46m  '\
+            '\e[44m  '\
+            '\e[45m  '\
+            '\e[107m  '\
+            '\e[41m  '\
+            '\e[43m  '\
+            '\e[103m  '\
+            '\e[42m  '\
+            '\e[46m  '\
+            '\e[44m  '\
+            '\e[45m  '\
+            '\e[40m  '\
+            '\e[0m'
+    fi
+    unset _df_depth
 }
 
 # =============================================================================
@@ -126,19 +184,24 @@ _dotfiles_color_ribbon() {
 
 # One date(1) invocation when neither stamp exists yet.
 dotfiles_ensure_session_start() {
-    if [ -n "${DOTFILES_LOGIN_TIME:-}" ] && [ -n "${DOTFILES_SESSION_ID:-}" ]; then
+    if [ -n "${DOTFILES_LOGIN_TIME:-}" ] && [ -n "${DOTFILES_SESSION_ID:-}" ] \
+        && [ -n "${DOTFILES_LOGIN_EPOCH:-}" ]; then
         return 0
     fi
-    _now=$(date '+%Y-%m-%d %H:%M:%S %s')
+    dotfiles_now || return 0
     if [ -z "${DOTFILES_LOGIN_TIME:-}" ]; then
-        DOTFILES_LOGIN_TIME=${_now% *}
+        DOTFILES_LOGIN_TIME=$_df_now_clock
         export DOTFILES_LOGIN_TIME
     fi
+    if [ -z "${DOTFILES_LOGIN_EPOCH:-}" ]; then
+        DOTFILES_LOGIN_EPOCH=$_df_now_epoch
+        export DOTFILES_LOGIN_EPOCH
+    fi
     if [ -z "${DOTFILES_SESSION_ID:-}" ]; then
-        DOTFILES_SESSION_ID=$$_${_now##* }
+        DOTFILES_SESSION_ID=$$_$_df_now_epoch
         export DOTFILES_SESSION_ID
     fi
-    unset _now
+    unset _df_now_clock _df_now_epoch
 }
 
 # =============================================================================
@@ -233,8 +296,10 @@ _dotfiles_collect_boot_state() {
             if [ -n "$_bsec" ]; then
                 if [ -n "${EPOCHSECONDS:-}" ]; then
                     _now=$EPOCHSECONDS
+                elif [ -n "${_df_now_epoch:-}" ]; then
+                    _now=$_df_now_epoch
                 else
-                    _now=$(date +%s)
+                    dotfiles_now && _now=$_df_now_epoch
                 fi
                 _dotfiles_fmt_uptime_secs $((_now - _bsec))
                 _DOTFILES_C_UPTIME=${_DOTFILES_FMT:-unknown}
@@ -513,9 +578,16 @@ dotfiles_show_dev_status() {
 
 dotfiles_check_updates() {
     _check_file="${XDG_CACHE_HOME:-$HOME/.cache}/shell_update_check"
-    _today=$(date +%Y%m%d)
+    # Session start already computed the clock. Avoid date(1) and cat(1)
+    # on every top-level terminal (~6ms + a fork) just to compare a stamp.
+    if [ -n "${DOTFILES_LOGIN_TIME:-}" ]; then
+        _today=${DOTFILES_LOGIN_TIME%% *}
+        _today=${_today//-/}
+    else
+        _today=$(date +%Y%m%d)
+    fi
     _last=
-    [ -f "$_check_file" ] && _last=$(cat "$_check_file" 2>/dev/null)
+    [ -r "$_check_file" ] && _last=$(< "$_check_file")
     if [ "$_last" = "$_today" ]; then
         unset _check_file _today _last
         return 0

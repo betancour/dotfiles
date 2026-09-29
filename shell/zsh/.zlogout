@@ -5,4 +5,6 @@ source "${${(%):-%x}:A:h}/../lib/bootstrap.sh"
 
 source "${DOTFILES_LIB_DIR}/logout.sh"
 
-[[ -r "${ZDOTDIR:-$HOME}/.zlogout.local" ]] && source "${ZDOTDIR:-$HOME}/.zlogout.local"
+if [[ -r "${ZDOTDIR:-$HOME}/.zlogout.local" ]]; then
+    source "${ZDOTDIR:-$HOME}/.zlogout.local"
+fi

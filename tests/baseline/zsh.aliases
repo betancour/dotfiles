@@ -1,0 +1,36 @@
+....='z ../../..'
+...='z ../..'
+..='z ..'
+cat='bat --style=auto'
+cd=z
+cls=clear
+df='df -h'
+fzf_preview='fzf --preview "bat --style=numbers --line-range :500 {}"'
+g=git
+gcad='git commit -a --amend'
+gcam='git commit -a -m'
+gcm='git commit -m'
+l='eza -G --group-directories-first --icons=auto'
+la='eza -la --group-directories-first --icons=auto'
+ll='eza -l --group-directories-first --icons=auto'
+ls='eza -lh --group-directories-first --icons=auto'
+lsa='eza -lha --group-directories-first --icons=auto'
+lt='eza --tree --level=2 --long --group-directories-first --icons=auto --git'
+lta='eza --tree --level=2 --long --group-directories-first --icons=auto --git -a'
+lzg=lazygit
+ping='ping -c 5'
+ports='lsof -i -P -n'
+preview='bat --style=numbers'
+python=python3
+run-help=man
+scp=/opt/homebrew/bin/scp
+search='rg --files-with-matches'
+sftp=/opt/homebrew/bin/sftp
+ssh-add=/opt/homebrew/bin/ssh-add
+ssh-agent=/opt/homebrew/bin/ssh-agent
+ssh-keygen=/opt/homebrew/bin/ssh-keygen
+ssh=/opt/homebrew/bin/ssh
+vi=nvim
+vim=nvim
+which-command=whence
+x=exit

@@ -10,7 +10,7 @@ SH_LIB_BASH  := $(filter-out $(SH_LIB)/platform.sh,$(wildcard $(SH_LIB)/*.sh))
 .PHONY: help install install-zsh install-bash install-sh install-both install-all \
 	install-deps dry-run uninstall \
 	install-java-tools update-java-tools java-tools-status \
-	validate validate-zsh validate-bash validate-sh lint clean
+	validate validate-zsh validate-bash validate-sh lint test clean
 
 help:
 	@echo "Dotfiles targets:"
@@ -27,6 +27,7 @@ help:
 	@echo "  dry-run         Show what install would do"
 	@echo "  uninstall       Remove managed symlinks / blocks"
 	@echo "  validate        Syntax-check shared lib + all shells"
+	@echo "  test            Run the behavioral contract (tests/run.sh)"
 	@echo "  lint            Run shellcheck on installer + libs"
 	@echo "  clean           Remove broken symlinks in \$$HOME"
 
@@ -65,6 +66,9 @@ dry-run:
 
 uninstall:
 	@sh "$(DOTFILES_DIR)/uninstall.sh"
+
+test:
+	@"$(DOTFILES_DIR)/tests/run.sh"
 
 validate: validate-zsh validate-bash validate-sh
 	@echo "Validating shared library..."

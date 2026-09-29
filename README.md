@@ -149,6 +149,22 @@ Removes managed symlinks and managed blocks. Leaves the repository at `~/.dotfil
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for boot order and design decisions. Harpoon maps: [docs/HARPOON.md](docs/HARPOON.md).
 
+## Tests
+
+The behavioral contract lives in [`tests/`](tests/README.md). After a configuration change:
+
+```sh
+./tests/run.sh
+```
+
+`make test` is the same command. Recorded baselines change only when you mean them to:
+
+```sh
+./tests/run.sh --update-baseline
+```
+
+A change is not complete until the harness passes. The optional Git hook is documented in `tests/README.md` and is not installed automatically.
+
 ## Dependencies
 
 The installer detects the OS package manager and installs:

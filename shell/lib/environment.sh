@@ -11,12 +11,10 @@ dotfiles_source_once "${DOTFILES_LIB_DIR}/platform.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/xdg.sh"
 dotfiles_source_once "${DOTFILES_LIB_DIR}/privacy.sh"
 
-umask 077
-
-# Locale
+# Locale. LANG is the default; do not set LC_ALL or it locks every category
+# (LC_TIME, LC_COLLATE, LC_NUMERIC, …) and cannot be overridden per category.
 export LANG="${LANG:-en_US.UTF-8}"
-export LC_ALL="${LC_ALL:-en_US.UTF-8}"
-export LC_CTYPE="${LC_CTYPE:-en_US.UTF-8}"
+export LC_CTYPE="${LC_CTYPE:-${LANG}}"
 
 # Editor and pager — prefer nvim, then vim, then vi (no repeated lookups later)
 if [ -z "${EDITOR:-}" ]; then
@@ -34,9 +32,11 @@ else
   export VISUAL="${VISUAL:-$EDITOR}"
 fi
 
-export PAGER=less
-export MANPAGER="less -X"
-export LESS="-R -F -X -M -i -J --tabs=4"
+export PAGER="${PAGER:-less}"
+export MANPAGER="${MANPAGER:-less -X}"
+if [ -z "${LESS+x}" ]; then
+  export LESS="-R -F -X -M -i -J --tabs=4"
+fi
 export LESSHISTFILE="${XDG_STATE_HOME}/less/history"
 [ -d "${XDG_STATE_HOME}/less" ] || mkdir -p "${XDG_STATE_HOME}/less"
 
@@ -181,8 +181,6 @@ fi
 
 # PATH after toolchain vars so BUN_INSTALL / PNPM_HOME / CARGO_HOME / DOTNET_ROOT resolve correctly
 dotfiles_source_once "${DOTFILES_LIB_DIR}/path.sh"
-
-unset BAT_THEME EZA_COLORS EXA_COLORS LS_COLORS LSCOLORS GREP_COLORS FZF_DEFAULT_OPTS
 
 if is_macos; then
   export HOMEBREW_NO_ANALYTICS=1

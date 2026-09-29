@@ -1,0 +1,8 @@
+#!/bin/sh
+# Stand-in for launchctl. Records the invocation and exits 0.
+# The real user domain is never contacted.
+log=${DOTFILES_TEST_LAUNCHCTL_LOG:-}
+if [ -n "$log" ]; then
+    printf '%s\n' "$*" >> "$log" 2>/dev/null || true
+fi
+exit 0

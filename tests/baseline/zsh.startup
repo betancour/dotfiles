@@ -1,0 +1,7 @@
+beep=0
+extendedglob=1
+globdots=0
+histfile=~/.local/state/zsh/history
+nullglob=0
+sharehistory=1
+umask=077

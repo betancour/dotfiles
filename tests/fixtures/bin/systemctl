@@ -1,0 +1,7 @@
+#!/bin/sh
+# Stand-in for systemctl --user. Records the invocation and exits 0.
+log=${DOTFILES_TEST_LAUNCHCTL_LOG:-}
+if [ -n "$log" ]; then
+    printf 'systemctl %s\n' "$*" >> "$log" 2>/dev/null || true
+fi
+exit 0

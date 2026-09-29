@@ -130,9 +130,9 @@ Logical tool names (`zoxide`, `fd`, `bat`, …) map to distro packages (`fd-find
 ### Zsh (login interactive)
 
 ```
-.zshenv     → bootstrap + environment + HISTFILE
-.zprofile   → profile (brew, ssh-agent, version managers)
-.zshrc      → options, history, completion, plugins, prompt, tools, aliases, functions
+.zshenv     → bootstrap + environment (no HISTFILE; scripts must not touch history)
+.zprofile   → profile (Homebrew vars, PATH rebuild, ssh-agent, version managers)
+.zshrc      → history, options, completion, plugins, prompt, tools, aliases, functions
 .zlogin     → login (optional banners, update check, agent restore)
 .zlogout    → logout (history backup, agent teardown, farewell)
 ```
@@ -205,14 +205,14 @@ Templates live under `config/terminal/` and `git/`.
 - Login collectors prefer kernel interfaces over pipelines: Linux `/proc/uptime` + `/proc/stat`, macOS `sysctl kern.boottime` (one call for uptime + boot stamp). Results are cached for the process. Uptime formatting is in-process (no `$()` subshell).
 - Shell ready time uses builtins where possible (zsh float `SECONDS`; bash `EPOCHREALTIME` with a single `awk` only when floats are required).
 - Formatting helpers avoid per-character `printf` loops; separators use in-shell pad expansion.
-- Session stamps (`DOTFILES_LOGIN_TIME` / `DOTFILES_SESSION_ID`) use one `date(1)` call (profile + login ensure).
-- Interactive rc load order is documented in `.bashrc` / `.zshrc`: environment → options → UI → tools → aliases → login last so **Ready** measures full interactive cost.
+- Session stamps (`DOTFILES_LOGIN_TIME`, `DOTFILES_LOGIN_EPOCH`, `DOTFILES_SESSION_ID`) use zsh `strftime` / bash `printf %()T`. `date(1)` runs only when those builtins are missing.
+- Interactive rc load order is documented in `.bashrc` / `.zshrc`: environment → history → options → UI → tools → aliases → login, then zsh syntax highlighting last, so **Ready** measures full interactive cost. History is applied after `/etc/zshrc`, which would otherwise reset `HISTFILE` and `HISTSIZE`.
 - NVM, mise, pyenv, and rbenv are lazy stubs until first invocation (shims stay on PATH).
 - Oh My Zsh framework is **off by default** (`DOTFILES_USE_OMZ=1` to opt in). Standalone autosuggestions / syntax-highlighting are sourced instead, including from `~/.oh-my-zsh/custom/plugins/` when present. This avoids a second `compinit`, `compaudit`, `zrecompile`, and the OMZ upgrade check.
 - Zsh reuses `.zcompdump` for 24h (`compinit -C`). `ZSH_DISABLE_COMPFIX=true` skips `compaudit`.
 - `starship init`, `zoxide init`, `direnv hook`, and `kubectl completion` are cached under `$XDG_CACHE_HOME/dotfiles/` until the binary is newer than the dump.
-- macOS `launchctl setenv` exports only `PATH` / `EDITOR` / `LANG` (each call is a fork).
-- PATH is built in a single pass with duplicate checks. XDG / history dirs are created only when missing.
+- macOS `launchctl setenv` exports only `PATH` / `EDITOR` / `LANG`, and only when that triple changed since the last login (the stamp is `~/.local/state/shell/launchctl.stamp`).
+- PATH is assembled in `path.sh` (highest priority first, duplicates and empty components dropped). Login shells run it again after macOS `path_helper`. Homebrew's `bin`/`sbin` are inserted there; startup does not call `brew shellenv`. XDG directories are created only when missing. `umask 077` applies to interactive shells, not to `zsh -c` / scripts.
 - Shared modules use source-once markers to avoid re-work.
 - Native git prompts are skipped when `starship` is on `PATH`. Git `core.untrackedCache` keeps `git status` (and therefore the prompt) cheap. `core.fsmonitor` is left off globally — the built-in daemon is per-repo and can stall first-prompt `git status` past Starship's `command_timeout`.
 

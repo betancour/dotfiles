@@ -2,7 +2,10 @@
 
 shopt -s histappend histverify histreedit 2>/dev/null || true
 shopt -s cdspell dirspell cdable_vars 2>/dev/null || true
-shopt -s progcomp extglob nullglob 2>/dev/null || true
+# nullglob is not set: an unmatched pattern must stay literal.
+# `rm *.bak` with nullglob and no matches becomes `rm` with no file arguments.
+shopt -s progcomp extglob 2>/dev/null || true
+shopt -u nullglob 2>/dev/null || true
 shopt -s checkwinsize cmdhist lithist 2>/dev/null || true
 # Bash 4+ (no-op on macOS system bash 3.2)
 shopt -s autocd 2>/dev/null || true

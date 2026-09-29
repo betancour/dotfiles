@@ -7,16 +7,17 @@ DOTFILES_SSH_AGENT_LOADED=1
 
 DOTFILES_SSH_AGENT_ENV="${DOTFILES_SSH_AGENT_ENV:-${XDG_STATE_HOME:-$HOME/.local/state}/shell/ssh-agent.env}"
 DOTFILES_SSH_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/shell"
-DOTFILES_SSH_KEY_NAMES="id_ed25519 id_ecdsa id_rsa"
 
 _dotfiles_ssh_state_init() {
     [ -d "$DOTFILES_SSH_STATE_DIR" ] || mkdir -p "$DOTFILES_SSH_STATE_DIR"
     chmod 700 "$DOTFILES_SSH_STATE_DIR" 2>/dev/null || true
 }
 
+# Literal names: Zsh does not split an unquoted parameter, so a single
+# variable of "id_ed25519 id_ecdsa id_rsa" was looked up as one filename.
 _dotfiles_ssh_has_keys() {
     [ -d "$HOME/.ssh" ] || return 1
-    for _name in $DOTFILES_SSH_KEY_NAMES; do
+    for _name in id_ed25519 id_ecdsa id_rsa; do
         [ -f "$HOME/.ssh/$_name" ] && unset _name && return 0
     done
     unset _name
@@ -55,9 +56,12 @@ dotfiles_ssh_agent_start() {
     _dotfiles_ssh_has_keys || return 0
 
     _dotfiles_ssh_state_init
-    eval "$(ssh-agent -s)" >/dev/null 2>&1 || return 1
+    _agent_env=$(ssh-agent -s 2>/dev/null) || return 1
+    # shellcheck disable=SC2163
+    eval "$_agent_env" >/dev/null || return 1
+    unset _agent_env
 
-    for _name in $DOTFILES_SSH_KEY_NAMES; do
+    for _name in id_ed25519 id_ecdsa id_rsa; do
         [ -f "$HOME/.ssh/$_name" ] && _dotfiles_ssh_add_key "$HOME/.ssh/$_name"
     done
     unset _name
@@ -67,7 +71,8 @@ dotfiles_ssh_agent_start() {
 
 dotfiles_ssh_agent_restore() {
     [ -n "${SSH_AUTH_SOCK:-}" ] && return 0
-    [ -f "$DOTFILES_SSH_AGENT_ENV" ] || return 0
+    # Nothing restored. Return failure so setup falls through to start.
+    [ -f "$DOTFILES_SSH_AGENT_ENV" ] || return 1
 
     # shellcheck source=/dev/null
     . "$DOTFILES_SSH_AGENT_ENV" 2>/dev/null || return 1
@@ -83,12 +88,11 @@ dotfiles_ssh_agent_setup() {
 }
 
 dotfiles_ssh_agent_teardown() {
-    [ "${SHLVL:-1}" -gt 1 ] && return 0
-
-    if [ -n "${SSH_AGENT_PID:-}" ] && kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
-        ssh-agent -k >/dev/null 2>&1 || kill "$SSH_AGENT_PID" 2>/dev/null || true
+    # The agent is shared across terminals via ssh-agent.env. Closing one
+    # top-level shell must not kill it for the others. Drop the env file
+    # only when the recorded process is already gone.
+    if [ -n "${SSH_AGENT_PID:-}" ] && ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
+        rm -f "$DOTFILES_SSH_AGENT_ENV" 2>/dev/null || true
     fi
-
     unset SSH_AUTH_SOCK SSH_AGENT_PID
-    rm -f "$DOTFILES_SSH_AGENT_ENV" 2>/dev/null || true
 }

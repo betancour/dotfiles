@@ -1,0 +1,6 @@
+#!/bin/sh
+# Optional. Not installed by the test suite.
+# From the repository root:
+#   ln -sfn ../../tests/hooks/pre-commit .git/hooks/pre-commit
+cd "$(git rev-parse --show-toplevel)" || exit 1
+exec ./tests/run.sh

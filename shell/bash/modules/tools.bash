@@ -25,17 +25,22 @@ _dotfiles_eval_cached direnv_hook direnv hook bash || true
 if [ "${TERM:-}" != dumb ]; then
     _dotfiles_eval_cached starship_init starship init bash || true
 fi
-if [ -n "${__KUBECTL_AVAILABLE:-}" ]; then
+if command -v kubectl >/dev/null 2>&1; then
     _dotfiles_eval_cached kubectl_comp kubectl completion bash || true
 fi
 
-# NVM: load .nvmrc on cd (simple, no chpwd hooks in Bash)
+# NVM: load .nvmrc on cd without discarding a zoxide cd function/alias.
 if [ -n "${NVM_DIR:-}" ] && [ -d "$NVM_DIR" ]; then
     __dotfiles_check_nvmrc() {
         [ -f .nvmrc ] && command -v nvm >/dev/null 2>&1 && nvm use >/dev/null 2>&1 || true
     }
     cd() {
-        builtin cd "$@" && __dotfiles_check_nvmrc
+        if command -v z >/dev/null 2>&1; then
+            z "$@" || return
+        else
+            builtin cd "$@" || return
+        fi
+        __dotfiles_check_nvmrc
     }
 fi
 

@@ -3,12 +3,20 @@
 export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/.zcompdump-${HOST}-${ZSH_VERSION}"
 [[ -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" ]] || mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 
-# Extra completion directories (Homebrew zsh-completions, git, local)
-[[ -d /opt/homebrew/share/zsh-completions ]] && fpath=(/opt/homebrew/share/zsh-completions $fpath)
-[[ -d /usr/local/share/zsh-completions ]] && fpath=(/usr/local/share/zsh-completions $fpath)
-[[ -d /opt/homebrew/share/zsh/site-functions ]] && fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
-[[ -d /usr/local/share/zsh/site-functions ]] && fpath=(/usr/local/share/zsh/site-functions $fpath)
-[[ -d "$HOME/.grok/completions/zsh" ]] && fpath=("$HOME/.grok/completions/zsh" $fpath)
+# Extra completion directories. Prepend, then keep the first copy of each
+# path: Homebrew's zsh already ships site-functions, sometimes twice.
+_df_fpath_prepend() {
+    [[ -d $1 ]] || return 0
+    fpath=("$1" $fpath)
+}
+_df_fpath_prepend /opt/homebrew/share/zsh-completions
+_df_fpath_prepend /usr/local/share/zsh-completions
+_df_fpath_prepend /opt/homebrew/share/zsh/site-functions
+_df_fpath_prepend /usr/local/share/zsh/site-functions
+_df_fpath_prepend /Applications/Docker.app/Contents/Resources/etc
+_df_fpath_prepend "$HOME/.grok/completions/zsh"
+typeset -U fpath
+unset -f _df_fpath_prepend
 
 # Skip fpath security audit (compaudit) — the dump is under our cache dir.
 ZSH_DISABLE_COMPFIX=true

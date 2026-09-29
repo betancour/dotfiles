@@ -1,0 +1,4 @@
+#!/bin/sh
+# Optional-tool stand-in. It is executable, so command -v finds it,
+# and it fails so init hooks must tolerate a broken optional CLI.
+exit 1

@@ -2,8 +2,11 @@
 
 source "${DOTFILES_LIB_DIR}/tools.sh"
 
-# FZF key bindings + completion
-if command -v fzf >/dev/null 2>&1; then
+# FZF key bindings + completion.
+# fzf saves every option and eval's them back, including `zle`. That eval
+# errors (and can drop the restored options) when this shell has no tty,
+# which is the case for `zsh -i -c` from a script. Real terminals still load it.
+if command -v fzf >/dev/null 2>&1 && [[ -t 0 && -t 1 && -o zle ]]; then
     for _fzf in \
         /opt/homebrew/opt/fzf/shell/key-bindings.zsh \
         /usr/share/fzf/key-bindings.zsh \
@@ -41,8 +44,9 @@ if [[ -n "${NVM_DIR:-}" && -d "$NVM_DIR" ]]; then
     add-zsh-hook chpwd _dotfiles_load_nvmrc
 fi
 
-# Kubectl completion (generated once; reused until kubectl is newer)
-if [[ -n "${__KUBECTL_AVAILABLE:-}" ]]; then
+# Kubectl completion (generated once; reused until kubectl is newer).
+# Checked here so non-login interactive shells get it too.
+if command -v kubectl >/dev/null 2>&1; then
     _dotfiles_eval_cached kubectl_comp kubectl completion zsh || true
 fi
 

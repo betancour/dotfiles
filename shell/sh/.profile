@@ -46,14 +46,8 @@ _df_path_prepend() {
 _df_path_prepend "$HOME/.local/bin"
 _df_path_prepend "$HOME/bin"
 
-# Homebrew (macOS)
-if [ -x /opt/homebrew/bin/brew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [ -x /usr/local/bin/brew ]; then
-    eval "$(/usr/local/bin/brew shellenv)"
-fi
-
-# Maven / Gradle (scripts/install-java-tools.sh). After brew so these win.
+# Maven / Gradle (scripts/install-java-tools.sh). Prepended again after brew
+# below so these stay ahead of Homebrew.
 if [ -d "${JAVA_TOOLS_HOME:-$HOME/.java-tools}/maven" ]; then
     export MAVEN_HOME="${MAVEN_HOME:-${JAVA_TOOLS_HOME:-$HOME/.java-tools}/maven}"
     _df_path_prepend "$MAVEN_HOME/bin"
@@ -82,6 +76,22 @@ export LESS="${LESS:--R}"
 # Load shared modules that are POSIX-safe when present.
 # shellcheck source=/dev/null
 [ -r "${DOTFILES_LIB_DIR}/platform.sh" ] && . "${DOTFILES_LIB_DIR}/platform.sh"
+
+# Homebrew vars without `brew shellenv` (that fork also duplicates PATH).
+if command -v dotfiles_brew_env >/dev/null 2>&1; then
+    dotfiles_brew_env || true
+    if [ -n "${HOMEBREW_PREFIX:-}" ]; then
+        _df_path_prepend "${HOMEBREW_PREFIX}/sbin"
+        _df_path_prepend "${HOMEBREW_PREFIX}/bin"
+    fi
+    # Java tools were prepended earlier; prepend again so they beat brew.
+    if [ -n "${MAVEN_HOME:-}" ]; then
+        _df_path_prepend "$MAVEN_HOME/bin"
+    fi
+    if [ -n "${GRADLE_HOME:-}" ]; then
+        _df_path_prepend "$GRADLE_HOME/bin"
+    fi
+fi
 
 # Local POSIX tools module (aliases with fallbacks).
 # shellcheck source=/dev/null

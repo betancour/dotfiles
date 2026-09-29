@@ -2,16 +2,22 @@
 #
 # Load order (cheap → expensive, ready-timer bookends the body):
 #   bootstrap → optional zprof → interactive guard → float SECONDS
-#   → environment → options/history → completion/plugins
-#   → prompt/keybindings/tools → aliases/functions → local → tty
-#   → login display last (Ready: measures full interactive load)
+#   → environment → history/options → completion/plugins
+#   → prompt/keybindings/tools → aliases/functions → local
+#   → login display, then syntax highlighting (must wrap every widget)
 
 source "${${(%):-%x}:A:h}/../lib/bootstrap.sh"
 
 # Optional startup profiling: ZSH_PROFILE_STARTUP=1 zsh -i -c 'zprof; exit'
-[[ -n "${ZSH_PROFILE_STARTUP:-}" ]] && zmodload zsh/zprof 2>/dev/null
+if [[ -n "${ZSH_PROFILE_STARTUP:-}" ]]; then
+    zmodload zsh/zprof 2>/dev/null || true
+fi
 
 [[ $- != *i* ]] && return
+
+# Interactive sessions create private files. Scripts (zsh -c) do not reach here,
+# so they keep the caller's umask.
+umask 077
 
 # Float SECONDS from process start so login can report Ready in ms (no EPOCHREALTIME needed).
 typeset -F SECONDS
@@ -19,9 +25,17 @@ typeset -F SECONDS
 # --- Environment (shared; source-once) ---
 dotfiles_source_once "${DOTFILES_LIB_DIR}/environment.sh"
 
+# Config files own tool colors. Drop inherited overrides for this interactive
+# shell only; non-interactive zsh keeps whatever the parent exported.
+unset BAT_THEME EZA_COLORS EXA_COLORS LS_COLORS LSCOLORS GREP_COLORS FZF_DEFAULT_OPTS
+
+dotfiles_gpg_tty
+
 # --- Shell behavior ---
-source "${DOTFILES_SHELL_DIR}/zsh/modules/options.zsh"
+# History file and sizes before SHARE_HISTORY, so /etc/zshrc's ~/.zsh_history
+# and HISTSIZE=2000 do not win.
 source "${DOTFILES_SHELL_DIR}/zsh/modules/history.zsh"
+source "${DOTFILES_SHELL_DIR}/zsh/modules/options.zsh"
 
 # --- Completion + plugins before prompt (autosuggestions / compinit) ---
 source "${DOTFILES_SHELL_DIR}/zsh/modules/completion.zsh"
@@ -37,8 +51,15 @@ dotfiles_source_once "${DOTFILES_SHELL_DIR}/.zaliases"
 dotfiles_source_once "${DOTFILES_SHELL_DIR}/.zfunctions"
 
 # Machine-local and vendor overrides after our defaults.
-[[ -r "${ZDOTDIR:-$HOME}/.zshrc.local" ]] && source "${ZDOTDIR:-$HOME}/.zshrc.local"
-[[ -r "/etc/zshrc_${TERM_PROGRAM:-}" ]] && source "/etc/zshrc_${TERM_PROGRAM}"
+if [[ -r "${ZDOTDIR:-$HOME}/.zshrc.local" ]]; then
+    source "${ZDOTDIR:-$HOME}/.zshrc.local"
+fi
+
+# /etc/zshrc already sources /etc/zshrc_$TERM_PROGRAM. Doing it again
+# registers Terminal.app's precmd hook twice.
+if [[ ${TERM_PROGRAM:-} == iTerm.app ]]; then
+    export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
+fi
 
 # Flow control is disabled via setopt NO_FLOW_CONTROL (no stty fork).
 
@@ -48,7 +69,23 @@ if [[ ! -o login ]]; then
     dotfiles_login
 fi
 
-[[ -n "${ZSH_PROFILE_STARTUP:-}" ]] && zprof 2>/dev/null
+# bun completions are ~1200 lines. Load them on the first Tab, not at startup.
+_DF_BUN_COMPLETION="${BUN_INSTALL:-$HOME/.bun}/_bun"
+if [[ -r $_DF_BUN_COMPLETION ]]; then
+    _bun() {
+        local _f=$_DF_BUN_COMPLETION
+        unfunction _bun
+        unset _DF_BUN_COMPLETION
+        # shellcheck source=/dev/null
+        source "$_f"
+        _bun "$@"
+    }
+    compdef _bun bun 2>/dev/null || true
+fi
 
-# bun completions
-[ -s "/Users/betancour/.bun/_bun" ] && source "/Users/betancour/.bun/_bun"
+# After every widget (fzf, local bindkey, bun). Highlighting no-ops without a tty.
+_dotfiles_load_syntax_highlighting
+
+if [[ -n "${ZSH_PROFILE_STARTUP:-}" ]]; then
+    zprof 2>/dev/null || true
+fi

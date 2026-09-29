@@ -9,7 +9,7 @@ if [ -z "${DOTFILES_LIB_DIR:-}" ]; then
     elif [ -n "${BASH_VERSION:-}" ]; then
         _df_zf_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     else
-        _df_zf_dir="${HOME}/dotfiles/shell"
+        _df_zf_dir="${HOME}/.dotfiles/shell"
     fi
     DOTFILES_LIB_DIR="${_df_zf_dir}/lib"
     unset _df_zf_dir

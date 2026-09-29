@@ -1,0 +1,11 @@
+generated=2026-09-29T00:16:22Z
+os=Darwin
+arch=arm64
+zsh=zsh 5.9 (arm64-apple-darwin26.0)
+bash=GNU bash, version 5.3.20(1)-release (aarch64-apple-darwin27.0.0)
+iterations=10
+perf_ratio=1.5
+perf_slack_ms=25
+term_profile=xterm-256color
+tty_colorterm=truecolor
+note=timings and command paths are this machine; update the baseline explicitly after an intentional change

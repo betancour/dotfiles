@@ -17,7 +17,7 @@ n() {
 
 mkcd() {
     [ "$#" -eq 0 ] && { echo "Usage: mkcd <directory>"; return 1; }
-    mkdir -p "$1" && cd "$1" || return 1
+    mkdir -p "$1" && builtin cd "$1" || return 1
 }
 
 up() {
@@ -28,7 +28,7 @@ up() {
         _path="../$_path"
         _i=$((_i + 1))
     done
-    cd "$_path" || { unset _levels _path _i; return 1; }
+    builtin cd "$_path" || { unset _levels _path _i; return 1; }
     unset _levels _path _i
 }
 
@@ -45,7 +45,7 @@ cdf() {
         _dir=$(find . -type d 2>/dev/null | fzf --height 40%)
     fi
     if [ -n "$_dir" ]; then
-        cd "$_dir" || { unset _dir; return 1; }
+        builtin cd "$_dir" || { unset _dir; return 1; }
     fi
     unset _dir
 }
@@ -232,6 +232,11 @@ java-tools-status() {
 }
 
 help() {
+    # Bash: `help cd` stays the builtin. `help` with no args is this list.
+    if [ -n "${BASH_VERSION:-}" ] && [ "$#" -gt 0 ]; then
+        builtin help "$@"
+        return
+    fi
     cat <<'EOF'
 Custom shell functions:
   Directory  mkcd  up  cdf  extract

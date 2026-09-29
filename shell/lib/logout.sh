@@ -11,39 +11,45 @@ DOTFILES_LOGOUT_LOADED=1
 . "${DOTFILES_LIB_DIR}/ssh-agent.sh"
 . "${DOTFILES_LIB_DIR}/platform.sh"
 
-# --- Session duration (one date for end stamp + epoch) ---
+# --- Session duration ---
+# Login already stored the start epoch. The end clock is a builtin.
+# date(1) is only the fallback when a shell was started before that stamp
+# existed, and then only the implementation this OS actually has.
 _session_start=${DOTFILES_LOGIN_TIME:-unknown}
-_end_raw=$(date '+%Y-%m-%d %H:%M:%S %s')
-_session_end=${_end_raw% *}
-_end_epoch=${_end_raw##* }
+_session_end=unknown
+_end_epoch=
 _session_duration=unknown
-unset _end_raw
-
-if [ "$_session_start" != unknown ]; then
-    # Portable: GNU date -d, BSD date -j -f.
-    _start_epoch=$(date -d "$_session_start" +%s 2>/dev/null \
-        || date -j -f '%Y-%m-%d %H:%M:%S' "$_session_start" +%s 2>/dev/null \
-        || true)
-    if [ -n "${_start_epoch:-}" ] && [ -n "${_end_epoch:-}" ]; then
-        _secs=$((_end_epoch - _start_epoch))
-        if [ "$_secs" -ge 0 ] 2>/dev/null; then
-            _h=$((_secs / 3600))
-            _m=$(( (_secs % 3600) / 60 ))
-            _s=$((_secs % 60))
-            if [ "$_h" -gt 0 ]; then
-                _session_duration="${_h}h ${_m}m ${_s}s"
-            elif [ "$_m" -gt 0 ]; then
-                _session_duration="${_m}m ${_s}s"
-            else
-                _session_duration="${_s}s"
-            fi
-            unset _h _m _s
-        fi
-        unset _secs
-    fi
-    unset _start_epoch
+if dotfiles_now; then
+    _session_end=$_df_now_clock
+    _end_epoch=$_df_now_epoch
+    unset _df_now_clock _df_now_epoch
 fi
-unset _end_epoch
+_start_epoch=${DOTFILES_LOGIN_EPOCH:-}
+if [ "$_session_start" != unknown ] && [ -z "$_start_epoch" ]; then
+    if is_macos; then
+        _start_epoch=$(date -j -f '%Y-%m-%d %H:%M:%S' "$_session_start" +%s 2>/dev/null || true)
+    else
+        _start_epoch=$(date -d "$_session_start" +%s 2>/dev/null || true)
+    fi
+fi
+if [ -n "${_start_epoch:-}" ] && [ -n "${_end_epoch:-}" ]; then
+    _secs=$((_end_epoch - _start_epoch))
+    if [ "$_secs" -ge 0 ] 2>/dev/null; then
+        _h=$((_secs / 3600))
+        _m=$(( (_secs % 3600) / 60 ))
+        _s=$((_secs % 60))
+        if [ "$_h" -gt 0 ]; then
+            _session_duration="${_h}h ${_m}m ${_s}s"
+        elif [ "$_m" -gt 0 ]; then
+            _session_duration="${_m}m ${_s}s"
+        else
+            _session_duration="${_s}s"
+        fi
+        unset _h _m _s
+    fi
+    unset _secs
+fi
+unset _start_epoch _end_epoch
 
 # --- Security: secrets and agent before any further work ---
 dotfiles_clear_secret_env
@@ -54,7 +60,9 @@ if [ -f "${HISTFILE:-}" ] && [ -s "$HISTFILE" ]; then
     _hist_dir="${XDG_STATE_HOME:-$HOME/.local/state}/${DOTFILES_SHELL:-shell}"
     mkdir -p "$_hist_dir"
     chmod 700 "$_hist_dir" 2>/dev/null || true
-    _backup="$_hist_dir/history.bak.$(date +%Y%m%d_%H%M%S)"
+    _stamp=${_session_end:-now}
+    _stamp=${_stamp//[: ]/_}
+    _backup="$_hist_dir/history.bak.${_stamp}"
     if cp "$HISTFILE" "$_backup" 2>/dev/null; then
         dotfiles_secure_history_backup "$_backup"
     fi

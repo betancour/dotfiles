@@ -6,7 +6,9 @@
 # Directory navigation (zoxide if available)
 if command -v zoxide >/dev/null 2>&1; then
     # zoxide supports a posix init that defines `z` (not a full cd hook).
-    eval "$(zoxide init posix 2>/dev/null)" || true
+    # Default hook is `pwd`, which POSIX sh cannot do. It prints a warning
+    # on every login. `prompt` is the hook zoxide documents for this shell.
+    eval "$(zoxide init posix --hook prompt 2>/dev/null)" || true
 fi
 
 # Listing
